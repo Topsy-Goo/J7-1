@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Marketplace</title>
+
+<!-- Эти ссылки подключают библиотеку стилей из https://getbootstrap.com/docs. -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"/>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+	<!-- Урезанная версия ангулара — то что нужно (это его база, но есть и дополнения): -->
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular.min.js"></script>
+	<!-- Дполнение первое: роутер фронта. -->
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular-route.min.js"></script>
+	<!-- Дополнение второе: поддержка использования локального хранилища браузера. -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ngStorage/0.3.11/ngStorage.min.js"></script>
+
+</head>
+<body ng-app="market-front">
+
+<div class="container">
+
+	<div ng-controller="indexController">
+		<nav class="navbar navbar-expand-lg navbar-light bg-light">
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="navbar-nav" style="font-weight: 700;">
+					<li class="nav-item" style="background-color: #E0F8C3; margin: 1px;">
+						<a class="nav-link" href="#!/main">🌞&nbsp;{{mainPageTitle}}</a>
+					</li>
+					<li class="nav-item" style="background-color: #E0F8C3; margin: 1px;"><!--  ng-show="isUserLoggedIn()" -->
+						<a class="nav-link" href="#!/store">📚&nbsp;{{storePageTitle}}</a>
+					</li>
+					<li class="nav-item"  style="background-color: #E0F8C3; margin: 1px;" ng-show="isUserLoggedIn()">
+						<!-- ng-show="isUserAdmin()" -->
+						<a class="nav-link" href="#!/edit_product">🎁&nbsp;{{edit_productPageTitle}}</a>
+					</li>
+					<li class="nav-item" style="background-color: #E0F8C3; margin: 1px;" ng-show="isUserLoggedIn()">
+						<a class="nav-link" href="#!/cart">🛒&nbsp;{{cartPageTitle}}</a>
+					</li>
+<!--					<li class="nav-item">-->
+<!--						<a class="nav-link" href="#!">{{}}</a>-->
+<!--					</li>-->
+
+					<li class="nav-item" ng-show="!isUserLoggedIn()" style="background-color: #E0F8C3; margin: 1px;">
+                        <form class="align-middle" ng-submit="tryToLogin()">
+                            <div class="input-group input-group-sm" style="padding: 4px;">
+                                <input	id="navLoginField"
+                                		class="form-control"
+                                		style="margin-left: 10px;"
+                                		type="text"
+										aria-describedby="inputGroup-sizing-sm"
+										ng-model="user.login"
+										>
+                                <input	id="navPasswordField"
+                                		class="form-control"
+                                		style="margin-left: 10px;"
+                                		type="password"
+										aria-describedby="inputGroup-sizing-sm"
+										ng-model="user.password"
+										>
+                                <button	id="navLoginSubmit"
+                                		class="btn btn-outline-warning btn-sm"
+                                		style="margin-left: 10px;"
+                                		type="submit"
+                                		>🔔&nbsp;Войти</button>
+                                <button	id="navRegistration"
+                                		class="btn btn-outline-warning btn-sm"
+                                		style="margin-left: 10px;"
+                                		type="button"
+                                		ng-click="tryToRegister()"
+                                		>👤&nbsp;Регистрация</button><!-- disabled -->
+                            </div>
+                        </form>
+                    </li>
+
+                    <!--<li class="nav-item" ng-show="isUserLoggedIn()" style="background-color: #E0F8C3; margin: 1px;">&lt;!&ndash; "padding: 4px;" &ndash;&gt;
+                        <button	class="btn btn-outline-secondary btn-sm"></button>
+					</li>-->
+					<li class="nav-item" style="background-color: #E0F8C3; margin: 1px;" ng-show="isUserLoggedIn()">
+						<a class="nav-link"  ng-click="tryToLogout()">🚪&nbsp;Выход</a>
+					</li>
+				</ul><!-- 🎀 📎 🔔 👤 🚪 🔕 🔒   -->
+			</div>
+		</nav>
+		<h1>{{appTitle}}</h1>
+		<p></p>
+	</div>
+
+	<ng-view>
+
+	</ng-view>
+
+	<script src="index.js"></script>
+	<script src="main/main.js"></script>
+	<script src="store/store.js"></script>
+	<script src="cart/cart.js"></script>
+	<script src="edit_product/edit_product.js"></script>
+	<script src="registration/registration.js"></script>
+</div>
+
+</body>
+</html>

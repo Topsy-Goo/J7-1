@@ -1,0 +1,55 @@
+<div>
+	<h5>Ваша корзина</h5>
+		<p></p>
+
+	<table class="table">
+		<tr>
+			<th>id</th>				<!-- 1 -->
+			<th>title</th>			<!-- 2 -->
+			<th>cost</th>			<!-- 3 -->
+			<th>add to cart</th>	<!-- 4 -->
+			<th>more actions</th>	<!-- 5 -->
+		</tr>
+
+		<tr ng-repeat="p in productsPage.content">
+			<td>{{p.productId}}</td>				<!-- 1 -->
+			<td>{{p.productTitle}}</td>				<!-- 2 -->
+			<td>{{p.productCost}}</td>				<!-- 3 -->
+			<td>									<!-- 4 -->
+				<button class="btn btn-primary"
+					title="Добавить продукт в корзину." style="width: 30pt"
+					ng-click="addToCart(p.productId)">+</button>
+				&nbsp;
+				<button class="btn btn-primary"
+					title="Убрать продукт из корзины." style="width: 30pt"
+					ng-click="removeFromCart(p.productId)">-</button>
+			</td>
+			<td>									<!-- 5 -->
+				<button class="btn btn-info" style="font-family: Webdings;"
+					title="Посмотреть информацию о продукте."
+					ng-click="infoProduct(p)">s</button>
+			</td>
+		</tr>
+		<caption>
+			Страница: {{productsPage.pageable.pageNumber +1}}/{{productsPage.totalPages}}
+			<br>
+			Товаров в корзине: {{cartItemsCount}}
+		</caption>
+	</table>
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+
+        	<li class="page-item" style="padding-right: 3px;">
+        		<button class="page-link" ng-click="prevProductsPage()">&lt;</button>
+			</li>
+            <li class="page-item" ng-repeat="pageIndex in paginationArray" style="padding-right: 3px;">
+                <button class="page-link" ng-click="loadProducts(pageIndex)">{{pageIndex}}</button>
+            </li>
+            <li class="page-item" style="padding-right: 3px;">
+        		<button class="page-link" ng-click="nextProductsPage()">&gt;</button>
+			</li>
+
+        </ul>
+    </nav>
+</div>

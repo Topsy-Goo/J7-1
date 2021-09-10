@@ -1,0 +1,72 @@
+<div>
+	<h5>{{contextPrompt}}</h5>
+		<p></p>
+
+	<form novalidate ng-submit="createOrUpdateProduct()"><!--  ng-reset="resetProductForm()" -->
+
+		<div class="container" style="font-size: 14pt; font-weight:500;">
+			<div class="row">
+				<!-- Число в col-N означает относительную ширину колонки. Если общее кол-во колонок всех элементов превышает 12, то элементы, занимающие лишние колонки, переносятся на след.строку. В данном примере общее кол-во колонок: 1+11 = 12, что заставляет ряд занимать всю доступную ему ширину. Если общее кол-во колонок не равно 12, то имеет смысл указать в class="row" тип выравнивания.  -->
+				<div class="col-2">
+					<label for="pid" class="col-form-lable">id:</label>
+				</div>
+				<div class="col-10">
+					<input	id="pid"
+							class="form-control"
+							type="number"
+							readonly
+							ng-model="new_product.productId">
+				</div>
+			</div>
+			<p></p>
+			<div class="row g-2">
+				<div class="col-2">
+					<label for="cnm" class="col-form-lable">category:&nbsp;</label>
+				</div>
+				<div class="col-10">
+					<input	id="cnm"
+							class="form-control"
+							type="text"
+							placeholder="—"
+							required="required"
+							ng-model="new_product.productsCategoryName">
+				</div>
+			</div>
+			<p></p>
+			<div class="row g-2">
+				<div class="col-2">
+					<label for="pnm" class="col-form-lable">title:&nbsp;</label>
+				</div>
+				<div class="col-10">
+					<input	id="pnm"
+							class="form-control"
+							type="text"
+							placeholder="—"
+							required="required"
+							ng-model="new_product.productTitle">
+				</div>
+			</div>
+			<p></p>
+			<div class="row g-2">
+				<div class="col-2">
+					<label for="pct" class="col-form-lable">cost:</label>
+				</div>
+				<div class="col-10">
+					<input	id="pct"
+							class="form-control"
+							type="number"
+							placeholder="—"
+							required="required"
+							ng-model="new_product.productCost">
+				</div>
+			</div>
+		</div>
+		<p></p>
+		<button type="submit" class="btn btn-primary">Применить</button>
+		<!--&nbsp;
+		<button type="reset" class="btn btn-secondary">Сброс</button>-->
+		&nbsp;
+		<button class="btn btn-secondary" ng-click="cancelProductEditing()">Отмена</button>
+	</form>
+
+</div>
