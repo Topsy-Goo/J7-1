@@ -27,15 +27,15 @@
 	/*	$routeProvider - модуль, который позволяет переходить между страницами
 	*/
 		$routeProvider
-			.when('/store',	//< задаём адрес страницы с товарами
-			{
-				templateUrl: 'store/store.html',	//<	адрес страницы с товарами и…
-				controller:	 'storeController'		//	…имя её контроллера
-			})
 			.when('/main',		//< задаём постфикс для перехода на главную страницу
 			{
 				templateUrl: 'main/main.html',		//< адрес главной страницы и…
 				controller:	 'mainController'		//	…имя её контроллера
+			})
+			.when('/store',	//< задаём адрес страницы с товарами
+			{
+				templateUrl: 'store/store.html',	//<	адрес страницы с товарами и…
+				controller:	 'storeController'		//	…имя её контроллера
 			})
 			.when('/edit_product/:pid',	//< для возможности передавать параметр требуется указать $routeParams в объявлении edit_productController'а.
 			{
@@ -51,6 +51,11 @@
 			{
 				templateUrl: 'cart/cart.html',
 				controller:	 'cartController'
+			})
+			.when('/order',
+			{
+				templateUrl: 'order/order.html',
+				controller:	 'orderController'
 			})
 			.when('/registration',
 			{
@@ -95,11 +100,7 @@ angular.module('market-front').controller('indexController',
 	$scope.edit_productPageTitle = 'Создать продукт';
 	$scope.cartPageTitle = 'Ваша корзина';
 
-	$rootScope.isUserLoggedIn = function ()
-	{
-		if ($localStorage.webMarketUser)	{	return true;	}
-		else	{	return false;	}
-	}
+	$rootScope.isUserLoggedIn = function () { if ($localStorage.webMarketUser) { return true; } else { return false; } }
 
 	$scope.tryToRegister = function ()
 	{
@@ -108,7 +109,7 @@ angular.module('market-front').controller('indexController',
 		$location.path('/registration');
 	}
 
-	$scope.clearUserFields = function ()	{	$scope.user = null;	}
+	$scope.clearUserFields = function () { $scope.user = null; }
 
 	$scope.tryToLogin = function ()
 	{
@@ -127,7 +128,6 @@ angular.module('market-front').controller('indexController',
 			},
 			function failureCallback (response)
 			{
-				console.log ('$scope.tryToLogin failure callback.');
 				alert ('ОШИБКА: '+ response.data.messages);
 			});
 		}

@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface ProductRepo extends JpaRepository<Product, Long>
 {
-    //List<Product> findAllByCostBetween (double minPrice, double maxPrice);
+    //List<Product> findAllByPriceBetween (double minPrice, double maxPrice);
 }

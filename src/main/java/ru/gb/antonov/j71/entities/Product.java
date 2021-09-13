@@ -1,71 +1,64 @@
 package ru.gb.antonov.j71.entities;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import ru.gb.antonov.j71.beans.errorhandlers.ProductUpdatingException;
+import ru.gb.antonov.j71.beans.errorhandlers.BadCreationParameterException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
-/*  Сущность для хранения инф-ции о товаре, доступном для заказа.
-*/
+import static ru.gb.antonov.j71.Factory.MAX_PRICE;
+import static ru.gb.antonov.j71.Factory.MIN_PRICE;
+
 @Entity
 @Table (name="products")
 public class Product
 {
-    public static final Double MIN_PRICE = 0.0;
-    public static final Double MAX_PRICE = Double.MAX_VALUE;
-
-    @Id
+    @Id  @Getter
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column (name="id")
     private Long id;
 
-    @Column(name="title", nullable=false)
+    @Column(name="title", nullable=false)  @Getter
     private String title;
 
-    @Column(name="price")
-    private double cost;
+    @Column(name="price")  @Getter
+    private double price;
 
-    @Column(name="rest")
+    @Column(name="rest")  @Getter
     private int rest;
 
     @ManyToOne
-    @JoinColumn(name="category_id", nullable=false)
-    private ProductsCategory productsCategory;
+    @JoinColumn(name="category_id", nullable=false)  @Getter
+    private ProductsCategory category;
 
     @CreationTimestamp
-    @Column(name="created_at", nullable=false)
+    @Column(name="created_at", nullable=false)  @Getter @Setter
     private LocalDateTime createdAt;
 
     @CreationTimestamp
-    @Column(name="updated_at", nullable=false)
+    @Column(name="updated_at", nullable=false)  @Getter @Setter
     private LocalDateTime updatedAt;
-
-/*    @OneToMany(mappedBy = "product")
-    private List<CartItem> cartItems;*/
-
-
+//----------------------------------------------------------------------
     public Product(){}
 
     public void update (String t, double c, ProductsCategory category)
     {
-        if (!setTitle (t) || !setCost (c) || !setProductsCategory (category))
+        if (!setTitle (t) || !setPrice (c) || !setCategory (category))
         {
-            throw new ProductUpdatingException (String.format (
-                "Недопустимый набор значений:\r    название продукта = %s,\r    цена = %.2f.", t, c));
+            throw new BadCreationParameterException (String.format (
+                "Недопустимый набор значений:\r    " +
+                "• название продукта = %s,\r    " +
+                "• цена = %.2f,\r" +
+                "• категория = %s.", t, c, category));
         }
     }
 //----------------- Геттеры и сеттеры -----------------------------------
 
-    public Long getId ()    {   return id;   }
     private void setId (Long id)   {   this.id = id;   }
 
-
-    public String getTitle ()   {   return title;   }
     public boolean setTitle (String title)
     {
         boolean ok = isTitleValid (title);
@@ -74,30 +67,29 @@ public class Product
         return ok;
     }
 
-    public double getCost ()    {   return cost;   }
-    public boolean setCost (double cost)
+    public boolean setPrice (double newvalue)
     {
-        boolean ok = isCostValid (cost);
+        boolean ok = isPriceValid (newvalue);
         if (ok)
-            this.cost = cost;
+            this.price = newvalue;
         return ok;
     }
 
-    public ProductsCategory getProductsCategory() {   return productsCategory;   }
-    private boolean setProductsCategory (ProductsCategory category)
+    private boolean setCategory (ProductsCategory newcategory)
     {
-        boolean ok = category != null;
+        boolean ok = newcategory != null;
         if (ok)
-            productsCategory = category;
+            category = newcategory;
         return ok;
     }
 
-/*    public Collection<CartItem> getCartItems()  {   return Collections.unmodifiableCollection (cartItems);   }
-    private void setCartItems (Collection<CartItem> collection)
+    public boolean setRest (int newvalue)
     {
-        if (collection != null)
-            cartItems = collection;
-    }*/
+        boolean ok = newvalue >= 0;
+        if (ok)
+            rest = newvalue;
+        return ok;
+    }
 //-----------------------------------------------------------------------
 
     public static boolean isTitleValid (String title)
@@ -105,23 +97,22 @@ public class Product
         return title != null  &&  !title.trim().isEmpty();
     }
 
-    public static boolean isCostValid (double cost)
+    public static boolean isPriceValid (double value)
     {
-        return cost >= MIN_PRICE  &&  cost <= MAX_PRICE;
+        return value >= MIN_PRICE  &&  value <= MAX_PRICE;
     }
 
-    public String toString()
+    @Override public boolean equals (Object o)
     {
-        return String.format("[id:%d, «%s», %.2f]", id, title, cost);
-    }
-
-    @Override
-    public boolean equals (Object o)
-    {
+        if (o == this)  return true;
+        if (o == null || getClass() != o.getClass())  return false;
         Product p = (Product) o;
-        return p!=null && this.id.equals(p.getId());
+        return this.id.equals(p.getId());
     }
 
-    @Override
-    public int hashCode()    {   return Objects.hash (id);   }
+    @Override public int hashCode()    {   return Objects.hash (id);   }
+
+    @Override public String toString()
+    {   return String.format ("[id:%d, «%s», %.2f]", id, title, price);
+    }
 }

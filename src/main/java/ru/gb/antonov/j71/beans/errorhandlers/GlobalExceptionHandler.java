@@ -18,9 +18,9 @@ public class GlobalExceptionHandler
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> catchProductUpdatingException (ProductUpdatingException e)
+    public ResponseEntity<?> catchUnableToPerformException (UnableToPerformException e)
     {
-        return new ResponseEntity<>(new ErrorMessage (e.getMessage()), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorMessage (e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler

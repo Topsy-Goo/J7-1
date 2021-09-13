@@ -6,16 +6,16 @@
 		<tr><th>id</th>
 			<th>category</th>
 			<th>title</th>
-			<th>cost</th>
+			<th>price</th>
 			<th>more actions</th>
 			<th ng-show="canShow()">add to cart</th>
 		</tr>
 		<!-- ng-show  работает и на таком уровне, если не забыть добавить $rootScope в js-файл. -->
 		<tr ng-repeat="p in productsPage.content">
 			<td>{{p.productId}}</td>
-			<td>{{p.productsCategoryName}}</td>
-			<td>{{p.productTitle}}</td>
-			<td>{{p.productCost}}</td>
+			<td>{{p.category}}</td>
+			<td><strong>{{p.title}}</strong></td>
+			<td>{{p.price}}</td>
 			<td>
 				<button class="btn btn-info" style="font-family: Webdings;"
 					title="Посмотреть информацию о продукте."
@@ -32,22 +32,24 @@
 			<!-- sar 📝 ✂ ✖🗙❌⚙ℹ style="font-family: Webdings;"   -->
 			<td ng-show="canShow()">
 				<button class="btn btn-primary"
-					title="Добавить продукт в корзину." style="width: 30pt"
-					ng-click="addToCart(p.productId)">+</button>
+					title="Убрать продукт из корзины." style="width: 30pt"
+					ng-click="cartMinus(p.productId)">-</button>
 				&nbsp;
 				<button class="btn btn-primary"
-					title="Убрать продукт из корзины." style="width: 30pt"
-					ng-click="removeFromCart(p.productId)">-</button>
+					title="Добавить продукт в корзину." style="width: 30pt"
+					ng-click="cartPlus(p.productId)">+</button>
 			</td>
 		</tr>
 		<caption>
 			Всего товаров: {{productsPage.totalElements}}&nbsp;&nbsp;•&nbsp;&nbsp;
 			Элементов на странице макс.: {{productsPage.pageable.pageSize}}&nbsp;&nbsp;•&nbsp;&nbsp;
 			Страница: {{productsPage.pageable.pageNumber +1}}/{{productsPage.totalPages}}
-			<br>
-			Товаров в корзине: {{cartItemsCount}}
 		</caption>
 	</table>
+
+	<p ng-show="canShow()">
+			Товаров в корзине: {{cartLoad}}
+	</p>
 
     <nav aria-label="Page navigation">
         <ul class="pagination">

@@ -22,7 +22,7 @@ public class ProductsCategory
     @Column(name="name", nullable=false)
     private String name;
 
-    @OneToMany(mappedBy="productsCategory")
+    @OneToMany(mappedBy="category")
     private List<Product> products;
 
     @CreationTimestamp
@@ -52,4 +52,5 @@ public class ProductsCategory
         }
         return result;
     }
+    public String toString()    {   return name;   }
 }
