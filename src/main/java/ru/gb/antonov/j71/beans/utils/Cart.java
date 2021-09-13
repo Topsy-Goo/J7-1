@@ -1,80 +1,139 @@
 package ru.gb.antonov.j71.beans.utils;
 
-import lombok.Data;
+import lombok.Setter;
 import ru.gb.antonov.j71.entities.Product;
 import ru.gb.antonov.j71.entities.dtos.OrderItemDto;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static ru.gb.antonov.j71.Factory.RECALC_CART;
 
 //@Data
 public class Cart
 {
-    private List<OrderItemDto> items;   //TODO: Очень хочется сделать эту коллекцию Set'ом !!! А на фронт можно передавать страницы Dto'шек.
-    private double totalPrice;
+    private List<OrderItemDto> oitems;
+    @Setter private double cost;
+    @Setter private int load;
+    @Setter private int titlesCount;
 
-    public Cart() {   this.items = new ArrayList<>();   }
-//-------------- Геттеры и сеттеры (в основном для JSON'ов) ---------
+    public Cart() {   oitems = new ArrayList<>();   }
+    //public Cart (List<OrderItemDto> list) {   oitems = list;   }
 
-    private List<OrderItemDto> getItems() {   return Collections.unmodifiableList (items);   }
+//-------------- Геттеры и сеттеры (JSON работает с публичными полями!) ----------------
 
-    private void setItems (List<OrderItemDto> list) {   if (list != null)   items = list;   }
+    public List<OrderItemDto> getOitems ()          {   return  Collections.unmodifiableList (oitems);   }
+    public void setOitems (List<OrderItemDto> list) {   if (list != null)   oitems = list;   }
 
-    private void setTotalPrice (double newvalue) {   this.totalPrice = newvalue;   }
+    public double getCost () {   return (RECALC_CART) ? cost : calcCost();   }
+    public int getLoad () {   return (RECALC_CART) ? load : calcLoad();   }
 
-    public double getTotalPrice() {   return (RECALC_CART) ? totalPrice : calculateCartCost();   }
+    public int getTitlesCount () {   return oitems.size();   }
 
 //-------------- Другие методы --------------------------------------
 
-    public Optional<OrderItemDto> findByProductId (long productId)
+/* (Если этот метод будет что-то возвращать, то он будет вызываться бесконечное количество раз.
+    А размещать его вне класса не велит метод getOitems(), который возвращает unmodifiableList.)
+*/
+    public void fillDrylCart (Cart drycart)
     {
-        //return items.stream().filter((oid)->oid.getProductId().equals(productId)).findFirst();
-        for (OrderItemDto oitem : items)
+        //drycart = new Cart();
+        for (OrderItemDto oi : oitems)
+        {
+            if (oi.getQuantity() > 0)
+                drycart.oitems.add (oi); //< вне класса так сделать не получится у unmodifiableList'а.
+        }
+        drycart.cost = cost;
+        drycart.load = load;
+        //cart.titlesCount = cart.oitems.size();
+    }
+
+    public String toString()
+    { return String.format("Cart:[cost:%.2f, titles:%d, load:%d].oitems:%s", cost, titlesCount, load, oitems); }
+
+//Функция «Всё-в-одном» : ищем запись с productId, а если не нашли, то создаём её (если вызывающая сторона
+//  снабдила нас корректным значением function и положительным значением delta). В найденноом/созданом
+//  элементе изменяем количетво.
+    public boolean changeQuantity (long productId, Function<Long, Product> function, int delta)
+    {
+        for (OrderItemDto oitem : oitems)
         {
             if (oitem.getProductId().equals (productId))
-                return Optional.of (oitem);
+                return oitem.changeQuantity (delta);
+            /* Если у товара количество обнулилось, то не удаляем его из Cart.oitems, чтобы юзер мог
+  снова его добавить, не выходя из «Корзины».  */
         }
-        return Optional.empty();
-    }
-
-/* Метод добавляет в корзину OrderItemDto, соответствующий товару, и возвращает OrderItemDto. */
-    private Optional<OrderItemDto> addProduct (Product product)
-    {
-        if (product == null)
-            return Optional.empty();
-
-        long pid = product.getId ();
-        OrderItemDto oitem = findByProductId (pid).orElse (null);
-
-        if (oitem == null)
+        if (function != null && delta > 0)
         {
-            oitem = new OrderItemDto (product);
-            items.add (oitem);
+            Product product = function.apply (productId); //< function бросает ResourceNotFoundException
+            return addProduct (product, delta);
         }
-        return Optional.of (oitem);
+        return false;
     }
 
-/* Метод удаляет продукт из корзины. Возвращает удалённую OrderItemDto, или null, если ничего не было
-   удалено. */
+    private boolean addProduct (Product product, int quantity)
+    {
+        OrderItemDto oitem = new OrderItemDto (product);
+        return oitem.setQuantity (quantity) && oitems.add (oitem);
+    }
+
+    private OrderItemDto findByProductId (long productId)
+    {
+        for (OrderItemDto oitem : oitems)
+        {
+            if (oitem.getProductId().equals (productId))
+   return oitem;
+        }
+        return null;
+    }
+
     public Optional<OrderItemDto> removeProduct (long productId)
     {
-        OrderItemDto result = findByProductId (productId).orElse (null);
-        if (result != null && items.remove (result))
+        OrderItemDto result = findByProductId (productId);
+        if (result != null && oitems.remove (result))
         {
-            if (RECALC_CART)   totalPrice = calculateCartCost();
+            if (RECALC_CART)   cost = calcCost ();
         }
         return Optional.ofNullable (result);
     }
 
-    public boolean changeQuantity (long productId, int delta)
+    private double calcCost ()
+    {
+        int sum = 0;
+        for (OrderItemDto oitem : oitems)
+            sum += oitem.getCost ();
+
+        return sum;
+    }
+
+    private int calcLoad ()
+    {
+        int count = 0;
+        for (OrderItemDto oitem : oitems)
+            count += oitem.getQuantity();
+
+        return count;
+    }
+
+    public void clear ()
+    {
+        oitems.clear ();
+        cost = 0;
+    }
+
+/*    public void clearEmptyLines ()
+    {
+        //oitems.stream()
+        //      .filter((oi)->oi.getQuantity()<=0)
+        //      .forEach((oi)->oitems.remove(oi));
+        oitems.removeIf (oi->oi.getQuantity() <= 0);
+    }*/
+
+/*    public boolean changeQuantity (long productId, int delta) //TODO: пока не пригодилась.
     {
         boolean ok = false;
-        OrderItemDto oitem = findByProductId (productId).orElse (null);
+        OrderItemDto oitem = findByProductId (productId);
 
         if (oitem != null)
         {
@@ -84,26 +143,11 @@ public class Cart
                 ok = oitem.changeQuantity (delta);
                 if (oitem.getQuantity() <= 0)
                 {
-                    items.remove (oitem);
+                    oitems.remove (oitem);
                 }
-                if (RECALC_CART && ok)   totalPrice = calculateCartCost();
+                if (RECALC_CART && ok)   cost = calcCost();
             }
         }
         return ok;
-    }
-
-    public double calculateCartCost ()
-    {
-        double sum = 0.0;
-        for (OrderItemDto oitem : items)
-            sum += oitem.getQuantityCost();
-
-        return sum;
-    }
-
-    public void clear ()
-    {
-        items.clear();
-        totalPrice = 0;
-    }
+    }*/
 }

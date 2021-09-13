@@ -1,6 +1,5 @@
 CREATE TABLE ourusers
-(
-	id			bigserial,
+(	id			bigserial,
 	login		VARCHAR(32) NOT NULL UNIQUE,
 	password	VARCHAR(64) NOT NULL,	-- размер 64 не для пароля юзера, а для хэша (хэш, похоже, всегда занимает 60 символов. Даже для пароля длиннее в 128 символов)
 	email		VARCHAR(64) NOT NULL UNIQUE,
@@ -15,21 +14,16 @@ INSERT INTO ourusers (login, password, email) VALUES
 	('user2',	'$2a$12$c4HYjryn7vo1bYQfSzkUDe8jPhYIpInbUKZmv5lGnmcyrQPLIWnVu',	'user2@post.ru');	-- пароль 100
 -- ----------------------------------------------------------------------
 CREATE TABLE roles
-(
-	id			serial,
+(	id			serial,
 	name		VARCHAR(64) NOT NULL UNIQUE,
 	created_at	TIMESTAMP DEFAULT current_timestamp,
 	updated_at	TIMESTAMP DEFAULT current_timestamp,
 	PRIMARY KEY (id)
 );
-INSERT INTO roles (name) VALUES
-	('ROLE_SUPERADMIN'), -- только для суперадминов
-	('ROLE_ADMIN'),		 -- только для админов и суперадминов
-	('ROLE_USER');		 -- только для авторизованных юзеров
+INSERT INTO roles (name) VALUES	('ROLE_SUPERADMIN'),('ROLE_ADMIN'),('ROLE_USER');
 -- ----------------------------------------------------------------------
 CREATE TABLE ourusers_roles
-(
-	ouruser_id		bigint	NOT NULL,
+(	ouruser_id		bigint	NOT NULL,
 	role_id		INT		NOT NULL,
 	PRIMARY KEY (ouruser_id, role_id),
 	FOREIGN KEY (ouruser_id) REFERENCES ourusers (id),
@@ -42,8 +36,7 @@ INSERT INTO ourusers_roles (ouruser_id, role_id) VALUES
 	(4, 3); -- user2	ROLE_USER
 -- ----------------------------------------------------------------------
 CREATE TABLE categories
-(
-	id			serial,
+(	id			serial,
 	name		VARCHAR(64) NOT NULL UNIQUE,
 	created_at	TIMESTAMP DEFAULT current_timestamp,
 	updated_at	TIMESTAMP DEFAULT current_timestamp,
@@ -52,10 +45,9 @@ CREATE TABLE categories
 INSERT INTO categories (name) VALUES	('A'),	('B'),	('C'),	('D');
 -- ----------------------------------------------------------------------
 CREATE TABLE products
-(
-	id			bigserial,	-- flyway не знает слово IDENTITY (наверное, не поддерживает h2)
+(	id			bigserial,	-- flyway не знает слово IDENTITY (наверное, не поддерживает h2)
 	title		VARCHAR(255)	NOT NULL,
-	price		INT,
+	price		DECIMAL(10,2),
 	rest		INT,
 	category_id	INT				NOT NULL,
 	created_at	TIMESTAMP DEFAULT current_timestamp,
@@ -75,36 +67,54 @@ INSERT INTO products (title, price, rest, category_id) VALUES
 	('Товар№17', 170.0, 20, 3),	('Товар№18', 180.0, 20, 4),
 	('Товар№19', 190.0, 20, 3),	('Товар№20', 200.0, 20, 4);
 -- ----------------------------------------------------------------------
---CREATE TABLE carts
---(
---	id			bigserial,
---	ouruser_id	bigint	NOT NULL,
---	product_id	bigint	NOT NULL,
---	quantity	INT,
---	PRIMARY KEY (id),
---	FOREIGN KEY (ouruser_id) REFERENCES ourusers (id),
---	FOREIGN KEY (product_id) REFERENCES products (id)
---);
---INSERT INTO carts (ouruser_id, product_id, quantity) VALUES
+CREATE TABLE orderstates
+(	id			serial,
+	state		VARCHAR(32)	NOT NULL,
+	PRIMARY KEY (id)
+);
+INSERT INTO orderstates (state) VALUES	('NONE'),('PENDING'),('SERVING'),('PAYED'),('CANCELED');
+-- ----------------------------------------------------------------------
+CREATE TABLE orders
+(	id				bigserial,
+	ouruser_id		bigint	NOT NULL,
+	phone			VARCHAR(16)	NOT NULL,
+	address			VARCHAR(255)	NOT NULL,
+--	orderstate_id	INT NOT NULL,
+--	comment			VARCHAR(1024),
+	created_at		TIMESTAMP DEFAULT current_timestamp,
+	updated_at		TIMESTAMP DEFAULT current_timestamp,
+	PRIMARY KEY (id),
+--	FOREIGN KEY (orderstate_id) REFERENCES orderstates (id),
+	FOREIGN KEY (ouruser_id) REFERENCES ourusers (id)
+);
+-- ----------------------------------------------------------------------
+CREATE TABLE orderitems
+(	id			bigserial,
+	order_id    bigint	NOT NULL,
+	product_id  bigint	NOT NULL,
+	bying_price DECIMAL(10,2),
+	quantity	INT,
+	PRIMARY KEY (id),
+	FOREIGN KEY (order_id) REFERENCES orders (id),
+	FOREIGN KEY (product_id) REFERENCES products (id)
+);
+-- ----------------------------------------------------------------------
+--carts (ouruser_id, product_id, quantity)
 --	(1, 1, 1),
 --	(1, 1, 1),
 --	(1, 1, 1);
---CREATE TABLE orders
---(
---	id			bigserial,
---	created_at	TIMESTAMP DEFAULT current_timestamp,
---	PRIMARY KEY (id)
---);
-
 --CREATE TABLE ordered_products
 --(
 --	id			bigserial,		-- TODO: временный id создан, чтобы сузить круг при поиске ошибок
---	order_id	bigint	NOT NULL,
+--	order_id	,
 --	product_id	bigint	NOT NULL,
 --	price		INT,
 --	quantity	INT,
 ----	PRIMARY KEY (order_id, product_id),
 --	PRIMARY KEY (id),
---	FOREIGN KEY (order_id) REFERENCES orders (id),
---	FOREIGN KEY (product_id) REFERENCES products (id)
+--	FOREIGN KEY (ouruser_id) REFERENCES ourusers (id)
+--	product_id	,
+--	quantity	INT,
+--
+--
 --);

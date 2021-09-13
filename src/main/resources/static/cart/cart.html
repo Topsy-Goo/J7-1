@@ -1,39 +1,60 @@
 <div>
 	<h5>Ваша корзина</h5>
 		<p></p>
+		<p ng-show="isCartEmpty()">Ваша корзина пуста.</p>
 
+<div ng-show="!isCartEmpty()">
 	<table class="table">
 		<tr>
-			<th>id</th>				<!-- 1 -->
-			<th>title</th>			<!-- 2 -->
-			<th>cost</th>			<!-- 3 -->
-			<th>add to cart</th>	<!-- 4 -->
-			<th>more actions</th>	<!-- 5 -->
+			<th>id</th>							<!-- 0 -->
+			<th>category</th>					<!-- 1 -->
+			<th>title</th>						<!-- 2 -->
+			<th>price</th>						<!-- 3 -->
+			<th colspan="3">quantity</th>		<!-- 4 -->
+			<th width="10%">quantity cost</th>	<!-- 5 -->
+			<th>more actions</th>				<!-- 6 -->
 		</tr>
-
-		<tr ng-repeat="p in productsPage.content">
-			<td>{{p.productId}}</td>				<!-- 1 -->
-			<td>{{p.productTitle}}</td>				<!-- 2 -->
-			<td>{{p.productCost}}</td>				<!-- 3 -->
-			<td>									<!-- 4 -->
+		<tr ng-repeat="oitem in cart.oitems">
+			<td>{{oitem.productId}}</td>				<!-- 0 -->
+			<td>{{oitem.category}}</td>					<!-- 1 -->
+			<td><strong>{{oitem.title}}</strong></td>	<!-- 2 -->
+			<td>{{oitem.price}}</td>					<!-- 3 -->
+			<td width="20">
 				<button class="btn btn-primary"
-					title="Добавить продукт в корзину." style="width: 30pt"
-					ng-click="addToCart(p.productId)">+</button>
+				title="Уменьшить количество товара в корзине." style="width: 30pt"
+				ng-click="cartMinus(oitem.productId, oitem.quantity)">-</button>
+			</td>									<!-- 4.1 -->
+			<td width="20" align="right">{{oitem.quantity}}</td><!-- 4.2 -->
+			<td width="20">
+				<button class="btn btn-primary"
+				title="Увеличить количество товара в корзине." style="width: 30pt"
+				ng-click="cartPlus(oitem.productId)">+</button>
+			</td>									<!-- 4.3 -->
+			<td align="right">{{oitem.cost}}</td>		<!-- 5 -->
+			<td>
+				<!-- Кнопка для удаления ВСЕГО количества товара из корзины. -->
+				<button class="btn btn-danger" style="font-family: Webdings;"
+					title="Удалить товар из корзины."
+					ng-click="removeFromCart(oitem.productId)">r</button><!--  -->
 				&nbsp;
-				<button class="btn btn-primary"
-					title="Убрать продукт из корзины." style="width: 30pt"
-					ng-click="removeFromCart(p.productId)">-</button>
-			</td>
-			<td>									<!-- 5 -->
+				<!-- Кнопка для просмотра информации о продукте. -->
 				<button class="btn btn-info" style="font-family: Webdings;"
-					title="Посмотреть информацию о продукте."
-					ng-click="infoProduct(p)">s</button>
-			</td>
+					title="Посмотреть информацию о товаре."
+					ng-click="infoProduct(oitem)">s</button>
+			</td>										<!-- 6 -->
+		</tr>
+		<tr><td></td>									<!-- 0 -->
+			<td></td>									<!-- 1 -->
+			<td></td>									<!-- 2 -->
+			<td></td>									<!-- 3 -->
+			<td colspan="3">Товаров: {{cartLoad}}</td>	<!-- 4 -->
+			<td align="right">Сумма: {{cartCost}}</td>	<!-- 5 -->
+			<td></td>									<!-- 6 -->
 		</tr>
 		<caption>
-			Страница: {{productsPage.pageable.pageNumber +1}}/{{productsPage.totalPages}}
-			<br>
-			Товаров в корзине: {{cartItemsCount}}
+			Страница: {{productsPage.pageable.pageNumber +1}}<!--/{{productsPage.totalPages}}<br>
+			Товаров в корзине: {{cartLoad}}.<br>
+			Общая стоимость выбранных товаров: {{cartCost}}.-->
 		</caption>
 	</table>
 
@@ -52,4 +73,13 @@
 
         </ul>
     </nav>
+
+	<button class="btn btn-primary" ng-click="gotoOrder()">
+		Оформить заказ
+	</button>
+	<!-- Кнопка для очистки корзины — удаление всего количества ВСЕХ товаров из корзины. -->
+	<button class="btn btn-secondary" ng-click="clearCart()">
+		Очистить корзину
+	</button>
+</div>
 </div>

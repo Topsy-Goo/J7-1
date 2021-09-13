@@ -1,5 +1,8 @@
 package ru.gb.antonov.j71.entities;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import ru.gb.antonov.j71.beans.errorhandlers.UserCreatingException;
@@ -8,48 +11,46 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
-/*  Сущность для хранения инф-ции о зарегистрированном пользователе.
-*/
 @Entity
 @Table (name="ourusers")
+@NoArgsConstructor
 public class OurUser
 {
-    @Id
+    @Id @Getter
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column (name="id")
     private Long id;
 
+    @Getter
     @Column(name="login", nullable=false, unique=true)
     private String login;
 
+    @Getter
     @Column(name="password", nullable=false)
     private String password;
 
+    @Getter
     @Column(name="email", nullable=false, unique=true)
     private String email;
 
+    @Getter @Setter
     @CreationTimestamp
     @Column(name="created_at", nullable=false)
     private LocalDateTime createdAt;
 
+    @Getter @Setter
     @CreationTimestamp
     @Column(name="updated_at", nullable=false)
     private LocalDateTime updatedAt;
-
+//--------------неколонки
+    @Getter @Setter
     @ManyToMany
     @JoinTable (name="ourusers_roles",
                 joinColumns        = @JoinColumn (name="ouruser_id"),
                 inverseJoinColumns = @JoinColumn (name="role_id"))
     private Collection<Role> roles;
 
-/*    @OneToMany(mappedBy = "ouruser")
-    private List<CartItem> cartItems;*/
-
-
 //------------------------ Конструкторы -------------------------------------
-    protected OurUser() {}
-
-//Здесь мы создаём не сущность, а шаблон для добавления юзера в базу. А вот из БД мы получаем настоящую сущность.
     public static OurUser dummyOurUser (String login, String password, String email)
     {
         OurUser u = new OurUser();
@@ -61,6 +62,28 @@ public class OurUser
         }
         u.roles = new HashSet<>();
         return u;
+    }
+//----------------------- Геттеры и сеттеры ---------------------------------
+
+    private void setId (Long id) {   this.id = id;   }
+    private void setPassword (String password) {   this.password = password;   }
+
+    private boolean setLogin (String login)
+    {
+        String s = validateString (login, 3, 32);
+        boolean ok = s != null;
+        if (ok)
+            this.login = s;
+        return ok;
+    }
+
+    private boolean setEmail (String email)
+    {
+        String s = validateString (email, 5, 64);
+        boolean ok = s != null && hasEmailFormat (email);
+        if (ok)
+            this.email = s;
+        return ok;
     }
 //----------------------- Аутентификация ------------------------------------
 
@@ -103,63 +126,9 @@ public class OurUser
         }
         return ok;
     }
-//----------------------- Корзина -------------------------------------------
-
-/*    public int getCartSize() {   return cart.size ();   }
-
-    public boolean addToCart (Product product)
-    {
-        return product != null && cart.add (product);
-    }
-
-    public boolean removeFromCart (Product product)
-    {
-        return product != null && cart.remove (product);
-    }*/
-//----------------------- Геттеры и сеттеры ---------------------------------
-
-    public Long getId() {   return id;   }
-    private void setId (Long id) {   this.id = id;   }
-
-    public String getLogin() {   return login;   }
-    private boolean setLogin (String login)
-    {
-        String s = validateString (login, 3, 32);
-        boolean ok = s != null;
-        if (ok)
-            this.login = s;
-        return ok;
-    }
-
-    public String getPassword() {   return password;   }
-    private void setPassword (String password) {   this.password = password;   }
-
-    public String getEmail() {   return email;   }
-    private boolean setEmail (String email)
-    {
-        String s = validateString (email, 5, 64);
-        boolean ok = s != null && hasEmailFormat (email);
-        if (ok)
-            this.email = s;
-        return ok;
-    }
-
-    public Collection<Role> getRoles() {   return roles;   }
-    private void setRoles (Collection<Role> roles) {   this.roles = roles;   }
-
-    public LocalDateTime getCreatedAt() {   return createdAt;   }
-    private void setCreatedAt (LocalDateTime ldt) {   this.createdAt = ldt;  }
-
-    public LocalDateTime getUpdatedAt() {   return updatedAt;   }
-    private void setUpdatedAt (LocalDateTime ldt) {   this.updatedAt = ldt;  }
-
-/*    public List<CartItem> getCartItems() {   return cartItems;   }
-    private void setCartItems (List<CartItem> collection)
-    {
-        if (collection != null)
-        {
-            cartItems = collection;
-        }
-    }*/
 //--------------------- Другие методы ---------------------------------------
+
+    @Override public String toString()
+    {   return String.format("OurUser:[id:%d, login:%s, email:%s].", id, login, email);
+    }
 }

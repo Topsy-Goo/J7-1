@@ -1,57 +1,65 @@
 package ru.gb.antonov.j71.beans.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.*;
-import ru.gb.antonov.j71.beans.services.OurUserService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import ru.gb.antonov.j71.beans.services.CartService;
 import ru.gb.antonov.j71.beans.services.ProductService;
-import ru.gb.antonov.j71.entities.OurUser;
-import ru.gb.antonov.j71.entities.Product;
-import ru.gb.antonov.j71.entities.dtos.ProductDto;
+import ru.gb.antonov.j71.beans.utils.Cart;
 
 import java.security.Principal;
 
-import static ru.gb.antonov.j71.Factory.PRODUCTS_PAGESIZE_DEFAULT;
-
-@RequestMapping ("/api/v1/cart")
 @RestController
-@RequiredArgsConstructor    //< создаёт конструктор для инициализации всех final-полей.
+@RequestMapping ("/api/v1/cart")    //http://localhost:8189/market/api/v1/cart
+@RequiredArgsConstructor
 public class CartController
 {
     private final ProductService productService;
-    private final OurUserService ourUserService;
-    private int pageSize = PRODUCTS_PAGESIZE_DEFAULT;
+    private final CartService cartService;
 
-/*
-    //http://localhost:8189/market/api/v1/cart/add/18
-    @GetMapping ("/add/{id}")
-    public Integer addProductToCart (@PathVariable Long id, Principal principal)
+//-------------------- Временная реализация (начало) ---------------------
+    @GetMapping
+    public Cart getProductsCart (Principal principal)   //черновик
     {
-        return productService.addToCart (id, principal, 1);
+        return cartService.getUsersCart (principal);
     }
 
-    //http://localhost:8189/market/api/v1/cart/itemscount
-    @GetMapping ("/itemscount")
-    public Integer getCartItemsCount (Principal principal)
+    @GetMapping ("/load")
+    public Integer getCartLoad (Principal principal)
     {
-        return ourUserService.getCartItemsCount (principal);
+        return cartService.getCartLoad (principal);
     }
 
-    //http://localhost:8189/market/api/v1/cart/remove/18
-    @GetMapping ("/remove/{id}")
-    public Integer removeProductFromCart (@PathVariable Long id, Principal principal)
+    @GetMapping ("/cost")
+    public Double getCartCost (Principal principal)
     {
-        return productService.removeFromCart (id, principal);
+        return cartService.getCartCost (principal);
     }
 
-    //http://localhost:8189/market/api/v1/cart/page
-    //http://localhost:8189/market/api/v1/cart/page?p=0
-    @GetMapping ("/page")
-    public Page<ProductDto> getProductsCartPage (
-                   @RequestParam (defaultValue="0", name="p", required = false) Integer pageIndex,
-                   Principal principal)
+    @GetMapping ("/plus/{productId}")
+    public void increaseProductQuantity (@PathVariable Long productId, Principal principal)
     {
-        return productService.getCartPage (pageIndex, pageSize, principal)
-                             .map(ProductService::dtoFromProduct);
-    }*/
+        cartService.changeProductQuantity (productId, 1, principal);
+    }
+
+    @GetMapping ("/minus/{productId}")
+    public void decreseProductQuantity (@PathVariable Long productId, Principal principal)
+    {
+        cartService.changeProductQuantity (productId, -1, principal);
+    }
+
+    @GetMapping ("/remove/{productId}")
+    public void removeProduct (@PathVariable Long productId, Principal principal)
+    {
+        cartService.removeProduct (productId, principal);
+    }
+
+    @GetMapping ("/clear")
+    public void clearCart (Principal principal)
+    {
+        cartService.clearCart (principal);
+    }
+//-------------------- Временная реализация (конец) ----------------------
 }

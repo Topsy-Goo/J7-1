@@ -1,109 +1,141 @@
-angular.module('market-front').controller('cartController', function ($scope, $http)
+
+angular.module('market-front').controller('cartController', function ($rootScope, $scope, $http, $location)
 {
-	const contextProductPath = 'http://localhost:8189/market/api/v1/cart';
+	const contextCartPath = 'http://localhost:8189/market/api/v1/cart';
 	var cartPageCurrent = 0;
 	var cartPageTotal = 0;
-	$scope.cartItemsCount = 0;
+	$scope.cartLoad = 0;
+	$scope.cartCost = 0;
+	$scope.titlesCount = 0;
 
-	$scope.getCartItemsCount = function()
+	$scope.loadCartPage = function () {/* будет загружать корзину вместо loadCart() */}
+
+	$scope.loadCart = function ()	//+
 	{
-		$http.get (contextProductPath + '/itemscount')
+		$http.get (contextCartPath/* + '/page'*/)
 		.then (
 		function successCallback (response)
 		{
-			$scope.cartItemsCount = response.data;
+			$scope.cart = response.data;	//< собственно, список наименований (включая «пустые» позиции)
+			$scope.cartLoad = response.data.load;	//< количество единиц товара
+			$scope.cartCost = response.data.cost;	//< общая стоимость товаров в корзине
+			$scope.titlesCount = response.data.titlesCount;	//< количество наименований (включая «пустые» позиции)
+console.log (response.data);
+console.log ($scope.cart);
 		},
-		function failureCallback (response)
+		function failureCallback (response)	//< вызывается асинхронно.
 		{
-			alert (response.data.messages);	//< название параметра взято из ErrorMessage
+			$scope.cartLoad = 0;
+			$scope.cartCost = 0;
+			$scope.titlesCount = 0;
+console.log ('Error: '+ response.data);
+			alert (response.data);
 		});
 	}
 
-	$scope.loadProductsPage = function ()
-	{
-		$scope.getCartItemsCount();
-
-		$http
-		({
-			url: contextProductPath + '/page',
-			method: 'GET',
-			params:	{p: cartPageCurrent}
-		})
-		.then (function (response)
-		{
-			$scope.productsPage = response.data;
-			cartPageCurrent = $scope.productsPage.pageable.pageNumber;
-			cartPageTotal = $scope.productsPage.totalPages;
-
-			$scope.paginationArray = $scope.generatePagesIndexes(1, cartPageTotal);
-
-		});
-	};
-
+	$scope.gotoOrder = function () { $location.path('/order'); }
+//----------------------------------------------------------------------- страницы
 	$scope.generatePagesIndexes = function (startPage, endPage)
 	{
 		let arr = [];
-		for (let i = startPage; i < endPage + 1; i++)
-		{
-			arr.push(i);
-		}
+		for (let i = startPage; i < endPage + 1; i++)	{ arr.push(i); }
 		return arr;
 	}
 
 	$scope.loadProducts = function (pageIndex = 1)	//< загрузка страницы по индексу
 	{
 		cartPageCurrent = pageIndex -1;
-		$scope.loadProductsPage();
+		$scope.loadCartPage();
 	}
 
 	$scope.prevProductsPage = function ()	//< загрузка левой соседней страницы
 	{
 		cartPageCurrent --;
-		$scope.loadProductsPage();
+		$scope.loadCartPage();
 	}
 
 	$scope.nextProductsPage = function ()	//< загрузка правой соседней страницы
 	{
 		cartPageCurrent ++;
-		$scope.loadProductsPage();
+		$scope.loadCartPage();
 	}
-
-	$scope.infoProduct = function (p)
+//----------------------------------------------------------------------- плюс/минус
+	$scope.cartMinus = function (pid, quantity)	//+
 	{
-		alert('id: ' + p.productId + ',\rназвание: '+ p.productTitle + ',\rцена: '+ p.productCost);
-	}
-
-	$scope.addToCart = function (pid)
-	{
-		$http.get (contextProductPath + '/add/' + pid)
-		.then (
-		function successCallback (response)
+		if (quantity > 0)
 		{
-			$scope.loadProductsPage();
-		},
-		function failureCallback (response)
-		{
-			alert ('Не удалось добавить продукт в корзину:\r'+ response.data.messages);	//< название параметра взято из ErrorMessage
-		});
-	}
-
-	$scope.removeFromCart = function (pid)
-	{
-		if ($scope.cartItemsCount > 0)
-		{
-			$http.get (contextProductPath + '/remove/' + pid)
+			$http.get (contextCartPath + '/minus/'+ pid)
 			.then (
 			function successCallback (response)
 			{
-				$scope.loadProductsPage();
+				$scope.loadCart();
 			},
 			function failureCallback (response)
 			{
-				alert ('Не удалось удалить продукт из корзины:\r'+ response.data.messages);	//< название параметра взято из ErrorMessage
+				alert (response.data.messages);
+				console.log ('Error: '+ response.data);
 			});
 		}
 	}
-//----------------------------------------------------------------------------------------
 
-	$scope.loadProductsPage();
+	$scope.cartPlus = function (pid)	//+
+	{
+		$http.get (contextCartPath + '/plus/'+ pid)
+		.then (
+		function successCallback (response)
+		{
+			$scope.loadCart();
+		},
+		function failureCallback (response)
+		{
+			alert (response.data);
+			console.log ('Error: '+ response.data);
+		});
+	}
+
+	$scope.infoProduct = function (oitem)	//+
+	{
+		alert('id:              '+ oitem.productId +
+		   ',\rкатегория:       '+ oitem.category +
+		   ',\rназвание:        '+ oitem.title +
+		   ',\rцена:            '+ oitem.price +
+		   ',\rколичество:      '+ oitem.quantity +
+		   ',\rобщая стоимость: '+ oitem.cost);
+	}
+
+	$scope.removeFromCart = function (pid)	//+
+	{
+		$http.get (contextCartPath + '/remove/' + pid)
+		.then (
+		function successCallback (response)
+		{
+			$scope.loadCart();
+		},
+		function failureCallback (response)
+		{
+			alert (response.data);
+		});
+	}
+
+	$scope.clearCart = function ()	//+
+	{
+		$http.get (contextCartPath + '/clear')
+		.then (
+		function successCallback (response)
+		{
+			$scope.loadCart();
+		},
+		function failureCallback (response)
+		{
+			alert (response.data);
+		});
+	}
+//----------------------------------------------------------------------- условия
+	$scope.isCartEmpty = function ()
+	{
+		if ($scope.titlesCount <= 0) { return true; } else { return false; }
+	}
+//----------------------------------------------------------------------- вызовы
+	$scope.loadCart();
 });
+

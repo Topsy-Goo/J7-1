@@ -1,0 +1,153 @@
+<div>
+	<h5>{{contextPrompt}}</h5>
+		<p></p>
+
+	<table class="table" ng-show="canShowOrderedItems()">
+		<tr>
+			<th>id</th>				<!-- 0 -->
+			<th>category</th>		<!-- 1 -->
+			<th>title</th>			<!-- 2 -->
+			<th>price</th>			<!-- 3 -->
+			<th>quantity</th>		<!-- 4 -->
+			<th>quantity cost</th>	<!-- 5 -->
+			<th>more actions</th>	<!-- 6 -->
+		</tr>
+		<tr ng-repeat="oitem in cart.oitems">
+			<td>{{oitem.productId}}</td>				<!-- 0 -->
+			<td>{{oitem.category}}</td>					<!-- 1 -->
+			<td><strong>{{oitem.title}}</strong></td>	<!-- 2 -->
+			<td>{{oitem.price}}</td>					<!-- 3 -->
+			<td>{{oitem.quantity}}</td>					<!-- 4 -->
+			<td>{{oitem.cost}}</td>						<!-- 5 -->
+			<td><button class="btn btn-info" ng-click="infoProduct(oitem)" title="Посмотреть информацию о товаре."
+						style="font-family: Webdings;">s</button>
+			</td>										<!-- 6 -->
+		</tr>
+		<tr>
+			<td></td>								<!-- 0 -->
+			<td></td>								<!-- 1 -->
+			<td></td>								<!-- 2 -->
+			<td></td>								<!-- 3 -->
+			<td>Всего товаров: {{cart.load}}</td>	<!-- 4 -->
+			<td>Сумма заказа: {{cart.cost}}</td>	<!-- 5 -->
+			<td></td>								<!-- 6 -->
+		</tr>
+		<caption>
+			Страница: {{productsPage.pageable.pageNumber +1}}<!--/{{productsPage.totalPages}}<br>
+			Всего товаров: {{cart.load}}.<br>
+			Общая стоимость: {{cart.cost}}.-->
+		</caption>
+	</table>
+
+<!-- Дилемма: если дать юзеру любоваться на список заказанных товаров после офрмления заказа,
+	 	то возникает вопрос, — как переключаться между страницами списка?
+	 Наверное, решение — в создании окна (со скролбаром), в котором будет отображаться таблица
+		 со списком только что заказанных товаров. -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+        	<li class="page-item" style="padding-right: 3px;">
+        		<button class="page-link" ng-click="prevProductsPage()">&lt;</button>
+			</li>
+            <li class="page-item" ng-repeat="pageIndex in paginationArray" style="padding-right: 3px;">
+                <button class="page-link" ng-click="loadProducts(pageIndex)">{{pageIndex}}</button>
+            </li>
+            <li class="page-item" style="padding-right: 3px;">
+        		<button class="page-link" ng-click="nextProductsPage()">&gt;</button>
+			</li>
+
+        </ul>
+    </nav>
+
+	<p>&nbsp;</p>
+	<div ng-show="showForm">
+		<p>
+			Для завершения заказа пожалуйста заполните расположенную ниже форму и нажмите кнопку <b>«Подтвердить»</b>.
+			Обратите внимание, что поля ввода <b>«Телефон»</b> и <b>«Адрес доставки»</b> нужно обязательно заполнить.
+		</p>
+		<p>
+			Чтобы отменить заказ сейчас, нажмите кнопку <b>«Отмена»</b>. В случае отмены заказа, Вы будете перемещены
+			на страницу вашей Корзины.
+		</p>
+	</div>
+	<div ng-show="!showForm">
+		<p>
+			Оформление заказа успешно завершено. Информация о сделанном вами заказе приведена ниже. Наш менеждер
+			свяжется с вами в ближайшее время для подтверждения этого заказа. Во время разговора с ним Вы сможете
+			высказать свои замечания к обработке заказа и, при желании, внести изменения в заказ.
+		</p>
+		<p ng-show="!showForm">
+			Номер вашего заказа: <b>{{orderDetails.orderNumber}}</b>.<br>
+			Время создания заказа:	{{orderDetails.orderCreatedAt}}.<br>
+			<br>
+			Номер телефона:			{{orderDetails.phone}}.<br>
+			Адрес доставки:			{{orderDetails.address}}.<br>
+			Стоимость доставки:		{{orderDetails.deliveryCost}}.<br>
+			Сумма к оплате с учётом стоимости доставки:	<b>{{orderDetails.overallCost}}</b>.
+<!--
+			Дата и Время доставки:	{{orderDetails.deliveryDateTime}}.<br>
+			Тип доставки:			{{orderDetails.deliveryType}}.<br>
+			Статус заказа:			{{orderDetails.orderStatus}}.<br>
+			Тип оплаты:			{{orderDetails.paymentType}}.<br>
+-->
+		</p>
+	</div>
+
+	<form novalidate ng-submit="confirmOrder()" ng-show="showForm">
+
+		<div class="container" style="font-size: 14pt; font-weight:500;">
+			<!-- Число в col-N означает относительную ширину колонки. Если общее кол-во колонок всех элементов
+			превышает 12, то элементы, занимающие лишние колонки, переносятся на след.строку. В данном примере
+			общее кол-во колонок: 1+11 = 12, что заставляет ряд занимать всю доступную ему ширину. Если общее
+			кол-во колонок не равно 12, то имеет смысл указать в class="row" тип выравнивания.  -->
+			<div class="row g-2">
+				<div class="col-2">
+					<label for="phone" class="col-form-lable">Телефон:&nbsp;</label>
+				</div>
+				<div class="col-10">
+					<input	id="phone"
+							class="form-control"
+							type="text"
+							placeholder="—"
+							required="required"
+							ng-model="orderDetails.phone">
+				</div>
+			</div>
+			<p></p>
+			<div class="row g-2">
+				<div class="col-2">
+					<label for="address" class="col-form-lable">Дрес доставки:&nbsp;</label>
+				</div>
+				<div class="col-10">
+					<input	id="address"
+							class="form-control"
+							type="text"
+							placeholder="—"
+							required="required"
+							ng-model="orderDetails.address">
+				</div>
+			</div>
+<!--			<p></p>-->
+<!--			<div class="row g-2">-->
+<!--				<div class="col-2">-->
+<!--					<label for="comment" class="col-form-lable">Комментарий к заказу:</label>-->
+<!--				</div>-->
+<!--				<div class="col-10">-->
+<!--					<input	id="comment"-->
+<!--							class="form-control"-->
+<!--							type="text"-->
+<!--							ng-model="orderDetails.comment">-->
+<!--				</div>-->
+<!--			</div>-->
+		</div>
+		<p></p>
+		<button type="submit" class="btn btn-primary" ng-show="canShowConfirmationButton()">Подтвердить</button>
+		&nbsp;
+		<button type="reset" class="btn btn-secondary" ng-click="cancelOrdering()">Отмена</button>
+	</form>
+
+	<p>&nbsp;</p>
+ 	<button class="btn btn-primary" ng-click="ok()" ng-show="!showForm" title="Обратно в магазин.">
+		Готово
+	</button>
+	<p>&nbsp;</p>
+</div>
