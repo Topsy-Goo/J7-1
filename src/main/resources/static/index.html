@@ -16,13 +16,26 @@
 	<!-- Дополнение второе: поддержка использования локального хранилища браузера. -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/ngStorage/0.3.11/ngStorage.min.js"></script>
 
+	<style>
+		/*	Список товаров в корзине и в заказе не будет разбит на страницы, но будет убран в
+			отдельный блок с прокуруткой.
+		*/
+		.almost_windows
+		{	overflow: auto; /* полосы прокрутки появятся только при необходимости */
+			width: 100%; /* Ширина блока */
+			height: 400px; /* Высота блока */
+			padding: 5px; /* Поля вокруг текста */
+			border: dotted 2px silver; /* Параметры рамки */
+		}
+	</style>
+
 </head>
 <body ng-app="market-front">
 
 <div class="container">
 
 	<div ng-controller="indexController">
-		<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		<nav class="navbar navbar-expand-lg navbar-light bg-light"><!--  -->
 			<div class="collapse navbar-collapse" id="navbarNav">
 				<ul class="navbar-nav" style="font-weight: 700;">
 					<li class="nav-item" style="background-color: #E0F8C3; margin: 1px;">

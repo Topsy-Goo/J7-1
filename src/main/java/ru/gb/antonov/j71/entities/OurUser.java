@@ -11,6 +11,9 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static ru.gb.antonov.j71.Factory.hasEmailFormat;
+import static ru.gb.antonov.j71.Factory.validateString;
+
 @Entity
 @Table (name="ourusers")
 @NoArgsConstructor
@@ -50,14 +53,18 @@ public class OurUser
                 inverseJoinColumns = @JoinColumn (name="role_id"))
     private Collection<Role> roles;
 
+    @Getter @Setter
+    @OneToMany (mappedBy = "ouruser")
+    private List<Order> orders;
 //------------------------ Конструкторы -------------------------------------
+
     public static OurUser dummyOurUser (String login, String password, String email)
     {
         OurUser u = new OurUser();
         if (!u.setLogin (login) || !u.setPass (password) || !u.setEmail (email))
         {
             throw new UserCreatingException (String.format (
-                "Недопустимый набор значений:\r    логин = %s,\r    пароль = %s,\r    почта = %s\r",
+                "\rНедопустимый набор значений:\r    логин = %s,\r    пароль = %s,\r    почта = %s",
                 login, password, email));
         }
         u.roles = new HashSet<>();
@@ -100,32 +107,6 @@ public class OurUser
     }
 
     public boolean addRole (Role role)  {   return (role != null) && roles.add (role);   }
-
-    public static String  validateString (String s, int minLen, int maxLen)
-    {
-        if (s != null && minLen > 0 && minLen <= maxLen)
-        {
-            s = s.trim();
-            int len = s.length();
-            if (len >= minLen && len <= maxLen)
-            {
-                return s;
-            }
-        }
-        return null;
-    }
-
-    public static boolean hasEmailFormat (String email)
-    {
-        boolean ok = false;
-        int at = email.indexOf ('@');
-        if (at > 0 && email.indexOf ('@', at +1) < 0)
-        {
-            int point = email.indexOf ('.', at);
-            ok = point >= at +2;
-        }
-        return ok;
-    }
 //--------------------- Другие методы ---------------------------------------
 
     @Override public String toString()

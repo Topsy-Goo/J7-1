@@ -36,9 +36,9 @@ public class Cart
 /* (Если этот метод будет что-то возвращать, то он будет вызываться бесконечное количество раз.
     А размещать его вне класса не велит метод getOitems(), который возвращает unmodifiableList.)
 */
-    public void fillDrylCart (Cart drycart)
+    public Cart fillDrylCart ()
     {
-        //drycart = new Cart();
+        Cart drycart = new Cart();
         for (OrderItemDto oi : oitems)
         {
             if (oi.getQuantity() > 0)
@@ -46,12 +46,13 @@ public class Cart
         }
         drycart.cost = cost;
         drycart.load = load;
-        //cart.titlesCount = cart.oitems.size();
+        return drycart;
     }
 
     public String toString()
-    { return String.format("Cart:[cost:%.2f, titles:%d, load:%d].oitems:%s", cost, titlesCount, load, oitems); }
-
+    {   return String.format("Cart:[cost:%.2f, titles:%d, load:%d].oitems:%s",
+        cost, titlesCount, load, oitems);
+    }
 //Функция «Всё-в-одном» : ищем запись с productId, а если не нашли, то создаём её (если вызывающая сторона
 //  снабдила нас корректным значением function и положительным значением delta). В найденноом/созданом
 //  элементе изменяем количетво.

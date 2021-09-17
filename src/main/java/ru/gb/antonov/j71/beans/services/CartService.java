@@ -94,9 +94,7 @@ public class CartService
 
     public Cart getUsersDryCart (OurUser ourUser) //черновик
     {
-        Cart dryCart = new Cart();
-        getUsersCart (ourUser).fillDrylCart (dryCart);
-        return dryCart;
+        return getUsersCart (ourUser).fillDrylCart();
     }
 
     public void deleteById (Long productId) //черновик

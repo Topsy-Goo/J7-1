@@ -18,4 +18,7 @@ public class OrderState
 
     @Column (name="state", nullable=false, unique=true)
     private String state;       //NONE, PENDING, SERVING, PAYED, CANCELED;
+
+    @Column (name="friendly_name")
+    private String friendlyName;
 }

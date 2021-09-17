@@ -2,19 +2,21 @@
 	<h5>Каталог продуктов</h5>
 		<p></p>
 
-	<table class="table">
-		<tr><th>id</th>
-			<th>category</th>
-			<th>title</th>
-			<th>price</th>
-			<th>more actions</th>
-			<th ng-show="canShow()">add to cart</th>
-		</tr>
+	<table class="table table-striped">
+		<thead class="table-dark">
+			<tr><th>id</th>
+				<th>category</th>
+				<th>title</th>
+				<th>price</th>
+				<th>more actions</th>
+				<th ng-show="canShow()">add to cart</th>
+			</tr>
+		</thead>
 		<!-- ng-show  работает и на таком уровне, если не забыть добавить $rootScope в js-файл. -->
 		<tr ng-repeat="p in productsPage.content">
 			<td>{{p.productId}}</td>
 			<td>{{p.category}}</td>
-			<td><strong>{{p.title}}</strong></td>
+			<th scope="row">{{p.title}}</th>
 			<td>{{p.price}}</td>
 			<td>
 				<button class="btn btn-info" style="font-family: Webdings;"

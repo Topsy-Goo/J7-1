@@ -74,7 +74,10 @@ public class AuthController
         }
         String login    = registerRequest.getLogin ();
         String password = registerRequest.getPassword ();
-        String email    = registerRequest.getEmail ();
+        String email = String.format ("%s@%s.%s",
+                                      registerRequest.getEmailUser(),
+                                      registerRequest.getEmailServer(),
+                                      registerRequest.getEmailDomain());
 
         Optional<OurUser> optionalOurUser = ourUserService.createNewOurUser (
                                                     login, password, email);

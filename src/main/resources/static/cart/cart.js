@@ -35,7 +35,7 @@ console.log ('Error: '+ response.data);
 
 	$scope.gotoOrder = function () { $location.path('/order'); }
 //----------------------------------------------------------------------- страницы
-	$scope.generatePagesIndexes = function (startPage, endPage)
+/*	$scope.generatePagesIndexes = function (startPage, endPage)
 	{
 		let arr = [];
 		for (let i = startPage; i < endPage + 1; i++)	{ arr.push(i); }
@@ -58,7 +58,7 @@ console.log ('Error: '+ response.data);
 	{
 		cartPageCurrent ++;
 		$scope.loadCartPage();
-	}
+	}*/
 //----------------------------------------------------------------------- плюс/минус
 	$scope.cartMinus = function (pid, quantity)	//+
 	{

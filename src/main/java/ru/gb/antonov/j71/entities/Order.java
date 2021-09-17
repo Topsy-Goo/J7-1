@@ -29,10 +29,6 @@ public class Order
     @JoinColumn (name="orderstates", nullable=false)
     private String state;*/
 
-    @ManyToOne
-    @JoinColumn(name="ouruser_id", nullable=false)
-    private OurUser ouruser;
-
     @CreationTimestamp
     @Column(name="created_at", nullable=false)
     private LocalDateTime createdAt;
@@ -41,6 +37,9 @@ public class Order
     @Column (name="updated_at", nullable=false)
     private LocalDateTime updatedAt;
 
+    @ManyToOne
+    @JoinColumn(name="ouruser_id", nullable=false)
+    private OurUser ouruser;
 //--------неколонки
     @OneToMany (mappedBy="order", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<OrderItem> orderItems;
@@ -49,6 +48,6 @@ public class Order
 //----------------------------------------------------------------------
     @Override public String toString()
     {   return String.format ("Order:[id:%d, u:%s, phone:%s, addr:%s]_with_[%s]",
-                              id, ouruser.getLogin(), phone, address, orderItems);
+                              id, ouruser.getLogin (), phone, address, orderItems);
     }
 }

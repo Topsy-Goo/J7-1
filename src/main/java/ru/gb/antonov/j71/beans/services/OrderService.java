@@ -15,6 +15,8 @@ import ru.gb.antonov.j71.entities.dtos.OrderItemDto;
 import java.security.Principal;
 import java.util.stream.Collectors;
 
+import static ru.gb.antonov.j71.Factory.orderCreationTimeToString;
+
 @Service
 @RequiredArgsConstructor
 public class OrderService
@@ -61,7 +63,8 @@ public class OrderService
         // чтобы юзер мог на неё посмотреть перед уходом со страницы заказа.
 
         detales.setOrderNumber (o.getId());
-        detales.setOrderCreatedAt (o.getCreatedAt());
+        //detales.setOrderCreatedAt (o.getCreatedAt());
+        detales.setOrderCreationTime (orderCreationTimeToString (o.getCreatedAt()));
         //detales.setDeliveryType ("Самовывоз");
         detales.setDeliveryCost (0.0);
         detales.setOverallCost (detales.getCart().getCost() + detales.getDeliveryCost());

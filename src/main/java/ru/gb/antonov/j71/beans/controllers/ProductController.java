@@ -15,7 +15,7 @@ import ru.gb.antonov.j71.entities.dtos.ProductDto;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static ru.gb.antonov.j71.Factory.PROD_PAGESZ_DEF;
+import static ru.gb.antonov.j71.Factory.PROD_PAGESIZE_DEF;
 
 @RestController
 @RequestMapping ("/api/v1/products")    //http://localhost:8189/market/api/v1/products
@@ -25,7 +25,8 @@ public class ProductController
     private final ProductService productService;
     private final CartService cartService;
 
-    private int pageSize = PROD_PAGESZ_DEF;
+    //@Value ("${views.shop.items-per-page-def}")
+    private final int pageSize = PROD_PAGESIZE_DEF;
 
 //--------------------------------------------------------------------
 

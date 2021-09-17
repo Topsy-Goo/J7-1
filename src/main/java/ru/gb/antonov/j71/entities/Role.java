@@ -26,13 +26,4 @@ public class Role
     @CreationTimestamp
     @Column(name="updated_at", nullable=false)
     private LocalDateTime updatedAt;
-
-
-/*  @ManyToMany   < Видимо, эта часть нужна только, если мы работаем с ролями и их списками юзеров.
-    @JoinTable (name="ourusers_roles",
-                joinColumns        = @JoinColumn (name="role_id"),
-                inverseJoinColumns = @JoinColumn (name="ouruser_id"))
-    private Collection<OurUser> ourusers; //*/
-
-    //public Role() {}
 }

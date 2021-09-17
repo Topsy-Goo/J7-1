@@ -2,48 +2,50 @@
 	<h5>{{contextPrompt}}</h5>
 		<p></p>
 
-	<table class="table" ng-show="canShowOrderedItems()">
-		<tr>
-			<th>id</th>				<!-- 0 -->
-			<th>category</th>		<!-- 1 -->
-			<th>title</th>			<!-- 2 -->
-			<th>price</th>			<!-- 3 -->
-			<th>quantity</th>		<!-- 4 -->
-			<th>quantity cost</th>	<!-- 5 -->
-			<th>more actions</th>	<!-- 6 -->
-		</tr>
-		<tr ng-repeat="oitem in cart.oitems">
-			<td>{{oitem.productId}}</td>				<!-- 0 -->
-			<td>{{oitem.category}}</td>					<!-- 1 -->
-			<td><strong>{{oitem.title}}</strong></td>	<!-- 2 -->
-			<td>{{oitem.price}}</td>					<!-- 3 -->
-			<td>{{oitem.quantity}}</td>					<!-- 4 -->
-			<td>{{oitem.cost}}</td>						<!-- 5 -->
-			<td><button class="btn btn-info" ng-click="infoProduct(oitem)" title="Посмотреть информацию о товаре."
-						style="font-family: Webdings;">s</button>
-			</td>										<!-- 6 -->
-		</tr>
-		<tr>
-			<td></td>								<!-- 0 -->
-			<td></td>								<!-- 1 -->
-			<td></td>								<!-- 2 -->
-			<td></td>								<!-- 3 -->
-			<td>Всего товаров: {{cart.load}}</td>	<!-- 4 -->
-			<td>Сумма заказа: {{cart.cost}}</td>	<!-- 5 -->
-			<td></td>								<!-- 6 -->
-		</tr>
-		<caption>
-			Страница: {{productsPage.pageable.pageNumber +1}}<!--/{{productsPage.totalPages}}<br>
-			Всего товаров: {{cart.load}}.<br>
-			Общая стоимость: {{cart.cost}}.-->
-		</caption>
-	</table>
-
+	<div class="almost_windows">
+		<table class="table" ng-show="canShowOrderedItems()"><!-- table-bordered table-striped -->
+			<thead class="table-dark">
+				<tr>
+					<th>id</th>				<!-- 0 -->
+					<th>category</th>		<!-- 1 -->
+					<th>title</th>			<!-- 2 -->
+					<th>price</th>			<!-- 3 -->
+					<th>quantity cost</th>	<!-- 5 -->
+					<th>quantity</th>		<!-- 4 -->
+					<th>more actions</th>	<!-- 6 -->
+				</tr>
+			</thead>
+			<tr ng-repeat="oitem in cart.oitems">
+				<td>{{oitem.productId}}</td>				<!-- 0 -->
+				<td>{{oitem.category}}</td>					<!-- 1 -->
+				<th scope="row">{{oitem.title}}</td>		<!-- 2 -->
+				<td>{{oitem.price}}</td>					<!-- 3 -->
+				<td>{{oitem.cost}}</td>						<!-- 5 -->
+				<td>{{oitem.quantity}}</td>					<!-- 4 -->
+				<td><button class="btn btn-info" ng-click="infoProduct(oitem)" title="Посмотреть информацию о товаре."
+							style="font-family: Webdings;">s</button>
+				</td>										<!-- 6 -->
+			</tr>
+			<tfoot><td></td>							<!-- 0 -->
+				<td></td>			 					<!-- 1 -->
+				<td></td>								<!-- 2 -->
+				<td></td>								<!-- 3 -->
+				<td>Общая стоимость: {{cart.cost}}</td>	<!-- 5 -->
+				<td>Всего товаров: {{cart.load}}</td>	<!-- 4 -->
+				<td></td>								<!-- 6 -->
+			</tfoot>
+<!--			<caption>
+				Страница: {{productsPage.pageable.pageNumber +1}}&lt;!&ndash;/{{productsPage.totalPages}}<br>
+				Всего товаров: {{cart.load}}.<br>
+				Общая стоимость: {{cart.cost}}.&ndash;&gt;
+			</caption>-->
+		</table>
+	</div>
 <!-- Дилемма: если дать юзеру любоваться на список заказанных товаров после офрмления заказа,
 	 	то возникает вопрос, — как переключаться между страницами списка?
 	 Наверное, решение — в создании окна (со скролбаром), в котором будет отображаться таблица
 		 со списком только что заказанных товаров. -->
-    <nav aria-label="Page navigation">
+<!--    <nav aria-label="Page navigation">
         <ul class="pagination">
         	<li class="page-item" style="padding-right: 3px;">
         		<button class="page-link" ng-click="prevProductsPage()">&lt;</button>
@@ -56,7 +58,7 @@
 			</li>
 
         </ul>
-    </nav>
+    </nav>-->
 
 	<p>&nbsp;</p>
 	<div ng-show="showForm">
@@ -76,19 +78,34 @@
 			высказать свои замечания к обработке заказа и, при желании, внести изменения в заказ.
 		</p>
 		<p ng-show="!showForm">
-			Номер вашего заказа: <b>{{orderDetails.orderNumber}}</b>.<br>
-			Время создания заказа:	{{orderDetails.orderCreatedAt}}.<br>
-			<br>
-			Номер телефона:			{{orderDetails.phone}}.<br>
-			Адрес доставки:			{{orderDetails.address}}.<br>
-			Стоимость доставки:		{{orderDetails.deliveryCost}}.<br>
-			Сумма к оплате с учётом стоимости доставки:	<b>{{orderDetails.overallCost}}</b>.
-<!--
+			<dl class="row">
+				<dt class="col-sm-3">Номер вашего заказа:</dt>
+				<dd class="col-sm-9"><b>{{orderDetails.orderNumber}}</b>.</dd>
+
+				<dt class="col-sm-3">Время создания заказа:</dt>
+				<dd class="col-sm-9">{{orderDetails.orderCreationTime}}.</dd>
+
+				<dt class="col-sm-3">Номер телефона:</dt>
+				<dd class="col-sm-9">{{orderDetails.phone}}.</dd>
+
+				<dt class="col-sm-3">Адрес доставки:</dt>
+				<dd class="col-sm-9">{{orderDetails.address}}.</dd>
+
+				<dt class="col-sm-3">Стоимость доставки:</dt>
+				<dd class="col-sm-9">{{orderDetails.deliveryCost}}.</dd>
+
+				<dt class="col-sm-3">Сумма к оплате с учётом стоимости доставки:</dt>
+				<dd class="col-sm-9"><b>{{orderDetails.overallCost}}</b>.</dd>
+
+<!--			<dt class="col-sm-3"></dt>
+				<dd class="col-sm-9"></dd>
+
 			Дата и Время доставки:	{{orderDetails.deliveryDateTime}}.<br>
 			Тип доставки:			{{orderDetails.deliveryType}}.<br>
 			Статус заказа:			{{orderDetails.orderStatus}}.<br>
 			Тип оплаты:			{{orderDetails.paymentType}}.<br>
 -->
+			</dl>
 		</p>
 	</div>
 

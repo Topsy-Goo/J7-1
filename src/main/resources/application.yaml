@@ -22,3 +22,7 @@ spring: # < конфигурируем спринг-окружение
 jwt:
   secret: $2a$12$c4HYjryn7vo1bYQfSzkUDe8jPhYIpInbUKZmv5lGnmcyrQPLIWnVu
   lifetime: 36000000 #10ч
+
+#views:
+#  shop:
+#    items-per-page-def: 6

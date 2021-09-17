@@ -36,17 +36,26 @@
 				</div>
 			</div>
 			<p></p>
-			<div class="row g-2">
+			<div class="row g-2 bg-example">
 				<div class="col-1">
-					<label for="email" class="col-form-lable">Почта:</label>
+					<label for="email" class="col-form-lable">Эл. почта:</label>
 				</div>
-				<div class="col-11">
+<!--				<div class="col-11">
 					<input	id="email"
 							class="form-control"
 							type="text"
 							placeholder="обязательно укажите (5…64 символов)"
 							required="required"
 							ng-model="new_user.email">
+				</div>-->
+				<div class="input-group col-11"><!-- не удалось сделать красиво: если для @ использовать
+span, то у него получаются скруглённые края, а если делать input, то мин.ширина выставляется тольк при
+пом. col-1 и почти всегда оказывается некрасиво большой. В общем, — в топку; слишком мало времени!	-->
+	<input class="form-control" type="text" width="50" ng-model="new_user.emailUser" placeholder="Имя пользователя" id="email">
+	<input class="form-control" type="text" width="20" value="@" readonly>
+	<input class="form-control" type="text" width="50" ng-model="new_user.emailServer" placeholder="Имя сервера">
+	<input class="form-control" type="text" width="20" value="." readonly>
+	<input class="form-control" type="text" width="50" ng-model="new_user.emailDomain" placeholder="Домен">
 				</div>
 			</div>
 		</div>

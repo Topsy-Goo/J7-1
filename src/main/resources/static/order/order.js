@@ -78,7 +78,7 @@ angular.module('market-front').controller('orderController',
 		   ',\rобщая стоимость: '+ oitem.cost);
 	}
 //---------------------------------------------------------- страницы
-	$scope.generatePagesIndexes = function (startPage, endPage)
+/*	$scope.generatePagesIndexes = function (startPage, endPage)
 	{
 		let arr = [];
 		for (let i = startPage; i < endPage + 1; i++)
@@ -104,7 +104,7 @@ angular.module('market-front').controller('orderController',
 	{
 		cartPageCurrent ++;
 		$scope.loadProductsPage();
-	}
+	}*/
 //---------------------------------------------------------- условия
 	$scope.canShowConfirmationButton = function ()	//+
 	{
