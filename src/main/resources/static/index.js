@@ -76,8 +76,9 @@
 	function run ($rootScope, $http, $localStorage)
 	{
 	/*	При запуске приложения во фронте неразлогиненный юзер будет считан (из локального хранилища
-	браузера) и в соотв-ии с ним будет добавлен и настроен умолчальный заголовок Authorization (как
-	при авторизации и регистрации).	(В нашем учебном проекте это не заработает, т.к. при старте
+	браузера) и в соотв-ии с ним будет добавлен и настроен умолчальный заголовок Authorization, как
+	при авторизации и регистрации.
+	(В нашем учебном проекте это не заработает, т.к. при старте
 	приложения, бэк считывает БД из sql-файла, а при регистрации нового юзера он не записывается в
 	упомянутый файл).
 	*/
@@ -105,7 +106,10 @@ angular.module('market-front').controller('indexController',
 	$scope.edit_productPageTitle = 'Создать продукт';
 	$scope.cartPageTitle = 'Ваша корзина';
 
-	$rootScope.isUserLoggedIn = function () { if ($localStorage.webMarketUser) { return true; } else { return false; } }
+	$rootScope.isUserLoggedIn = function ()
+	{
+		if ($localStorage.webMarketUser) { return true; } else { return false; }
+	}
 
 	$scope.tryToRegister = function ()
 	{
@@ -121,8 +125,8 @@ angular.module('market-front').controller('indexController',
 		if ($scope.user != null)
 		{
 			$http.post(contextProductPath + '/login', $scope.user)
-			.then
-			(function successCallback (response)
+			.then(
+			function successCallback (response)
 			{
 				if (response.data.token)	//< проверка, что в ответе именно токен
 				{

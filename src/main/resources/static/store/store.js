@@ -18,7 +18,7 @@ angular.module('market-front').controller('storeController', function ($rootScop
 	var productPageTotal = 0;	//< такая переменная не видна в HTML-файле
 	$scope.cartLoad = 0;	//< такая переменная    видна в HTML-файле
 
-/*	Типовое (для этого проекта) описание функции в js (для функций $scope. и var используются также, как для переменных):	*/
+/*	для функций $scope. и var используются также, как для переменных	*/
 	$scope.loadProductsPage = function ()
 	{
 		$scope.getCartLoad();
@@ -28,23 +28,14 @@ angular.module('market-front').controller('storeController', function ($rootScop
 			method: 'GET',
 			params:	{p: productPageCurrent}
 		})
-		.then (
-		function successCallback (response)
+		.then (function (response)
 		{
 			$scope.productsPage = response.data;	//< переменную можно объявлять где угодно в коде
 			productPageCurrent = $scope.productsPage.pageable.pageNumber;
 			productPageTotal = $scope.productsPage.totalPages;
 
 			$scope.paginationArray = $scope.generatePagesIndexes(1, productPageTotal);
-console.log ('response.data: '+ response.data);
-console.log (response.data);
-		},
-		function failureCallback (response)//< вызывается асинхронно.
-		{
-console.log ('Error: response.data:\r'+ response.data);
-console.log ('Error: response.data.messages:\r'+ response.data.messages);
-			alert ('Error: response.data:\r'+ response.data);
-			alert ('Error: response.data.messages:\r'+ response.data.messages);
+			console.log (response.data); //< в этом случае конкатенация не работает
 		});
 	}
 //----------------------------------------------------------------------- страницы
@@ -110,7 +101,7 @@ console.log ('Error: response.data.messages:\r'+ response.data.messages);
 			{
 				$scope.cartLoad = 0;
 				alert (response.data.messages);	//< название параметра взято из ErrorMessage
-				console.log ('Error: '+ response.data.messages);
+				console.log ('Error: '+ response.data.messages); //< конкатенация работает
 			});
 		}
 	}

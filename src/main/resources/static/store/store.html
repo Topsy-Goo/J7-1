@@ -9,7 +9,7 @@
 				<th>title</th>
 				<th>price</th>
 				<th>more actions</th>
-				<th ng-show="canShow()">add to cart</th>
+				<th ng-show="canShow()">add to cart</th><!--  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 			</tr>
 		</thead>
 		<!-- ng-show  работает и на таком уровне, если не забыть добавить $rootScope в js-файл. -->
@@ -32,7 +32,7 @@
 					ng-click="deleteProduct(p.productId)" ng-show="canShow()">r</button>
 			</td>
 			<!-- sar 📝 ✂ ✖🗙❌⚙ℹ style="font-family: Webdings;"   -->
-			<td ng-show="canShow()">
+			<td ng-show="canShow()"><!--  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 				<button class="btn btn-primary"
 					title="Убрать продукт из корзины." style="width: 30pt"
 					ng-click="cartMinus(p.productId)">-</button>
@@ -49,7 +49,7 @@
 		</caption>
 	</table>
 
-	<p ng-show="canShow()">
+	<p ng-show="canShow()"><!--  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 			Товаров в корзине: {{cartLoad}}
 	</p>
 

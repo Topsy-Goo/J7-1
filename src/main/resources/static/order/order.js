@@ -20,9 +20,9 @@ angular.module('market-front').controller('orderController',
 		//		Возможно, следует юзеру сообщить об их отсутствии.
 			$scope.contextPrompt = "Ваш заказ сформирован.";
 			$scope.orderDetails = response.data;
-			$scope.cart = $scope.orderDetails.cart;
-/*			console.log ('Детали заказа загружены:');
-			console.log (response.data);*/
+			$scope.cart = $scope.orderDetails.cartDto;
+console.log ('Детали заказа загружены:');
+console.log (response.data);
 		},
 		function failureCallback (response)
 		{

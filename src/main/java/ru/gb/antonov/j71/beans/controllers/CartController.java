@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.gb.antonov.j71.beans.services.CartService;
 import ru.gb.antonov.j71.beans.services.ProductService;
-import ru.gb.antonov.j71.beans.utils.Cart;
+import ru.gb.antonov.j71.entities.dtos.CartDto;
 
 import java.security.Principal;
 
@@ -21,22 +21,13 @@ public class CartController
 //------------------------------------------------------------------------
 
     @GetMapping
-    public Cart getProductsCart (Principal principal)
-    {
-        return cartService.getUsersCart (principal)/*.getCart()*/;
-    }
+    public CartDto getProductsCart (Principal principal) { return cartService.getUsersCartDto (principal); }
 
     @GetMapping ("/load")
-    public Integer getCartLoad (Principal principal)
-    {
-        return cartService.getCartLoad (principal);
-    }
+    public Integer getCartLoad (Principal principal) { return cartService.getCartLoad (principal); }
 
     @GetMapping ("/cost")
-    public Double getCartCost (Principal principal)
-    {
-        return cartService.getCartCost (principal);
-    }
+    public Double getCartCost (Principal principal) { return cartService.getCartCost (principal); }
 
     @GetMapping ("/plus/{productId}")
     public void increaseProductQuantity (@PathVariable Long productId, Principal principal)
@@ -57,8 +48,5 @@ public class CartController
     }
 
     @GetMapping ("/clear")
-    public void clearCart (Principal principal)
-    {
-        cartService.clearCart (principal);
-    }
+    public void clearCart (Principal principal) { cartService.clearCart (principal); }
 }

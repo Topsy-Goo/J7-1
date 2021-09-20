@@ -1,134 +1,182 @@
 package ru.gb.antonov.j71.beans.services;
 
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.gb.antonov.j71.beans.errorhandlers.UnableToPerformException;
-import ru.gb.antonov.j71.beans.utils.Cart;
 import ru.gb.antonov.j71.entities.OurUser;
 import ru.gb.antonov.j71.entities.Product;
+import ru.gb.antonov.j71.entities.dtos.CartDto;
+import ru.gb.antonov.j71.entities.dtos.OrderItemDto;
 
-import javax.annotation.PostConstruct;
 import java.security.Principal;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.function.Function;
 
+import static ru.gb.antonov.j71.Factory.DRYCART;
 import static ru.gb.antonov.j71.Factory.cartKeyByLogin;
 
 @Service
 @RequiredArgsConstructor
 public class CartService
 {
+/*      Корзина разделена на 2 части: InMemoryCart (хранится в Redis-е) и CartDto (формируется
+    каждый раз, когда клиент запрашивает корзину).
+        В кэше в корзине храним только id товаров и количества. Всю остальную инф-цию о товаре
+    считываем из базы во время формирования CartDto.
+        Таким образом мы решаем проблему устаревших цен и названий для товаров. Если этот подход слишком
+    нагружает БД, то, возможно, БД тоже нужен какой-то кэшь. Во всяком случае выбранный мною подход
+    выглядит вполне логичным.
+*/
     private final ProductService productService;
     private final OurUserService ourUserService;
     private final RedisTemplate<String, Object> redisTemplate;
-    private Cart ccc;
-//--------------------------------------- classes
-    public static class CartsEntry
+//--------------------- классы для хранения корзин в кэше ----------------
+
+    public static class CartsEntry //Это не Entry; просто носить ключ рядом с корзиной очень удобно.
     {
         private final String key;
-        private final Cart cart;
+        private final InMemoryCart imcart;
 
-        private CartsEntry (String k, Cart c)
-        {
-            key = k;
-            cart = c;
-        }
-        public Cart getCart() { return cart; }
+        private CartsEntry (String k, InMemoryCart v) {  key = k;    imcart = v;  }
     }
-    private static class CartItem
+
+    public static class CartItem
     {
         private long pid;
         private int quantity;
+
+        public CartItem (){}
+        private CartItem (long p, int q) { pid = p;quantity = q; }
+
+        public void setPid (long value) { pid = value; }
+        public void setQuantity (int value) { quantity = value; }
+        public long getPid () { return pid; }
+        public int getQuantity () { return quantity; }
+        //public String toString() { return String.format ("CartItem:[pid:%d, qty:%d]", pid, quantity); }
     }
-    private static class InMemoryCart
+
+    public static class InMemoryCart
     {
         List<CartItem> citems;
-        int load;
 
+        private InMemoryCart () { citems = new LinkedList<>(); }
+        private void clear()    { citems.clear(); }
+
+        public void setCitems (List<CartItem> list) { citems = list; }
+        public List<CartItem> getCitems () { return citems; }
+        //public String toString() { return citems.toString(); }
     }
 //------------------------------------------------------------------------
-
     private OurUser userByPrincipal (Principal principal)
     {
         return ourUserService.userByPrincipal (principal);
     }
 
-//---------------------------------------
-/*  private TreeMap<Long, Cart> carts;
-
-    @PostConstruct
-    public void init() //черновик
-    {
-        this.carts = new TreeMap<>();
-    }*/
-//-------------------- Временная реализация (начало) ---------------------
-
-    @PostConstruct
-    public void init()
-    {
-        ccc = new Cart();
-    }
-
     @Transactional
-    public Cart/*sEntry*/ getUsersCart (Principal principal)
+    public CartDto getUsersCartDto (Principal principal)
     {
-        return getUsersCart (userByPrincipal (principal));
+        CartsEntry ce = getUsersCartEntry (principal);
+        return inMemoryCartToDto (ce.imcart, !DRYCART);
     }
 
-    private Cart/*sEntry*/ getUsersCart (OurUser ourUser)
+    @NotNull
+    private CartsEntry getUsersCartEntry (Principal principal)
     {
-        return ccc;
-/*        if (ourUser == null)
+        return getUsersCartEntry (userByPrincipal (principal));
+    }
+
+    @NotNull
+    private CartsEntry getUsersCartEntry (OurUser ourUser)
+    {
+        if (ourUser == null)
             throw new UnableToPerformException ("getUsersCart(): нет юзера — нет корзины!");
 
         String key = cartKeyByLogin (ourUser.getLogin());
         if (!redisTemplate.hasKey (key))
         {
-            redisTemplate.opsForValue().set(key, new Cart());
+            redisTemplate.opsForValue().set (key, new InMemoryCart());
         }
-        Cart cart = (Cart) redisTemplate.opsForValue().get(key);
-        if (cart == null)
+        InMemoryCart imcart = (InMemoryCart) redisTemplate.opsForValue().get(key);
+        if (imcart == null)
             throw new UnableToPerformException ("getUsersCart(): не могу извлечь корзину пользователя: "
                                                 + ourUser.getLogin());
-        return new CartsEntry (key, cart);*/
+        return new CartsEntry (key, imcart);
     }
 
     private void updateCart (CartsEntry cartsEntry)
     {
-        redisTemplate.opsForValue().set (cartsEntry.key, cartsEntry.cart);
+        redisTemplate.opsForValue().set (cartsEntry.key, cartsEntry.imcart);
     }
-//---------------------------------------------------------------------
+
     @Transactional
     public int getCartLoad (Principal principal)
     {
-        return getUsersCart (principal).cart.getLoad();
+        CartsEntry ce = getUsersCartEntry (principal);
+        return inlineCalcImcLoad (ce.imcart.citems);
+    }
+
+    private int inlineCalcImcLoad (List<CartItem> citems)
+    {
+        int load = 0;
+        for (CartItem ci : citems)
+        {
+            load += ci.quantity;
+        }
+        return load;
     }
 
     @Transactional
     public double getCartCost (Principal principal)
     {
-        return getUsersCart (principal).cart.getCost();
+        CartsEntry ce = getUsersCartEntry (principal);
+        return inlineCalcCartCost (ce.imcart.citems);
+    }
+
+    private double inlineCalcCartCost (List<CartItem> citems)
+    {
+        double cartcost = 0.0;
+        for (CartItem ci : citems)
+        {
+            int quantity = ci.quantity;
+            if (quantity > 0)
+                cartcost += productService.findById (ci.pid).getPrice() * quantity;
+        }
+        return cartcost;
     }
 
     @Transactional
     public void changeProductQuantity (long productId, int delta, Principal principal)
     {
-        //(Считаем, что нет смысла создавать новую товарн.позицию для неположительных значений delta.)
-        Function<Long, Product> f = (delta <= 0) ? null : new Function<>()
-                {
-                    public Product apply (Long id)
-                    {
-                        return productService.findById (productId);
-                    }
-                };
-        CartsEntry ce = getUsersCart (principal);
-        if (!ce.cart.changeQuantity (productId, f, delta))
+    //(Считаем, что нет смысла создавать новую товарн.позицию для неположительных значений delta.)
+        if (delta == 0)
+            return;
+        CartsEntry ce = getUsersCartEntry (principal);
+        if (delta < 0)
         {
-            throw new UnableToPerformException ("Не удалось изменить количество для: pID."+ productId);
+            for (CartItem ci : ce.imcart.citems) //предполагаем, что productId может встретиться в корзине больше 1-го раза.
+            {
+                if (delta >= 0)
+                    break;
+                if (ci.pid == productId)
+                {
+                    delta += ci.quantity;
+                    ci.quantity = (delta < 0) ? 0 : delta;
+                }
+            }
+        }
+        else
+        {   for (CartItem ci : ce.imcart.citems)
+            if (ci.pid == productId)
+            {
+                ci.quantity += delta;
+                delta = 0;
+                break;
+            }
+            if (delta > 0)
+                ce.imcart.citems.add (new CartItem (productId, delta));
         }
         updateCart (ce);
     }
@@ -136,51 +184,56 @@ public class CartService
     @Transactional
     public void removeProduct (long productId, Principal principal)
     {
-        CartsEntry ce = getUsersCart (principal);
-        ce.cart.removeProduct (productId);
-        updateCart (ce);
+        CartsEntry ce = getUsersCartEntry (principal);
+        if (ce.imcart.citems.removeIf (ci->ci.pid == productId))
+            updateCart (ce);
     }
 
     @Transactional
-    public void clearCart (Principal principal)
+    public void clearCart (Principal principal) { clearCart (userByPrincipal (principal)); }
+
+    public void clearCart (OurUser ourUser)
     {
-        clearCart (userByPrincipal (principal));
+        CartsEntry ce = getUsersCartEntry (ourUser);
+        ce.imcart.clear();
+        updateCart (ce);     //TODO: удалять корзины нужно поручить Memurai-ю.
     }
 
-    //вызывается в рамках транзакции (в т.ч. из OrderService.applyOrderDetails())
-    public void clearCart (OurUser ourUser) //черновик
+    public CartDto getUsersDryCartDto (OurUser ourUser)
     {
-        CartsEntry ce = getUsersCart (ourUser);
-        ce.cart.clear();
-        redisTemplate.delete (ce.key); ??????????
+        return inMemoryCartToDto (getUsersCartEntry (ourUser).imcart, DRYCART);
     }
 
-    public Cart getUsersDryCart (OurUser ourUser)
+    @NotNull
+    private CartDto inMemoryCartToDto (InMemoryCart imcart, boolean dtycart)
     {
-        return getUsersCart (ourUser).cart.fillDrylCart();
-    }
-
-    public void updateProductInCarts (Product product) //черновик
-    {
-        if (carts == null) return;
-
-        Set<Long> keyset = carts.keySet();
-        for (Long uid : keyset)
+        CartDto cdto = new CartDto ();
+        for (CartItem ci : imcart.citems)
         {
-            Cart cart = carts.get (uid);
-            if (cart != null)
-                cart.updateProduct (product);
+            int quantity = ci.quantity;
+            if (quantity > 0 || dtycart != DRYCART)
+            {
+                Product p = productService.findById (ci.pid);
+                int rest = p.getRest();
+                if (rest > 0)   //< если остаток товара <= 0, то считаем, что товара нет
+                {
+                    quantity = Math.min (rest, quantity);
+                    cdto.addItem (new OrderItemDto (p), quantity);
+                }
+            }
         }
+        return cdto;
     }
 
+/** Товар не удаляем, а обнуляем у него поле {@code rest}. В дальнейшем, при попытке добавить
+    этот товар в корзину, проверяется его количество, и, т.к. оно равно 0, добавление не происходит.<p>
+    Логично будет добавить к этому НЕвозможность показывать такой товар на витрине.
+*/
     @Transactional
     public void deleteById (Long productId) //черновик
     {
         //TODO: Редактирование товаров пока не входит в план проекта.
-        //TODO: (Кажется, из базы не удаляются даже самые древние товары.
-        //       И на фронте это сложно как-то провернуть.)
+        //TODO: добавить к этому НЕвозможность показывать такой товар на витрине.
         productService.onProductDeletion (productId);
-        //TODO: «Удалённый» товар может находиться в одной или нескольких корзинах.
     }
-//-------------------- Временная реализация (конец) ----------------------
 }
