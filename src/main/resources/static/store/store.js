@@ -28,14 +28,23 @@ angular.module('market-front').controller('storeController', function ($rootScop
 			method: 'GET',
 			params:	{p: productPageCurrent}
 		})
-		.then (function (response)
+		.then (
+		function successCallback (response)
 		{
 			$scope.productsPage = response.data;	//< переменную можно объявлять где угодно в коде
 			productPageCurrent = $scope.productsPage.pageable.pageNumber;
 			productPageTotal = $scope.productsPage.totalPages;
 
 			$scope.paginationArray = $scope.generatePagesIndexes(1, productPageTotal);
-			console.log (response.data);
+console.log ('response.data: '+ response.data);
+console.log (response.data);
+		},
+		function failureCallback (response)//< вызывается асинхронно.
+		{
+console.log ('Error: response.data:\r'+ response.data);
+console.log ('Error: response.data.messages:\r'+ response.data.messages);
+			alert ('Error: response.data:\r'+ response.data);
+			alert ('Error: response.data.messages:\r'+ response.data.messages);
 		});
 	}
 //----------------------------------------------------------------------- страницы

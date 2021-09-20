@@ -11,7 +11,6 @@ import ru.gb.antonov.j71.entities.dtos.UserInfoDto;
 
 import java.security.Principal;
 import java.util.Collection;
-import java.util.List;
 
 @RequestMapping ("/api/v1/user_profile")
 @RestController

@@ -90,12 +90,18 @@
 			<artifactId>jedis</artifactId>
 			<version>3.6.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.jetbrains</groupId>
+			<artifactId>annotations</artifactId>
+			<version>RELEASE</version>
+			<scope>compile</scope>
+		</dependency>
 
-<!--		<dependency>	для @PostConstruct и @PreDestroy; не понадобилось, — всё работает и так.
-			<groupId>javax.annotation</groupId>
-			<artifactId>jsr250-api</artifactId>
-			<version>1.0</version>
-		</dependency> -->
+		<!--		<dependency>	для @PostConstruct и @PreDestroy; не понадобилось, — всё работает и так.
+					<groupId>javax.annotation</groupId>
+					<artifactId>jsr250-api</artifactId>
+					<version>1.0</version>
+				</dependency> -->
 
 	</dependencies>
 

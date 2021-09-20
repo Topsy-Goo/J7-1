@@ -27,7 +27,6 @@ public class ProductController
 
     //@Value ("${views.shop.items-per-page-def}")
     private final int pageSize = PROD_PAGESIZE_DEF;
-
 //--------------------------------------------------------------------
 
     //http://localhost:8189/market/api/v1/products/page?p=0
@@ -38,6 +37,7 @@ public class ProductController
         return productService.findAll (pageIndex, pageSize).map(ProductService::dtoFromProduct);
     }
 //------------------- Редактирование продуктов -------------------------
+//TODO: редактирование товаров пока не входит в план проекта.
 
     //http://localhost:8189/market/api/v1/products/11
     @GetMapping ("/{id}")
@@ -70,12 +70,11 @@ public class ProductController
     @PutMapping
     public Optional<ProductDto> updateProduct (@RequestBody ProductDto pdto)
     {
-        //TODO: редактирование товаров пока не входит в план проекта.
         Product p = productService.updateProduct (pdto.getProductId(),
                                                   pdto.getTitle (),
                                                   pdto.getPrice (),
                                                   pdto.getCategory ());
-        cartService.updateProductInCarts (p);
+        //cartService.updateProductInCarts (p);
         return toOptionalProductDto (p);
     }
 
@@ -92,16 +91,4 @@ public class ProductController
         return p != null ? Optional.of (ProductService.dtoFromProduct(p))
                          : Optional.empty();
     }
-//------------------- Фильтры ------------------------------------------
-/*
-    //http://localhost:8189/market/api/v1/products?min=50&max=90
-    //http://localhost:8189/market/api/v1/products?min=50
-    //http://localhost:8189/market/api/v1/products?max=90
-    @GetMapping
-    public List<ProductDto> getProductsByPriceRange (
-                                    @RequestParam(name="min", required = false) Integer min,
-                                    @RequestParam(name="max", required = false) Integer max)
-    {
-        return ProductService.productListToDtoList (productService.getProductsByPriceRange(min, max));
-    }*/
 }
