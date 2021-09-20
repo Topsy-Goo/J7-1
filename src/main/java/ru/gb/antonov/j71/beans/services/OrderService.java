@@ -5,19 +5,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.gb.antonov.j71.beans.errorhandlers.BadCreationParameterException;
 import ru.gb.antonov.j71.beans.repositos.OrdersRepo;
-import ru.gb.antonov.j71.beans.utils.Cart;
 import ru.gb.antonov.j71.entities.*;
+import ru.gb.antonov.j71.entities.dtos.CartDto;
 import ru.gb.antonov.j71.entities.dtos.OrderDetalesDto;
 import ru.gb.antonov.j71.entities.dtos.OrderDto;
 import ru.gb.antonov.j71.entities.dtos.OrderItemDto;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.gb.antonov.j71.Factory.*;
+import static ru.gb.antonov.j71.Factory.orderCreationTimeToString;
 
 @Service
 @RequiredArgsConstructor
@@ -41,43 +41,47 @@ public class OrderService
     public OrderDetalesDto getOrderDetales (Principal principal)
     {
         OurUser ourUser = userByPrincipal (principal);
-        Cart dryCart = cartService.getUsersDryCart (ourUser);
+        CartDto dryCartDto = cartService.getUsersDryCartDto (ourUser);
         OrderDetalesDto odt = new OrderDetalesDto();
-        odt.setCart (dryCart);
+        odt.setCartDto (dryCartDto);
         return odt;
     }
 
+/** <p>Вызывается из {@code OrderController} при получении запроса на оформление заказа. </p>
+
+    <p>Всё время на странице заказа показываем юзеру товары, которые он заказал. Мы должны вернуть в
+    {@code OrderDetalesDto} ту же {@code OrderDetalesDto}, но с дозаполненными полями, чтобы показать
+    юзеру детали оформленного заказа.</p>
+
+    @param detales содержит всю необходимую информацию для оформления заказа, включая «сухую» корзину.
+
+    @return та же {@code OrderDetalesDto}, но с дозаполненными полями.
+*/
     @Transactional
     public OrderDetalesDto applyOrderDetails (OrderDetalesDto detales, Principal principal)
     {
-        Cart cart = detales.getCart();
+        CartDto cartDto = detales.getCartDto();
         OurUser ourUser = userByPrincipal (principal);
-        OrderState oState = orderStatesService.getOrderStateByShortName (ORDERSTATE_PENDING);
-        Order o = new Order();
+        OrderState oState = orderStatesService.getStatePending();
 
+        Order o = new Order();
         o.setState (oState);
         o.setOuruser (ourUser);
         o.setPhone (detales.getPhone());
         o.setAddress (detales.getAddress());
-        o.setOrderItems (cart.getOitems()
-                             .stream()
-                             .map ((dto)->orderItemFromDto (o, dto))
-                             .collect (Collectors.toList()));
-        o.setCost (cart.getCost());
-        //o.setState (statesService.getStatePending());
-
+        o.setOrderItems (cartDto.getOitems()
+                                .stream()
+                                .map ((dto)->orderItemFromDto (o, dto))
+                                .collect (Collectors.toList()));
+        o.setCost (cartDto.getCost());
         ordersRepo.save (o);
 
-/*  Всё время на странице заказа показываем юзеру товары, которые он заказал. Мне не сложно,
-    а у юзера есть возможность кинуть взгляд на заказанные товары. К тому же отправку сообщения
-    на почту мы ещё не сделали.
-*/
         detales.setOrderNumber (o.getId());
         detales.setOrderState (oState.getFriendlyName());
         detales.setOrderCreationTime (orderCreationTimeToString (o.getCreatedAt()));
-        detales.setDeliveryCost (0.0);
-        detales.setOverallCost (detales.getCart().getCost() + detales.getDeliveryCost());
-        //detales.setDeliveryType ("Самовывоз");
+        //detales.setDeliveryType ("Самовывоз");  TODO: сделать ниспадающий список на стр.оформления заказа.
+        //detales.setDeliveryCost (0.0);        //TODO: поменять на чтение стоимости выбранной доставки.
+        detales.setOverallCost (o.getCost() + detales.getDeliveryCost());
 
         cartService.clearCart (ourUser); //< очищаем корзину юзера, но оставляем dryCart в OrderDetalesDto, чтобы юзер мог на неё посмотреть перед уходом со страницы заказа.
         return detales;
@@ -86,7 +90,7 @@ public class OrderService
     private OrderItem orderItemFromDto (Order o, OrderItemDto dto)
     {
         if (o == null || dto == null)
-            throw new BadCreationParameterException ("ой!..");
+            throw new BadCreationParameterException ("orderItemFromDto(): не удалось сформировать строку заказа.");
 
         OrderItem oi = new OrderItem();
         oi.setOrder(o);
@@ -101,7 +105,7 @@ public class OrderService
     {
         OurUser ourUser    = userByPrincipal (principal);
         List<Order> orders = ourUser.getOrders();
-        Collection<OrderDto> list   = newOrderDtosCollection ((orders != null) ? orders.size() : 0);
+        Collection<OrderDto> list = new ArrayList<>((orders != null) ? orders.size () : 0);
 
         if (orders != null)
         for (Order o : orders)
@@ -116,20 +120,20 @@ public class OrderService
         if (o == null)
             throw new BadCreationParameterException ("Не удалось прочитать инф-цию о заказе.");
 
-        OrderDto dto = new OrderDto();
+        OrderDto odto = new OrderDto();
         int[] oitemLoad = {0};  //< накопительный счётчик товаров в заказе
 
-        dto.setOrderNumber (o.getId());
-        dto.setState (o.getState().getFriendlyName());
-        dto.setAddress (o.getAddress());
-        dto.setPhone (o.getPhone());
-        dto.setCost (o.getCost());
-        dto.setOitems (o.getOrderItems()
+        odto.setOrderNumber (o.getId());
+        odto.setState (o.getState().getFriendlyName());
+        odto.setAddress (o.getAddress());
+        odto.setPhone (o.getPhone());
+        odto.setCost (o.getCost());
+        odto.setOitems (o.getOrderItems()
                         .stream()
                         .map ((oi)->orderItemToDto (oi, oitemLoad))
                         .collect (Collectors.toList()));
-        dto.setLoad (oitemLoad[0]);
-        return dto;
+        odto.setLoad (oitemLoad[0]);
+        return odto;
     }
 
     private OrderItemDto orderItemToDto (OrderItem oi, int[] oitemLoad)
@@ -137,18 +141,18 @@ public class OrderService
         if (oi == null || oitemLoad == null || oitemLoad.length == 0)
             throw new BadCreationParameterException ("Не удалось прочитать инф-цию об элементе заказа.");
 
-        OrderItemDto dto = new OrderItemDto();
+        OrderItemDto oidto = new OrderItemDto();
         double price = oi.getBuyingPrice();
         int quantity = oi.getQuantity();
         Product product = oi.getProduct();
 
-        dto.setProductId (product.getId());
-        dto.setCategory (product.getCategory().getName());
-        dto.setTitle (product.getTitle());
-        dto.setPrice (price);
-        dto.setQuantity (quantity);
-        dto.setCost (price * quantity);
+        oidto.setProductId (product.getId());
+        oidto.setCategory (product.getCategory().getName());
+        oidto.setTitle (product.getTitle());
+        oidto.setPrice (price);
+        oidto.setQuantity (quantity);
+        oidto.setCost (price * quantity);
         oitemLoad[0] += quantity;
-        return dto;
+        return oidto;
     }
 }

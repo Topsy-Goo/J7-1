@@ -15,7 +15,7 @@ import java.util.Locale;
 public class Factory
 {
     public static final String  STR_EMPTY   = "";
-    public static final boolean RECALC_CART = false;  //< TODO вкл/выкл пересчёт корзины при её изменении.
+    //public static final boolean RECALC_CART = false;  //< TODO вкл/выкл пересчёт корзины при её изменении.
 
     public static final Double MIN_PRICE = 0.0;
     public static final Double MAX_PRICE = Double.MAX_VALUE;
@@ -27,7 +27,7 @@ public class Factory
     public static final int PRODCAT_NAMELEN_MAX = 255;
 
     public static final int LOGIN_LEN_MIN = 3;
-    public static final int LOGIN_LEN_MAX = 32;
+    public static final int LOGIN_LEN_MAX = 36;
     public static final int PASS_LEN_MIN = 3;
     public static final int PASS_LEN_MAX = 128;
 
@@ -41,8 +41,13 @@ public class Factory
 
     public static final Locale RU_LOCALE = new Locale ("ru", "RU");
     public static final String CART_PREFIX_ = "GB_RU_J7_WEBSHOP_";
+    public static final boolean DRYCART = true;
 
 //------------------------------------------------------------------------
+
+/** Составляем строку даты и времени как:  {@code d MMMM yyyy, HH:mm:ss}<p>
+    Пример строки:  {@code 20 сентября 2021, 23:10:29}
+*/
     public static String orderCreationTimeToString (LocalDateTime ldt)
     {
         return (ldt != null) ? ldt.format(DateTimeFormatter.ofPattern ("d MMMM yyyy, HH:mm:ss", RU_LOCALE))
@@ -75,11 +80,8 @@ public class Factory
         return null;
     }
 
-    public static Collection<OrderDto> newOrderDtosCollection (int size)
-    {
-        return new ArrayList<>(size);
-    }
-
+/** Составляем ключ как:  GB_RU_J7_WEBSHOP_ + login
+*/
     public static String cartKeyByLogin (String login)
     {
         String postfix = validateString (login, LOGIN_LEN_MIN, LOGIN_LEN_MAX);
@@ -88,3 +90,4 @@ public class Factory
         throw new UnableToPerformException ("cartKeyByLogin(): некорректный логин: "+ login);
     }
 }
+//uuid:6214f46e-d11a-4349-826b-9d999ca21bb1

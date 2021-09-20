@@ -6,9 +6,8 @@ angular.module('market-front').controller('cartController', function ($rootScope
 	var cartPageTotal = 0;
 	$scope.cartLoad = 0;
 	$scope.cartCost = 0;
-	$scope.titlesCount = 0;	//TODO: лишняя переменная?
+	$scope.titlesCount = 0;	//< используется для проверки, пустая ли корзина.
 
-//	$scope.loadCartPage = function () {/* будет загружать корзину вместо loadCart() */}
 
 	$scope.loadCart = function ()
 	{
@@ -21,14 +20,14 @@ angular.module('market-front').controller('cartController', function ($rootScope
 			$scope.cartCost = response.data.cost;	//< общая стоимость товаров в корзине
 			$scope.titlesCount = response.data.titlesCount;	//< количество наименований (включая «пустые» позиции)
 //console.log (response.data);
-//console.log ($scope.cart);
 		},
 		function failureCallback (response)	//< вызывается асинхронно.
 		{
 			$scope.cartLoad = 0;
 			$scope.cartCost = 0;
 			$scope.titlesCount = 0;
-//console.log ('Error: '+ response.data);
+/*console.log ('Error: '+ response.data);
+console.log ('Error: '+ response.data.messages);*/
 			alert (response.data);
 		});
 	}

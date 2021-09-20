@@ -1,6 +1,6 @@
 CREATE TABLE ourusers
 (	id			bigserial,
-	login		VARCHAR(32) NOT NULL UNIQUE,
+	login		VARCHAR(36) NOT NULL UNIQUE,	-- 36 — чтобы в cartKeyByLogin() прошёл uuid (36 символов)
 	password	VARCHAR(64) NOT NULL,	-- размер 64 не для пароля юзера, а для хэша (хэш, похоже, всегда занимает 60 символов. Даже для пароля длиннее в 128 символов)
 	email		VARCHAR(64) NOT NULL UNIQUE,
 	created_at	TIMESTAMP DEFAULT current_timestamp,

@@ -43,5 +43,4 @@ https://www.youtube.com/watch?v=3VdO_E7Lftc&t=11094
 https://youtu.be/3VdO_E7Lftc?t=1094
 
 Текст для следующего коммита:
-	Java7.Урок 2.Полезные блоки.ДЗ
-	Применили Memurai к предыдущей версии проекта (разделили корзину на InMemoryCart и CartDto).
+
