@@ -93,14 +93,6 @@ angular.module('market-front').controller('edit_productController',
 		$scope.new_product = null;
 		$location.path('/store');
 	}
-//----------------------------------------------------------------------------------------
+//----------------------------------------------------------------------- вызовы
 	$scope.prepareEditProductPage();	//< вызов описанной выше функции
 });
-
-/*	$scope.createNewProduct = function (p)
-	{
-		$http.post (param1, param2)
-			 .then (function successCallback (response)	{},
-			 		function failureCallback (response)	{}
-			 	   );
-	}	*/

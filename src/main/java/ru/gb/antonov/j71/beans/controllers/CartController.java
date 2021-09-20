@@ -18,12 +18,12 @@ public class CartController
 {
     private final ProductService productService;
     private final CartService cartService;
+//------------------------------------------------------------------------
 
-//-------------------- Временная реализация (начало) ---------------------
     @GetMapping
-    public Cart getProductsCart (Principal principal)   //черновик
+    public Cart getProductsCart (Principal principal)
     {
-        return cartService.getUsersCart (principal);
+        return cartService.getUsersCart (principal)/*.getCart()*/;
     }
 
     @GetMapping ("/load")
@@ -61,5 +61,4 @@ public class CartController
     {
         cartService.clearCart (principal);
     }
-//-------------------- Временная реализация (конец) ----------------------
 }

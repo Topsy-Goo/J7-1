@@ -43,10 +43,8 @@ public class AuthController
         String login = authRequest.getLogin();
         String password = authRequest.getPassword();
 
-        try
-        {   UsernamePasswordAuthenticationToken upat = new UsernamePasswordAuthenticationToken (
-                                                                login, password);
-            authenticationManager.authenticate (upat);
+/*        try
+        {   authenticationManager.authenticate (new UsernamePasswordAuthenticationToken (login, password));
         }
         catch (BadCredentialsException e)
         {
@@ -58,7 +56,8 @@ public class AuthController
         UserDetails userDetails = ourUserService.loadUserByUsername (login);
         String token = jwtokenUtil.generateJWToken (userDetails);
 
-        return ResponseEntity.ok (new AuthResponse (token));
+        return ResponseEntity.ok (new AuthResponse (token));*/
+        return inlineAuthentificateAndResponseWithJwt (login, password);
     }
 
     //http://localhost:8189/market/api/v1/auth/register
@@ -83,23 +82,27 @@ public class AuthController
                                                     login, password, email);
         if (optionalOurUser.isPresent())
         {
-            try
-            {   authenticationManager.authenticate (new UsernamePasswordAuthenticationToken (
-                                                        login, password));
-            }
-            catch (BadCredentialsException e)
-            {
-                String errMsg = String.format ("Incorrect login (%s) or password (%s).", login, password);
-                return new ResponseEntity<> (new ErrorMessage (errMsg), HttpStatus.UNAUTHORIZED);
-            }
-            catch (Exception e){e.printStackTrace();}
-
-            UserDetails userDetails = ourUserService.loadUserByUsername (login);
-            String token = jwtokenUtil.generateJWToken (userDetails);
-
-            return ResponseEntity.ok (new AuthResponse (token));
+            return inlineAuthentificateAndResponseWithJwt (login, password);
         }
         return new ResponseEntity<> (new ErrorMessage ("Something went wrong."),
                                      HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private ResponseEntity<?> inlineAuthentificateAndResponseWithJwt (String login, String password)
+    {
+        try
+        {   authenticationManager.authenticate (new UsernamePasswordAuthenticationToken (login, password));
+        }
+        catch (BadCredentialsException e)
+        {
+            String errMsg = String.format ("Incorrect login (%s) or password (%s).", login, password);
+            return new ResponseEntity<> (new ErrorMessage (errMsg), HttpStatus.UNAUTHORIZED);
+        }
+        catch (Exception e){e.printStackTrace();}
+
+        UserDetails userDetails = ourUserService.loadUserByUsername (login);
+        String token = jwtokenUtil.generateJWToken (userDetails);
+
+        return ResponseEntity.ok (new AuthResponse (token));
     }
 }

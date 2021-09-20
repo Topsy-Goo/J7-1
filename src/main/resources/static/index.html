@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Marketplace</title>
 
 <!-- Эти ссылки подключают библиотеку стилей из https://getbootstrap.com/docs. -->
@@ -23,7 +24,7 @@
 		.almost_windows
 		{	overflow: auto; /* полосы прокрутки появятся только при необходимости */
 			width: 100%; /* Ширина блока */
-			height: 400px; /* Высота блока */
+			max-height: 400px; /* макс. Высота блока */
 			padding: 5px; /* Поля вокруг текста */
 			border: dotted 2px silver; /* Параметры рамки */
 		}
@@ -35,7 +36,7 @@
 <div class="container">
 
 	<div ng-controller="indexController">
-		<nav class="navbar navbar-expand-lg navbar-light bg-light"><!--  -->
+		<nav class="navbar navbar-expand-lg navbar-link bg-light"><!--  -->
 			<div class="collapse navbar-collapse" id="navbarNav">
 				<ul class="navbar-nav" style="font-weight: 700;">
 					<li class="nav-item" style="background-color: #E0F8C3; margin: 1px;">
@@ -90,8 +91,11 @@
 <!--                    <li class="nav-item" ng-show="isUserLoggedIn()" style="background-color: #E0F8C3; margin: 1px;">
                         <button	class="btn btn-outline-secondary btn-sm"></button>
 					</li>-->
+                    <li class="nav-item" style="background-color: #E0F8C3; margin: 1px;" ng-show="isUserLoggedIn()">
+                        <a	class="nav-link" href="#!/user_profile">👤&nbsp;Профиль</a>
+					</li>
 					<li class="nav-item" style="background-color: #E0F8C3; margin: 1px;" ng-show="isUserLoggedIn()"><!-- "padding: 4px;" -->
-						<a class="nav-link"  ng-click="tryToLogout()">🚪&nbsp;Выход</a>
+						<a class="nav-link" ng-click="tryToLogout()">🚪&nbsp;Выход</a>
 					</li>
 				</ul><!-- 🎀 📎 🔔 👤 🚪 🔕 🔒   -->
 			</div>
@@ -109,6 +113,7 @@
 	<script src="store/store.js"></script>
 	<script src="cart/cart.js"></script>
 	<script src="order/order.js"></script>
+	<script src="user_profile/user_profile.js"></script>
 	<script src="edit_product/edit_product.js"></script>
 	<script src="registration/registration.js"></script>
 </div>

@@ -38,7 +38,7 @@ angular.module('market-front').controller('storeController', function ($rootScop
 			console.log (response.data);
 		});
 	}
-
+//----------------------------------------------------------------------- страницы
 	$scope.generatePagesIndexes = function (startPage, endPage)
 	{
 		let arr = [];
@@ -66,7 +66,7 @@ angular.module('market-front').controller('storeController', function ($rootScop
 		productPageCurrent ++;
 		$scope.loadProductsPage();
 	}
-
+//----------------------------------------------------------------------- действия
 	$scope.deleteProduct = function (pid)
 	{
 		$http.get (contextProductPath + '/delete/' + pid)
@@ -105,8 +105,8 @@ angular.module('market-front').controller('storeController', function ($rootScop
 			});
 		}
 	}
-
-	$scope.cartPlus = function (pid)	//+
+//----------------------------------------------------------------------- плюс/минус
+	$scope.cartPlus = function (pid)
 	{
 		$http.get (contextCartPath + '/plus/'+ pid)
 		.then (
@@ -140,7 +140,6 @@ angular.module('market-front').controller('storeController', function ($rootScop
 	}
 
 	$scope.canShow = function()	{	return $rootScope.isUserLoggedIn();	}
-//----------------------------------------------------------------------------------------
+//----------------------------------------------------------------------- вызовы
 	$scope.loadProductsPage();
 });
-/*	console.log ('removeFromCart: pid: '+ pid);*/

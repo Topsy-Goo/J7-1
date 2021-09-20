@@ -15,9 +15,9 @@ SELECT * FROM OURUSERS ;
 SELECT * FROM ROLES ;
 SELECT * FROM OURUSERS_ROLES ;
 SELECT * FROM PRODUCTS ;
+SELECT * FROM DELIVERY_TYPES ;
 
-
-Домашнее задание:
+Домашнее задание 1:
 1. Сделать на backend'е оформление заказа с сохранением его в БД
 2. * Привязывать заказ к текущему пользователю
 
@@ -37,9 +37,3 @@ https://www.youtube.com/watch?v=3VdO_E7Lftc&t=11094
 https://youtu.be/3VdO_E7Lftc?t=1094
 
 Текст для следующего коммита:
-	Добвили в OurUser зависимость List<Order> orders.
-	Изменили в OrderDetalesDto тип и формат времени создания заказа.
-	Изменили стиль таблиц.
-	Изменили поле ввода почты в регистрации юзера.
-	Поместили таблицу в рамку на стр. cart и order.
-

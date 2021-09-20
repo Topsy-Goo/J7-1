@@ -4,6 +4,7 @@ import lombok.Setter;
 import ru.gb.antonov.j71.entities.Product;
 import ru.gb.antonov.j71.entities.dtos.OrderItemDto;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -11,12 +12,13 @@ import java.util.stream.Collectors;
 import static ru.gb.antonov.j71.Factory.RECALC_CART;
 
 //@Data
-public class Cart
+public class Cart //implements Serializable
 {
     private List<OrderItemDto> oitems;
     @Setter private double cost;
     @Setter private int load;
-    @Setter private int titlesCount;
+    @Setter private int titlesCount;  //< TODO: на фронте это поле выглядит лишним.
+    //public static final long serialVersionUID = 1L;
 
     public Cart() {   oitems = new ArrayList<>();   }
     //public Cart (List<OrderItemDto> list) {   oitems = list;   }
@@ -123,13 +125,15 @@ public class Cart
         cost = 0;
     }
 
-/*    public void clearEmptyLines ()
+    public void updateProduct (Product product)
     {
-        //oitems.stream()
-        //      .filter((oi)->oi.getQuantity()<=0)
-        //      .forEach((oi)->oitems.remove(oi));
-        oitems.removeIf (oi->oi.getQuantity() <= 0);
-    }*/
+        long pid = product.getId();
+        for (OrderItemDto oitem : oitems)
+        {
+            if (oitem.getProductId() == pid)
+                oitem.updateFromProduct (product);
+        }
+    }
 
 /*    public boolean changeQuantity (long productId, int delta) //TODO: пока не пригодилась.
     {

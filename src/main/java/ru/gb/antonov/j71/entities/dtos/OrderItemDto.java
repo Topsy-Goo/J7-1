@@ -2,10 +2,13 @@ package ru.gb.antonov.j71.entities.dtos;
 
 import lombok.Data;
 import ru.gb.antonov.j71.beans.errorhandlers.BadCreationParameterException;
+import ru.gb.antonov.j71.entities.OrderItem;
 import ru.gb.antonov.j71.entities.Product;
 
+import java.io.Serializable;
+
 @Data
-public class OrderItemDto
+public class OrderItemDto implements Serializable
 {
 //TODO: Кажется, здесь validator.constraints не нужны, т.к. ожидаем, что все поля будут заполнятся НЕ юзером.
     private Long productId;
@@ -14,19 +17,17 @@ public class OrderItemDto
     private double price;
     private int    quantity;
     private double cost;
+    public static final long serialVersionUID = 1L;
 //------------------------------------------------------------------
 
-    private OrderItemDto () {}
+    public OrderItemDto ()
+    {}
     public OrderItemDto (Product p)  //< создаём «пустой» объект : без количества и цен.
     {
         if (p == null)
-            throw new BadCreationParameterException ("new OrderItemDto() have got null as parameter.");
+            throw new BadCreationParameterException ("A new OrderItemDto() have got null as parameter.");
         productId = p.getId();
-        title     = p.getTitle();
-        category  = p.getCategory ().getName ();
-        price     = p.getPrice();
-        //quantity = 0;
-        //cost = 0;
+        updateFromProduct (p);
     }
     public OrderItemDto (OrderItemDto oi)
     {
@@ -38,12 +39,6 @@ public class OrderItemDto
         cost      = oi.cost;
     }
 //--------- Геттеры и сеттеры (JSON работает с публичными полями!) --------------
-/*
-    public void setProductId (Long productId) {   this.productId = productId;   }
-    public void setTitle (String newtitle) {   title = newtitle;  }
-    public void setCategory (String name)  {   category = name;   }
-    public void setPrice (double newvalue) {   price = newvalue;  }
-    public void setCost (double newValue)  {   cost = newValue;   }*/
 
     public boolean setQuantity (int newQuantity)
     {
@@ -60,4 +55,17 @@ public class OrderItemDto
     public boolean changeQuantity (int delta) {   return setQuantity (quantity + delta);   }
 
     private void calcCost () {   setCost (price * quantity);   }
+
+    public void updateFromProduct (Product p)
+    {
+        if (productId.equals (p.getId())) //< TODO: выглядит немного избыточно!
+        {
+            title     = p.getTitle();
+            category  = p.getCategory().getName();
+            price     = p.getPrice();
+    //Следующие поля не нужно заполнять при создании объекта, а при обновлении их заполнять ещё и не рекомендуется!
+            //quantity = ?;
+            //cost = ?;
+        }
+    }
 }

@@ -6,8 +6,6 @@ angular.module('market-front').controller('orderController',
 	var cartPageCurrent = 0;
 	var cartPageTotal = 0;
 	$scope.contextPrompt = "";
-/*	$scope.cartLoad = 0;
-	$scope.cartCost = 0;*/
 	$scope.orderNumber = 0;
 	$scope.showForm = true;
 	$scope.wellDone = false;
@@ -23,16 +21,12 @@ angular.module('market-front').controller('orderController',
 			$scope.contextPrompt = "Ваш заказ сформирован.";
 			$scope.orderDetails = response.data;
 			$scope.cart = $scope.orderDetails.cart;
-/*			$scope.cartLoad = $scope.cart.load;
-			$scope.cartCost = $scope.cart.cost;*/
-			console.log ('Детали заказа загружены:');
-			console.log (response.data);
+/*			console.log ('Детали заказа загружены:');
+			console.log (response.data);*/
 		},
 		function failureCallback (response)
 		{
 			$scope.contextPrompt = "Произошла ошибка!";
-/*			$scope.cartLoad = 0;
-			$scope.cartCost = 0;*/
 			alert (response.data);
 		});
 	}
@@ -51,12 +45,11 @@ angular.module('market-front').controller('orderController',
 			$scope.contextPrompt = 'Ваш заказ оформлен.';
 			$scope.orderDetails = response.data;
 			alert ('Ваш заказ оформлен.');	//< кажется, это тоже работает асинхронно
-//			console.log('Order ready.');
 		},
 		function failureCallback (response)
 		{
 			$scope.contextPrompt = "Произошла ошибка!";
-			console.log ('Error: '+ response.data.messages);
+//			console.log ('Error: '+ response.data.messages);
 			alert (response.data.messages);
 			/* если выводим сообщение от валидатора, то нужно укзаывать имя поля с сообщением,
 			например:	response.data.messages,
@@ -67,7 +60,7 @@ angular.module('market-front').controller('orderController',
 	$scope.cancelOrdering = function () { $location.path('/cart'); }
 
 	$scope.ok = function () { $location.path('/store'); }
-
+//----------------------------------------------------------------------- действия
 	$scope.infoProduct = function (oitem)	//+
 	{
 		alert('id:              '+ oitem.productId +
@@ -77,35 +70,7 @@ angular.module('market-front').controller('orderController',
 		   ',\rколичество:      '+ oitem.quantity +
 		   ',\rобщая стоимость: '+ oitem.cost);
 	}
-//---------------------------------------------------------- страницы
-/*	$scope.generatePagesIndexes = function (startPage, endPage)
-	{
-		let arr = [];
-		for (let i = startPage; i < endPage + 1; i++)
-		{
-			arr.push(i);
-		}
-		return arr;
-	}
-
-	$scope.loadProducts = function (pageIndex = 1)	//< загрузка страницы по индексу
-	{
-		cartPageCurrent = pageIndex -1;
-		$scope.loadProductsPage();
-	}
-
-	$scope.prevProductsPage = function ()	//< загрузка левой соседней страницы
-	{
-		cartPageCurrent --;
-		$scope.loadProductsPage();
-	}
-
-	$scope.nextProductsPage = function ()	//< загрузка правой соседней страницы
-	{
-		cartPageCurrent ++;
-		$scope.loadProductsPage();
-	}*/
-//---------------------------------------------------------- условия
+//----------------------------------------------------------------------- условия
 	$scope.canShowConfirmationButton = function ()	//+
 	{
 		return $rootScope.isUserLoggedIn();
@@ -115,6 +80,6 @@ angular.module('market-front').controller('orderController',
 	{
 		return $rootScope.isUserLoggedIn();
 	}
-//----------------------------------------------------------
+//----------------------------------------------------------------------- вызовы
 	$scope.loadOrderDetailes();
 });

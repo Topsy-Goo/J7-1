@@ -8,9 +8,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.gb.antonov.j71.beans.errorhandlers.OurValidationException;
 import ru.gb.antonov.j71.beans.services.OrderService;
-import ru.gb.antonov.j71.beans.services.OurUserService;
-import ru.gb.antonov.j71.beans.utils.Cart;
-import ru.gb.antonov.j71.entities.OurUser;
 import ru.gb.antonov.j71.entities.dtos.OrderDetalesDto;
 
 import java.security.Principal;
@@ -21,16 +18,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderController
 {
-    //private final OurUserService ourUserService;
     private final OrderService   orderService;
-    //private final CartService cartService;
-
 //-------------------------------------------------------------------------------------------
 
     @GetMapping ("/details")
     public OrderDetalesDto getOrderDetales (Principal principal)
     {
-        //TODO:
         return orderService.getOrderDetales (principal);
     }
 

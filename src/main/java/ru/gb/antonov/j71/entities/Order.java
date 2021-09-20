@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -19,15 +20,18 @@ public class Order
     @Column (name="id")
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name="ouruser_id", nullable=false)
+    private OurUser ouruser;
+
     @Column (name="phone")
     private String phone;
 
     @Column (name="address")
     private String address;
 
-/*  @ManyToOne
-    @JoinColumn (name="orderstates", nullable=false)
-    private String state;*/
+    @Column (name="cost")
+    private double cost;    //< общая стоимость выбранных/купленных товаров
 
     @CreationTimestamp
     @Column(name="created_at", nullable=false)
@@ -38,13 +42,15 @@ public class Order
     private LocalDateTime updatedAt;
 
     @ManyToOne
-    @JoinColumn(name="ouruser_id", nullable=false)
-    private OurUser ouruser;
+    @JoinColumn (name="orderstate_id", nullable=false)
+    private OrderState state;
 //--------неколонки
     @OneToMany (mappedBy="order", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<OrderItem> orderItems;
     //У OrderItem'мов не нужно указывать cascade, т.к. мы их тянем за собой в БД,
     // а не они нас.
+//----------------------------------------------------------------------
+    public List<OrderItem> getOrderItems () { return Collections.unmodifiableList (orderItems); }
 //----------------------------------------------------------------------
     @Override public String toString()
     {   return String.format ("Order:[id:%d, u:%s, phone:%s, addr:%s]_with_[%s]",

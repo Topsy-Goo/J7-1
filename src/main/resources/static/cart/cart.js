@@ -6,13 +6,13 @@ angular.module('market-front').controller('cartController', function ($rootScope
 	var cartPageTotal = 0;
 	$scope.cartLoad = 0;
 	$scope.cartCost = 0;
-	$scope.titlesCount = 0;
+	$scope.titlesCount = 0;	//TODO: лишняя переменная?
 
-	$scope.loadCartPage = function () {/* будет загружать корзину вместо loadCart() */}
+//	$scope.loadCartPage = function () {/* будет загружать корзину вместо loadCart() */}
 
-	$scope.loadCart = function ()	//+
+	$scope.loadCart = function ()
 	{
-		$http.get (contextCartPath/* + '/page'*/)
+		$http.get (contextCartPath)
 		.then (
 		function successCallback (response)
 		{
@@ -20,47 +20,22 @@ angular.module('market-front').controller('cartController', function ($rootScope
 			$scope.cartLoad = response.data.load;	//< количество единиц товара
 			$scope.cartCost = response.data.cost;	//< общая стоимость товаров в корзине
 			$scope.titlesCount = response.data.titlesCount;	//< количество наименований (включая «пустые» позиции)
-console.log (response.data);
-console.log ($scope.cart);
+//console.log (response.data);
+//console.log ($scope.cart);
 		},
 		function failureCallback (response)	//< вызывается асинхронно.
 		{
 			$scope.cartLoad = 0;
 			$scope.cartCost = 0;
 			$scope.titlesCount = 0;
-console.log ('Error: '+ response.data);
+//console.log ('Error: '+ response.data);
 			alert (response.data);
 		});
 	}
 
 	$scope.gotoOrder = function () { $location.path('/order'); }
-//----------------------------------------------------------------------- страницы
-/*	$scope.generatePagesIndexes = function (startPage, endPage)
-	{
-		let arr = [];
-		for (let i = startPage; i < endPage + 1; i++)	{ arr.push(i); }
-		return arr;
-	}
-
-	$scope.loadProducts = function (pageIndex = 1)	//< загрузка страницы по индексу
-	{
-		cartPageCurrent = pageIndex -1;
-		$scope.loadCartPage();
-	}
-
-	$scope.prevProductsPage = function ()	//< загрузка левой соседней страницы
-	{
-		cartPageCurrent --;
-		$scope.loadCartPage();
-	}
-
-	$scope.nextProductsPage = function ()	//< загрузка правой соседней страницы
-	{
-		cartPageCurrent ++;
-		$scope.loadCartPage();
-	}*/
 //----------------------------------------------------------------------- плюс/минус
-	$scope.cartMinus = function (pid, quantity)	//+
+	$scope.cartMinus = function (pid, quantity)
 	{
 		if (quantity > 0)
 		{
@@ -78,7 +53,7 @@ console.log ('Error: '+ response.data);
 		}
 	}
 
-	$scope.cartPlus = function (pid)	//+
+	$scope.cartPlus = function (pid)
 	{
 		$http.get (contextCartPath + '/plus/'+ pid)
 		.then (
@@ -93,7 +68,7 @@ console.log ('Error: '+ response.data);
 		});
 	}
 
-	$scope.infoProduct = function (oitem)	//+
+	$scope.infoProduct = function (oitem)
 	{
 		alert('id:              '+ oitem.productId +
 		   ',\rкатегория:       '+ oitem.category +
@@ -103,7 +78,7 @@ console.log ('Error: '+ response.data);
 		   ',\rобщая стоимость: '+ oitem.cost);
 	}
 
-	$scope.removeFromCart = function (pid)	//+
+	$scope.removeFromCart = function (pid)
 	{
 		$http.get (contextCartPath + '/remove/' + pid)
 		.then (
@@ -117,7 +92,7 @@ console.log ('Error: '+ response.data);
 		});
 	}
 
-	$scope.clearCart = function ()	//+
+	$scope.clearCart = function ()
 	{
 		$http.get (contextCartPath + '/clear')
 		.then (

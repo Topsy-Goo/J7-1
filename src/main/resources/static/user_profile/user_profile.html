@@ -1,0 +1,96 @@
+<div>
+	<h5>Ваш профиль</h5>
+	<p></p>
+
+	<div ng-show="canShow()">
+
+		<dl class="row">
+			<dt class="col-sm-3">Логин:&nbsp;</dt>
+			<dd class="col-sm-9">{{userInfo.login}}</dd>
+
+			<dt class="col-sm-3">Эл.&nbsp;почта:&nbsp;</dt>
+			<dd class="col-sm-9">{{userInfo.email}}</dd>
+
+			<dt class="col-sm-3">Всего заказов:&nbsp;</dt>
+			<dd class="col-sm-9">{{ordersLength}}</dd>
+
+<!--			<dt class="col-sm-3">:&nbsp;</dt>
+			<dd class="col-sm-9">{{userInfo.}}</dd>-->
+		</dl>
+
+		<div ng-repeat="order in orders">
+			<table class="table table-striped">
+				<tr><td class="col-3">
+						Заказ № <b>{{order.orderNumber}}</b>.<br>
+						<!--Статус заказа: --><b>{{order.state}}</b>.
+					</td>
+					<td class="col-3">
+						Всего товаров: <b>{{order.load}}</b><br>
+						Общая стоимость: <b>{{order.cost}}</b>
+					</td>
+					<td class="col-4">
+						<b>Телефон:</b> <nobr>{{order.phone}}</nobr><br>
+						<b>Адрес:</b> {{order.address}}
+					</td>
+					<td class="col-2">
+						<button class="btn btn-outline-primary btn-sm justify-end"
+								ng-model="checked" ng-init="checked=false" ng-click="checked=!checked">
+							Показать-Скрыть
+						</button>
+					</td>
+				</tr>
+			</table>
+			<!-- Источник: https://docs.angularjs.org/api/ng/directive/ngIf -->
+			<div class="almost_windows" ng-if="checked" class="animate-if">
+				<table class="table table-success table-striped">
+					<thead class="table-dark">
+						<tr>
+							<th>id</th>				<!-- 0 -->
+							<th>category</th>		<!-- 1 -->
+							<th>title</th>			<!-- 2 -->
+							<th>buying price</th>			<!-- 3 -->
+							<th>quantity cost</th>	<!-- 5 -->
+							<th>quantity</th>		<!-- 4 -->
+							<!--<th>more actions</th>-->	<!-- 6 -->
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="oitem in order.oitems">
+							<td>{{oitem.productId}}</td>				<!-- 0 -->
+							<td>{{oitem.category}}</td>					<!-- 1 -->
+							<th scope="row">{{oitem.title}}</td>		<!-- 2 -->
+							<td>{{oitem.price}}</td>					<!-- 3 -->
+							<td>{{oitem.cost}}</td>						<!-- 5 -->
+							<td>{{oitem.quantity}}</td>					<!-- 4 -->
+						<!--<td><button class="btn btn-info" ng-click="infoProduct(oitem)" title="Посмотреть информацию о товаре."
+										style="font-family: Webdings;">s</button>
+							</td>-->										<!-- 6 -->
+						</tr>
+					</tbody>
+					<tfoot class="table-primary">
+						<tr><td></td>							<!-- 0 -->
+							<td></td>			 					<!-- 1 -->
+							<td></td>								<!-- 2 -->
+							<td></td>								<!-- 3 -->
+							<td>Общая стоимость: {{order.cost}}</td><!-- 5 -->
+							<td>Всего товаров: {{order.load}}</td>	<!-- 4 -->
+							<!--<td></td>-->								<!-- 6 -->
+						</tr>
+					</tfoot>
+				</table>
+			</div> <!-- << Это прячем. -->
+			<p>&nbsp;</p>
+		</div>
+
+<!--		<p>{{userInfo}}</p>
+		<p>{{orders}}</p>-->
+
+	</div>
+<!--	<p>&nbsp;</p>-->
+	<button class="btn btn-secondary" ng-click="gotoStore()">В магазин</button>
+	<p>&nbsp;</p>
+</div>
+
+<!--
+ng-init="showthis=true" ng-click="" ng-show="showthis"
+-->

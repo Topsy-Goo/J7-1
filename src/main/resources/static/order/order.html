@@ -85,6 +85,9 @@
 				<dt class="col-sm-3">Время создания заказа:</dt>
 				<dd class="col-sm-9">{{orderDetails.orderCreationTime}}.</dd>
 
+				<dt class="col-sm-3">Статус заказа:</dt>
+				<dd class="col-sm-9">{{orderDetails.orderState}}.</dd>
+
 				<dt class="col-sm-3">Номер телефона:</dt>
 				<dd class="col-sm-9">{{orderDetails.phone}}.</dd>
 
@@ -96,13 +99,11 @@
 
 				<dt class="col-sm-3">Сумма к оплате с учётом стоимости доставки:</dt>
 				<dd class="col-sm-9"><b>{{orderDetails.overallCost}}</b>.</dd>
-
-<!--			<dt class="col-sm-3"></dt>
+<!--
+				<dt class="col-sm-3"></dt>
 				<dd class="col-sm-9"></dd>
-
 			Дата и Время доставки:	{{orderDetails.deliveryDateTime}}.<br>
 			Тип доставки:			{{orderDetails.deliveryType}}.<br>
-			Статус заказа:			{{orderDetails.orderStatus}}.<br>
 			Тип оплаты:			{{orderDetails.paymentType}}.<br>
 -->
 			</dl>

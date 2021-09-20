@@ -13,11 +13,10 @@ import static ru.gb.antonov.j71.Factory.PROD_TITLELEN_MIN;
 @Data
 public class ProductDto
 {
-    private Long   productId;
+    private Long productId;
 
     @NotNull (message="Не задано название товара!")
-    @Length (min= PROD_TITLELEN_MIN,
-             max= PROD_TITLELEN_MAX,
+    @Length (min= PROD_TITLELEN_MIN, max= PROD_TITLELEN_MAX,
              message="Длина названия товара: 3…255 символов!")
     private String title;
 

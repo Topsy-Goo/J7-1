@@ -25,7 +25,8 @@ public class OrderDetalesDto
     private Long          orderNumber;
 //  private LocalDateTime orderCreatedAt;
     private String        orderCreationTime;
-//  private String        deliveryType;
+//  private String        deliveryType; TODO: Кажется, это несложно.
+    private String        orderState;
     private double        deliveryCost;
     private double        overallCost;
 /*  @Length (max=255, message="Максимальная длина текста комментария — 255 символов.")

@@ -66,14 +66,13 @@ public class ProductService
     public Product updateProduct (long id, String title, double price, String productCategoryName)
     {
         Product p = findById (id);  //< бросает ResourceNotFoundException
-        ProductsCategory category = p.getCategory ();
+        ProductsCategory category = p.getCategory();
 
-        if (!category.getName().equals(productCategoryName))
+        if (!category.getName().equals (productCategoryName))
         {
             category = productCategoryService.findByName (productCategoryName); //< бросает ResourceNotFoundException
         }
         p.update (title, price, category);     //< бросает UnableToPerformException
-        //cartService.updateProduct (p);
         return productRepo.save (p);
     }
 //TODO: Успешное удаление или редактирование товаров должно как-то отражаться и в корзинах, эти товары содержащих.
@@ -108,5 +107,12 @@ public class ProductService
                      .collect (Collectors.toList ());
         }
         return Collections.emptyList ();
+    }
+
+    public void onProductDeletion (Long pid)
+    {   //Обнулим количество товара, чтобы его невозможно было купить.
+        Product p = findById (pid);
+        p.setRest (0);
+        productRepo.save (p);
     }
 }

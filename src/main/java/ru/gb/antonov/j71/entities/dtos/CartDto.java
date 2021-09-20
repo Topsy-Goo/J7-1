@@ -5,9 +5,6 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class AuthResponse
+public class CartDto
 {
-    private String token;
-
-    public AuthResponse (String token) { this.token = token;   }
 }

@@ -13,6 +13,7 @@ import ru.gb.antonov.j71.beans.errorhandlers.UserNotFoundException;
 import ru.gb.antonov.j71.beans.repositos.OurUserRepo;
 import ru.gb.antonov.j71.entities.OurUser;
 import ru.gb.antonov.j71.entities.Role;
+import ru.gb.antonov.j71.entities.dtos.UserInfoDto;
 
 import java.security.Principal;
 import java.util.Collection;
@@ -28,7 +29,9 @@ public class OurUserService implements UserDetailsService
     private final OurUserRepo ourUserRepo;
     private final RoleService roleService;
 //-----------------------------------------------------------------------------------
-    public OurUser findUserByPrincipal (Principal principal)
+//TODO: если юзера можно будет удалять из БД, то нужно не забыть удалить и его корзину из Memurai.
+
+    public OurUser userByPrincipal (Principal principal)
     {
         String login = (principal != null) ? principal.getName() : STR_EMPTY;
         String errMsg = "Логин не зарегистрирован: " + login;
@@ -73,5 +76,12 @@ public class OurUserService implements UserDetailsService
     public Optional<OurUser> findByLogin (String login)
     {
         return ourUserRepo.findByLogin (login);
+    }
+
+    @Transactional
+    public UserInfoDto getUserInfoDto (Principal principal)
+    {
+        OurUser u = userByPrincipal (principal);
+        return new UserInfoDto (u.getLogin(), u.getEmail());
     }
 }

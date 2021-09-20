@@ -2,8 +2,10 @@ package ru.gb.antonov.j71.entities;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -16,9 +18,15 @@ public class OrderState
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column (name="state", nullable=false, unique=true)
-    private String state;       //NONE, PENDING, SERVING, PAYED, CANCELED;
+    @Column (name="short_name", nullable=false, unique=true)
+    private String shortName;       //NONE, PENDING, SERVING, PAYED, CANCELED;
 
-    @Column (name="friendly_name")
+    @Column (name="friendly_name", nullable=false, unique=true)
     private String friendlyName;
+
+    @CreationTimestamp    @Column(name="created_at", nullable=false)
+    private LocalDateTime createdAt;
+
+    @CreationTimestamp    @Column (name="updated_at", nullable=false)
+    private LocalDateTime updatedAt;
 }

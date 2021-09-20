@@ -78,7 +78,20 @@
 			<artifactId>flyway-core</artifactId>
 		</dependency>
 
-<!--		<dependency>	для @PostConstruct и @PreDestroy
+	<!-- Для использования следующих двух зависимостей требуется установка Redis'а (Linux only)
+		 или Memorai (аналог Redis'а для Windows). -->
+		<dependency>	<!-- Аналог Spring data под кэшь Radis'а. -->
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-redis</artifactId>
+		</dependency>
+		<!-- + -->
+		<dependency>	<!-- Библиотека для установления соединения с Redis. -->
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>3.6.0</version>
+		</dependency>
+
+<!--		<dependency>	для @PostConstruct и @PreDestroy; не понадобилось, — всё работает и так.
 			<groupId>javax.annotation</groupId>
 			<artifactId>jsr250-api</artifactId>
 			<version>1.0</version>

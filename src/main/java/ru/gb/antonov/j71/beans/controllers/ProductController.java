@@ -70,10 +70,12 @@ public class ProductController
     @PutMapping
     public Optional<ProductDto> updateProduct (@RequestBody ProductDto pdto)
     {
+        //TODO: редактирование товаров пока не входит в план проекта.
         Product p = productService.updateProduct (pdto.getProductId(),
                                                   pdto.getTitle (),
                                                   pdto.getPrice (),
                                                   pdto.getCategory ());
+        cartService.updateProductInCarts (p);
         return toOptionalProductDto (p);
     }
 

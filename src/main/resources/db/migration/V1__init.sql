@@ -23,7 +23,7 @@ CREATE TABLE roles
 INSERT INTO roles (name) VALUES	('ROLE_SUPERADMIN'),('ROLE_ADMIN'),('ROLE_USER');
 -- ----------------------------------------------------------------------
 CREATE TABLE ourusers_roles
-(	ouruser_id		bigint	NOT NULL,
+(	ouruser_id	bigint	NOT NULL,
 	role_id		INT		NOT NULL,
 	PRIMARY KEY (ouruser_id, role_id),
 	FOREIGN KEY (ouruser_id) REFERENCES ourusers (id),
@@ -66,55 +66,74 @@ INSERT INTO products (title, price, rest, category_id) VALUES
 -- ----------------------------------------------------------------------
 CREATE TABLE orderstates
 (	id				serial,
-	state			VARCHAR(16)	NOT NULL,
-	friendly_name	VARCHAR(64)	NOT NULL,
+	short_name		VARCHAR(16)	NOT NULL,	-- фактически, короткое имя, которое удобно помнить
+	friendly_name	VARCHAR(64)	NOT NULL,	-- расшифровка короткого имени, для демонстрации пользователю
+	created_at		TIMESTAMP DEFAULT current_timestamp,
+	updated_at		TIMESTAMP DEFAULT current_timestamp,
 	PRIMARY KEY (id)
 );
-INSERT INTO orderstates (state, friendly_name) VALUES
-	('NONE','(Нет статуса)'),('PENDING','Ожидает подтверждения'),('SERVING','Выполняется'),
-	('PAYED','Оплачен'),('CANCELED','Отменён');
+INSERT INTO orderstates (short_name, friendly_name) VALUES
+	('NONE','(Нет статуса)'),	('PENDING','Ожидает подтверждения'),	('SERVING','Выполняется'),
+	('PAYED','Оплачен'),		('CANCELED','Отменён');
+-- ----------------------------------------------------------------------
+CREATE TABLE delivery_types
+(
+	id				bigserial,
+	friendly_name	VARCHAR(64)	NOT NULL,
+	cost			DECIMAL(10,2),
+	created_at		TIMESTAMP DEFAULT current_timestamp,
+	updated_at		TIMESTAMP DEFAULT current_timestamp,
+	PRIMARY KEY (id)
+);
+INSERT INTO delivery_types (friendly_name, cost) VALUES
+	('Самовывоз',0.0),		('Курьерская доставка', 300.0),
+	('Почта России',300.0),	('Доставка до терминала',100.0);
 -- ----------------------------------------------------------------------
 CREATE TABLE orders
 (	id				bigserial,
 	ouruser_id		bigint	NOT NULL,
-	phone			VARCHAR(16)	NOT NULL,
-	address			VARCHAR(255)	NOT NULL,
---	orderstate_id	INT NOT NULL,
---	comment			VARCHAR(1024),
+	phone			VARCHAR(16) NOT NULL,
+	address			VARCHAR(255) NOT NULL,
+	cost			DECIMAL(10,2),
+	orderstate_id	INT NOT NULL,
+--	comment			VARCHAR(512),
 	created_at		TIMESTAMP DEFAULT current_timestamp,
 	updated_at		TIMESTAMP DEFAULT current_timestamp,
 	PRIMARY KEY (id),
---	FOREIGN KEY (orderstate_id) REFERENCES orderstates (id),
+	FOREIGN KEY (orderstate_id) REFERENCES orderstates (id),
 	FOREIGN KEY (ouruser_id) REFERENCES ourusers (id)
 );
+INSERT INTO orders (ouruser_id, phone, address, cost, orderstate_id) VALUES
+	(2, '+78006004050', 'г.Китеж, ул.Алхимиков, 17-3-12', 140.0, 4),
+	(2, '+78006004050', 'г.Китеж, ул.Алхимиков, 17-3-12', 300.0, 5);
 -- ----------------------------------------------------------------------
 CREATE TABLE orderitems
-(	id			bigserial,
-	order_id    bigint	NOT NULL,
-	product_id  bigint	NOT NULL,
-	bying_price DECIMAL(10,2),
-	quantity	INT,
+(	id				bigserial,
+	order_id    	bigint	NOT NULL,
+	product_id  	bigint	NOT NULL,
+	buying_price	DECIMAL(10,2),
+	quantity		INT,
+	created_at		TIMESTAMP DEFAULT current_timestamp,
+	updated_at		TIMESTAMP DEFAULT current_timestamp,
 	PRIMARY KEY (id),
 	FOREIGN KEY (order_id) REFERENCES orders (id),
 	FOREIGN KEY (product_id) REFERENCES products (id)
 );
+INSERT INTO orderitems (order_id, product_id, buying_price, quantity) VALUES
+	(1,  1,  10.0, 1),	(1,  2,  20.0, 2),	(1,  3,  30.0, 3),
+	(2, 18, 180.0, 1),	(2, 12, 120.0, 1);
+-- ----------------------------------------------------------------------
+-- Оказывается, какой-то гений придумал «camelCase» в названиях таблиц и столбцов заменять на camel_case при составлении запросов…
 -- ----------------------------------------------------------------------
 --carts (ouruser_id, product_id, quantity)
 --	(1, 1, 1),
 --	(1, 1, 1),
 --	(1, 1, 1);
---CREATE TABLE ordered_products
---(
---	id			bigserial,		-- TODO: временный id создан, чтобы сузить круг при поиске ошибок
+--ordered_products
 --	order_id	,
 --	product_id	bigint	NOT NULL,
---	price		INT,
 --	quantity	INT,
 ----	PRIMARY KEY (order_id, product_id),
---	PRIMARY KEY (id),
 --	FOREIGN KEY (ouruser_id) REFERENCES ourusers (id)
 --	product_id	,
 --	quantity	INT,
---
---
---);

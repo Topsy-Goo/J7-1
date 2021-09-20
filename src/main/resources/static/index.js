@@ -62,6 +62,11 @@
 				templateUrl: 'registration/registration.html',
 				controller:	 'registrationController'
 			})
+			.when('/user_profile',
+			{
+				templateUrl: 'user_profile/user_profile.html',
+				controller:	 'user_profileController'
+			})
 			.otherwise(
 			{
 				redirectTo:	'/main'
