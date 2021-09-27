@@ -169,7 +169,7 @@
 				</executions>
 				<configuration>
 					<sources>
-						<source>${project.basedir}/src/main/resources/xsd/product.xsd</source>
+						<source>${project.basedir}/src/main/resources/xsd/product.xsd</source><!--  -->
 					</sources>
 					<!-- пакет, который указан во всех сгенерированных java-файлах -->
 					<packageName>ru.gb.antonov.j71.beans.soap</packageName>

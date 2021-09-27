@@ -4,6 +4,18 @@
 	xmlns:tns="http://j71.antonov.gb.ru/spring/ws/product"
 	targetNamespace="http://j71.antonov.gb.ru/spring/ws/product" elementFormDefault="qualified">
 
+	<xs:complexType name="ProductSoap">
+		<xs:sequence>
+			<xs:element name="id" type="xs:long"/>
+			<xs:element name="title" type="xs:string"/>
+			<xs:element name="price" type="xs:double"/>
+			<xs:element name="rest" type="xs:int"/>
+			<xs:element name="categoryName" type="xs:string"/>
+			<xs:element name="createdAt" type="xs:long"/><!-- unsignedLong -->
+			<xs:element name="updatedAt" type="xs:long"/><!-- unsignedLong -->
+		</xs:sequence>
+	</xs:complexType>
+
 	<xs:element name="getProductSoapByIdRequest">
 		<xs:complexType>
 			<xs:sequence>
@@ -20,17 +32,22 @@
 		</xs:complexType>
 	</xs:element>
 
-	<xs:complexType name="ProductSoap">
-		<xs:sequence>
-			<xs:element name="id" type="xs:long"/>
-			<xs:element name="title" type="xs:string"/>
-			<xs:element name="price" type="xs:double"/>
-			<xs:element name="rest" type="xs:int"/>
-<!--			<xs:element name="category" type="tns:ProductsCategorySoap"/>-->
-			<xs:element name="createdAt" type="xs:long"/><!-- unsignedLong -->
-			<xs:element name="updatedAt" type="xs:long"/><!-- unsignedLong -->
-		</xs:sequence>
-	</xs:complexType>
+	<xs:element name="getProductSoapRangeByIdRequest">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="fromId" type="xs:long"/>
+				<xs:element name="toId" type="xs:long"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="getProductSoapRangeByIdResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="soapProducts" maxOccurs="unbounded" type="tns:ProductSoap"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
 
 <!--
 	<xs:complexType name="ProductsCategorySoap">
@@ -43,6 +60,5 @@
 		</xs:sequence>
 	</xs:complexType>
 -->
-
 
 </xs:schema>

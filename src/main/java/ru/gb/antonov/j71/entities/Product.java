@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import ru.gb.antonov.j71.beans.errorhandlers.BadCreationParameterException;
-import ru.gb.antonov.j71.beans.soap.ProductSoap;
+import ru.gb.antonov.j71.beans.soap.products.ProductSoap;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -124,6 +124,7 @@ public class Product
                                 p.title,
                                 p.price,
                                 p.rest,
+                                p.getCategory().getName(),
                                 p.createdAt.getLong (ChronoField.MILLI_OF_SECOND),
                                 p.updatedAt.getLong (ChronoField.MILLI_OF_SECOND));
     }

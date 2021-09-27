@@ -1,16 +1,20 @@
 package ru.gb.antonov.j71.beans.services;
 
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.gb.antonov.j71.beans.errorhandlers.ResourceNotFoundException;
+import ru.gb.antonov.j71.beans.errorhandlers.UnableToPerformException;
 import ru.gb.antonov.j71.beans.repositos.ProductRepo;
+import ru.gb.antonov.j71.beans.soap.products.ProductSoap;
 import ru.gb.antonov.j71.entities.Product;
 import ru.gb.antonov.j71.entities.ProductsCategory;
 import ru.gb.antonov.j71.entities.dtos.ProductDto;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,6 +35,15 @@ public class ProductService
         String errMessage = "Не найден продукт с id = "+ id;
         return productRepo.findById(id)
                           .orElseThrow (()->new ResourceNotFoundException (errMessage));
+    }
+
+/** @param from {@code productId} первого элемента интервала.
+    @param to {@code productId} последнего элемента интервала (включительно). */
+    public List<Product> findAllByIdBetween (Long from, Long to)
+    {
+        String errMsg = String.format ("Не могу получить все товары из диапазона id: %d…%d.", from, to);
+        return productRepo.findAllByIdBetween (from, to)
+                          .orElseThrow (()->new ResourceNotFoundException (errMsg));
     }
 
     public Page<Product> findAll (int pageIndex, int pageSize)
@@ -75,13 +88,18 @@ public class ProductService
         p.update (title, price, category);     //< бросает UnableToPerformException
         return productRepo.save (p);
     }
-//TODO: Успешное удаление или редактирование товаров должно как-то отражаться и в корзинах, эти товары содержащих.
+
+/** Товар не удаляем, а обнуляем у него поле {@code rest}. В дальнейшем, при попытке добавить
+    этот товар в корзину, проверяется его количество, и, т.к. оно равно 0, добавление не происходит.<p>
+    Логично будет добавить к этому НЕвозможность показывать такой товар на витрине.*/
     @Transactional
     public void deleteById (Long id)
     {
+        //TODO: Редактирование товаров пока не входит в план проекта.
+        //TODO: добавить к этому НЕвозможность показывать такой товар на витрине.
         Product p = findById (id);  //< бросает ResourceNotFoundException
-        //cartService.onProductDeletion (p);
-        productRepo.delete(p);
+        p.setRest (0);
+        //productRepo.delete(p);
     }
 //-------------- Фильтры ------------------------------------------------
     /*public List<Product> getProductsByPriceRange (Integer min, Integer max)
@@ -114,5 +132,35 @@ public class ProductService
         Product p = findById (pid);
         p.setRest (0);
         productRepo.save (p);
+    }
+//-------------- SOAP ---------------------------------------------------
+
+    @Transactional
+    public ProductSoap getProductSoapByProductId (Long pid)
+    {
+        return Product.toProductSoap (findById (pid));
+    }
+
+/** @param from {@code productId} первого элемента интервала.
+    @param to {@code productId} последнего элемента интервала (включительно). */
+    @Transactional
+    @NotNull
+    public List<ProductSoap> getProductSoapRangeByProductIdRange (Long from, Long to)
+    {
+        List<ProductSoap> result = Collections.emptyList();
+        if (from != null && to != null && from > 0L && from.compareTo(to) <= 0)
+        {
+            long range = to - from +1L;
+            if (range <= (long)Integer.MAX_VALUE)
+            {
+                List<Product> products = findAllByIdBetween (from, to);
+                result = new ArrayList<>((int)range);
+
+                for (Product p : products)
+                    result.add (Product.toProductSoap (p));
+                /*result = findAllByIdBetween (from, to).stream().map (Product::toProductSoap).collect (Collectors.toList ());*/
+            }
+        }
+        return result;
     }
 }
