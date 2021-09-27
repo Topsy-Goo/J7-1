@@ -1,6 +1,6 @@
-<div>
+<div style="margin: 10px;">
 	<h5>Каталог продуктов</h5>
-		<p></p>
+	<p>&nbsp;</p>
 
 	<table class="table table-striped">
 		<thead class="table-dark">
@@ -9,7 +9,7 @@
 				<th>title</th>
 				<th>price</th>
 				<th>more actions</th>
-				<th ng-show="canShow()">add to cart</th><!--  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+				<th>add to cart</th><!--  ng-show="canShow()" !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 			</tr>
 		</thead>
 		<!-- ng-show  работает и на таком уровне, если не забыть добавить $rootScope в js-файл. -->
@@ -27,12 +27,12 @@
 					title="Редактировать продукт."
 					ng-click="startEditProduct(p.productId)" ng-show="canShow()">a</button>
 				&nbsp;
-				<button class="btn btn-danger" style="font-family: Webdings;"
+				<button class="btn btn-warning" style="font-family: Webdings;"
 					title="Удалить продукт."
 					ng-click="deleteProduct(p.productId)" ng-show="canShow()">r</button>
 			</td>
 			<!-- sar 📝 ✂ ✖🗙❌⚙ℹ style="font-family: Webdings;"   -->
-			<td ng-show="canShow()"><!--  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+			<td><!--  ng-show="canShow()" !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 				<button class="btn btn-primary"
 					title="Убрать продукт из корзины." style="width: 30pt"
 					ng-click="cartMinus(p.productId)">-</button>
@@ -49,7 +49,7 @@
 		</caption>
 	</table>
 
-	<p ng-show="canShow()"><!--  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+	<p><!--  ng-show="canShow()" !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 			Товаров в корзине: {{cartLoad}}
 	</p>
 

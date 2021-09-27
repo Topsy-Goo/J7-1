@@ -35,24 +35,11 @@ public class OrderController
     {   if (br.hasErrors())
         {
             //преобразуем набор ошибок в список сообщений, и пакуем в одно общее исключение (в наше заранее для это приготовленное исключение).
-            throw new OurValidationException (br.getAllErrors ()
+            throw new OurValidationException (br.getAllErrors()
                                                 .stream()
                                                 .map (ObjectError::getDefaultMessage)
                                                 .collect (Collectors.toList ()));
         }
         return orderService.applyOrderDetails (orderDetalesDto, principal);
     }
-
-/*    @GetMapping
-    public OrderDetalesDto getUsersCart (Principal principal)
-    {
-
-    }*/
-
-/*    @GetMapping ("/orderinfo")
-    public void orderInfo (Principal principal)
-    {
-        //cartService.getOrderInfo (userFromPrincipal (principal));
-    }*/
-
 }

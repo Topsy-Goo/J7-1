@@ -82,15 +82,30 @@
 	приложения, бэк считывает БД из sql-файла, а при регистрации нового юзера он не записывается в
 	упомянутый файл).
 	*/
+		const contextAuthoPath	= 'http://localhost:8189/market/api/v1/auth';
+		const contextCartPath	= 'http://localhost:8189/market/api/v1/cart';
+
         if ($localStorage.webMarketUser)
         {
             $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.webMarketUser.token;
         }
+
+		if (!$localStorage.gbj7MarketGuestCartId)
+		{
+			$http.get(contextCartPath + '/uuid')
+			.then(
+			function successCallback(response)
+			{
+				$localStorage.gbj7MarketGuestCartId = response.data.value;
+				console.log ('Temporary cartID is generated:'+ response.data.value);
+//				console.log ();
+			});
+		}
 	}
 })();
 
 angular.module('market-front').controller('indexController',
-								function ($rootScope, $scope, $http, $localStorage, $location)
+	function ($rootScope, $scope, $http, $localStorage, $location)
 {
 /*	function ($scope, $http) - инжектим модули, которые входят в стандартную поставку ангуляра:
 
@@ -99,7 +114,9 @@ angular.module('market-front').controller('indexController',
 	$rootScope - глобальный контекст (позволяет обращаться к ф-циям (и переменным?) откуда угодно)
 	$localStorage - локальное хранилище браузера (требуется подкл. скрипт ngStorage.min.js.)
 */
-	const contextProductPath = 'http://localhost:8189/market/api/v1/auth';
+	const contextAuthoPath = 'http://localhost:8189/market/api/v1/auth';
+	const contextCartPath  = 'http://localhost:8189/market/api/v1/cart';
+
 	$scope.appTitle = 'Marketplace';
 	$scope.mainPageTitle = 'Главная страница';
 	$scope.storePageTitle = 'Каталог продуктов';
@@ -124,7 +141,8 @@ angular.module('market-front').controller('indexController',
 	{
 		if ($scope.user != null)
 		{
-			$http.post(contextProductPath + '/login', $scope.user)
+			$http.post (contextAuthoPath + '/login',
+						$scope.user)
 			.then(
 			function successCallback (response)
 			{
@@ -134,24 +152,42 @@ angular.module('market-front').controller('indexController',
 					$localStorage.webMarketUser = {login: $scope.user.login, token: response.data.token};
 					$scope.clearUserFields();
 				}
+				$scope.tryMergeCarts();
 			},
 			function failureCallback (response)
 			{
 				alert ('ОШИБКА: '+ response.data.messages);
 			});
 		}
-	};
+	}
 
 	$scope.tryToLogout = function ()
 	{
 		$scope.removeUserFromLocalStorage();
 		$scope.clearUserFields();
 		$location.path('/main');
-	};
+	}
 
 	$scope.removeUserFromLocalStorage = function ()
 	{
 		delete $localStorage.webMarketUser;
 		$http.defaults.headers.common.Authorization = '';
-	};
+	}
+
+	$scope.tryMergeCarts = function ()
+	{
+		if ($localStorage.gbj7MarketGuestCartId)
+		{
+			$http.get (contextCartPath + '/merge/' + $localStorage.gbj7MarketGuestCartId)
+			.then (
+			function successCallback (response)
+			{
+				$scope.loadCart();
+			},
+			function failureCallback (response)
+			{
+				alert (response.data);
+			});
+		}
+	}
 });

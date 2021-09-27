@@ -59,7 +59,7 @@ public class OrderItemDto
 
     //private void calcCost () {   setCost (price * quantity);   }
 
-    public void updateFromProduct (Product p)
+    public boolean updateFromProduct (Product p)
     {
         if (productId.equals (p.getId())) //< TODO: выглядит немного избыточно!
         {
@@ -69,6 +69,8 @@ public class OrderItemDto
     //Следующие поля не нужно заполнять при создании объекта, а при обновлении их заполнять ещё и не рекомендуется!
             //quantity = ?;
             //cost = ?;
+            return true;
         }
+        return false;
     }
 }

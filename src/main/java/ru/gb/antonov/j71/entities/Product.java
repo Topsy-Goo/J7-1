@@ -4,9 +4,11 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import ru.gb.antonov.j71.beans.errorhandlers.BadCreationParameterException;
+import ru.gb.antonov.j71.beans.soap.ProductSoap;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
 import java.util.Objects;
 
 import static ru.gb.antonov.j71.Factory.MAX_PRICE;
@@ -114,5 +116,15 @@ public class Product
 
     @Override public String toString()
     {   return String.format ("[id:%d, «%s», %.2f]", id, title, price);
+    }
+
+    public static ProductSoap toProductSoap (Product p)
+    {
+        return new ProductSoap (p.id,
+                                p.title,
+                                p.price,
+                                p.rest,
+                                p.createdAt.getLong (ChronoField.MILLI_OF_SECOND),
+                                p.updatedAt.getLong (ChronoField.MILLI_OF_SECOND));
     }
 }

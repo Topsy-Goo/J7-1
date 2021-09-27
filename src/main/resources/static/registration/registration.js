@@ -10,7 +10,9 @@ angular.module('market-front').controller('registrationController',
 	$rootScope - глобальный контекст (позволяет обращаться к ф-циям (и переменным?) откуда угодно)
 	$localStorage - локальное хранилище браузера (требуется подкл. скрипт ngStorage.min.js.)
 */
-	const contextProductPath = 'http://localhost:8189/market/api/v1/auth';
+	const contextAuthoPath = 'http://localhost:8189/market/api/v1/auth';
+	const contextCartPath = 'http://localhost:8189/market/api/v1/cart';
+
 	var contextPrompt_Registered = "Вы успешно зарегистрированы.";
 	var contextPrompt_Unathorized = "Введите логин, паоль и адрес электронной почты.";
 	var contextPrompt_LogedIn = "Вы уже авторизованы.";
@@ -36,9 +38,9 @@ angular.module('market-front').controller('registrationController',
 	{
 		if ($scope.new_user != null)
 		{
-			$http.post(contextProductPath + '/register', $scope.new_user)
-			.then
-			(function successCallback (response)
+			$http.post (contextAuthoPath + '/register', $scope.new_user)
+			.then(
+			function successCallback (response)
 			{
 				if (response.data.token)
 				{
@@ -47,6 +49,7 @@ angular.module('market-front').controller('registrationController',
 					$scope.clearNewUserFields();
 					$scope.contextPrompt = contextPrompt_Registered;
 				}
+				$scope.tryMergeCarts();
 			},
 			function failureCallback (response)	//кажется, errorCallback тоже можно использовать
 			{
@@ -65,8 +68,24 @@ angular.module('market-front').controller('registrationController',
 
 	$scope.clearNewUserFields = function()	{	$scope.new_user = null;	}
 
+	$scope.tryMergeCarts = function ()
+	{
+		if ($localStorage.gbj7MarketGuestCartId)
+		{
+			$http.get (contextCartPath + '/merge' + '/' + $localStorage.gbj7MarketGuestCartId)
+			.then (
+			function successCallback (response)
+			{
+				$scope.loadCart();
+			},
+			function failureCallback (response)
+			{
+				alert (response.data);
+			});
+		}
+	}
+//-------------------------------------------------------------------------------- условия
 	$scope.canShow = function()	{	return !$rootScope.isUserLoggedIn();	}
-//----------------------------------------------------------------------------------------
-
+//-------------------------------------------------------------------------------- вызовы
 	$scope.prepareToRegistration();	//< вызов описанной выше функции
 });

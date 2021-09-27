@@ -1,6 +1,6 @@
 
 angular.module('market-front').controller('orderController',
-	function ($rootScope, $scope, $http, $location)
+	function ($rootScope, $scope, $http, $location, $localStorage)
 {
 	const contextOrderPath = 'http://localhost:8189/market/api/v1/order';
 	var cartPageCurrent = 0;
@@ -16,13 +16,13 @@ angular.module('market-front').controller('orderController',
 		.then (
 		function successCallback (response)
 		{
-		//TODO:	тут мы получаем данные о выбранных товарах. В списке отсутствуют «пустые» позиции.
-		//		Возможно, следует юзеру сообщить об их отсутствии.
+		//тут мы получаем данные о выбранных товарах. В списке отсутствуют «пустые» позиции.
+		//TODO:	Возможно, следует юзеру сообщить об их отсутствии.
 			$scope.contextPrompt = "Ваш заказ сформирован.";
 			$scope.orderDetails = response.data;
 			$scope.cart = $scope.orderDetails.cartDto;
-console.log ('Детали заказа загружены:');
-console.log (response.data);
+			console.log ('Детали заказа загружены:');
+			console.log (response.data);
 		},
 		function failureCallback (response)
 		{
@@ -44,13 +44,13 @@ console.log (response.data);
 			$scope.showForm = false;
 			$scope.contextPrompt = 'Ваш заказ оформлен.';
 			$scope.orderDetails = response.data;
-			alert ('Ваш заказ оформлен.');	//< кажется, это тоже работает асинхронно
+			alert ($scope.contextPrompt);	//< кажется, это тоже работает асинхронно
 		},
 		function failureCallback (response)
 		{
 			$scope.contextPrompt = "Произошла ошибка!";
-//			console.log ('Error: '+ response.data.messages);
-			alert (response.data.messages);
+			//console.log (response.data);
+			alert ($scope.contextPrompt);
 			/* если выводим сообщение от валидатора, то нужно укзаывать имя поля с сообщением,
 			например:	response.data.messages,
 			а для всех нормальных сообщений — указываем только response.data.	*/
@@ -61,7 +61,7 @@ console.log (response.data);
 
 	$scope.ok = function () { $location.path('/store'); }
 //----------------------------------------------------------------------- действия
-	$scope.infoProduct = function (oitem)	//+
+	$scope.infoProduct = function (oitem)
 	{
 		alert('id:              '+ oitem.productId +
 		   ',\rкатегория:       '+ oitem.category +
@@ -71,15 +71,9 @@ console.log (response.data);
 		   ',\rобщая стоимость: '+ oitem.cost);
 	}
 //----------------------------------------------------------------------- условия
-	$scope.canShowConfirmationButton = function ()	//+
-	{
-		return $rootScope.isUserLoggedIn();
-	}
+	$scope.canShowConfirmationButton = function ()	{ return $rootScope.isUserLoggedIn(); }
 
-	$scope.canShowOrderedItems = function ()	//+
-	{
-		return $rootScope.isUserLoggedIn();
-	}
+	$scope.canShowOrderedItems = function ()	{ return $rootScope.isUserLoggedIn(); }
 //----------------------------------------------------------------------- вызовы
 	$scope.loadOrderDetailes();
 });

@@ -84,7 +84,7 @@ public class AuthController
         {
             return inlineAuthentificateAndResponseWithJwt (login, password);
         }
-        return new ResponseEntity<> (new ErrorMessage ("Something went wrong."),
+        return new ResponseEntity<> (new ErrorMessage ("Новый пользователь создан некорректно."),
                                      HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -95,7 +95,7 @@ public class AuthController
         }
         catch (BadCredentialsException e)
         {
-            String errMsg = String.format ("Incorrect login (%s) or password (%s).", login, password);
+            String errMsg = String.format ("Некорректные логин (%s) и/или пароль (%s).", login, password);
             return new ResponseEntity<> (new ErrorMessage (errMsg), HttpStatus.UNAUTHORIZED);
         }
         catch (Exception e){e.printStackTrace();}

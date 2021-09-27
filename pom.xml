@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+			   					   https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -93,20 +95,48 @@
 		<dependency>
 			<groupId>org.jetbrains</groupId>
 			<artifactId>annotations</artifactId>
-			<version>RELEASE</version>
+			<version>22.0.0</version><!-- LATEST or RELEASE are being deprecated -->
 			<scope>compile</scope>
 		</dependency>
 
-		<!--		<dependency>	для @PostConstruct и @PreDestroy; не понадобилось, — всё работает и так.
-					<groupId>javax.annotation</groupId>
-					<artifactId>jsr250-api</artifactId>
-					<version>1.0</version>
-				</dependency> -->
+<!--		<dependency>	для @PostConstruct и @PreDestroy; не понадобилось, — всё работает и так.
+			<groupId>javax.annotation</groupId>
+			<artifactId>jsr250-api</artifactId>
+			<version>1.0</version>
+		</dependency> -->
+
+<!-- Следующие 5 зависимости нужны для SOAP. -->
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jaxb</groupId>
+			<artifactId>jaxb-runtime</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>wsdl4j</groupId>
+			<artifactId>wsdl4j</artifactId>
+			<version>1.6.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.codehaus.mojo/jaxb2-maven-plugin -->
+		<dependency>	<!-- Без этого jaxb2-плагин не устанавливался. -->
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>jaxb2-maven-plugin</artifactId>
+			<version>2.5.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web-services</artifactId>
+		</dependency>
 
 	</dependencies>
 
 	<build>
 		<plugins>
+
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -119,6 +149,39 @@
 					</excludes>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jaxb2-maven-plugin</artifactId>
+				<version>2.5.0</version>
+				<executions>
+					<execution>
+						<id>xjc</id>
+						<goals>
+							<goal>xjc</goal>
+							<!-- генератор классов из XSD-схем. Если тупая сука не запускается,
+							ссылаясь на то, что XSD-файл не был изменён с момента последнего
+							запуска задачи, то нужно изменить XSD-файл, сохранить его, отменить
+							изменение и снова сохранить. Наверное, говно-авторы этого маразма
+							так и хотели, — чтобы юзер корячился из-за каждой мелочи. -->
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<sources>
+						<source>${project.basedir}/src/main/resources/xsd/product.xsd</source>
+					</sources>
+					<!-- пакет, который указан во всех сгенерированных java-файлах -->
+					<packageName>ru.gb.antonov.j71.beans.soap</packageName>
+					<!-- каталог, в котором будет создан пакет -->
+					<outputDirectory>${project.basedir}/src/main/java</outputDirectory>
+					<!-- Запрещаем тупой суке удалять ВСЕ файлы из указанной папки.
+					( Какому уёбку вообще пришла в голову идея, что по умолчанию папку
+					нужно очищать?!! ) -->
+					<clearOutputDir>false</clearOutputDir>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 

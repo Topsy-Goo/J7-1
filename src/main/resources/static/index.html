@@ -18,21 +18,50 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/ngStorage/0.3.11/ngStorage.min.js"></script>
 
 	<style>
-		/*	Список товаров в корзине и в заказе не будет разбит на страницы, но будет убран в
-			отдельный блок с прокуруткой.
+		/*	Список товаров в cart и в order НЕ будет разбит на страницы, но будет убран в
+			вот такой отдельный блок с прокуруткой:
 		*/
 		.almost_windows
-		{	overflow: auto; /* полосы прокрутки появятся только при необходимости */
-			width: 100%; /* Ширина блока */
-			max-height: 400px; /* макс. Высота блока */
-			padding: 5px; /* Поля вокруг текста */
-			border: dotted 2px silver; /* Параметры рамки */
+		{	overflow: auto;	/* полосы прокрутки появятся только при необходимости	*/
+			width: 100%;	/* Ширина блока	*/
+			max-height: 400px;	/* макс. Высота блока	*/
+			padding: 5px;		/* Поля вокруг текста	*/
+			border: dotted 2px silver;	/* Параметры рамки	*/
+		}
+	/*--------------------------------------------------- стили элементов футера	*/
+		.page_footer
+		{	width: 100%;
+			color: #ffffff;			background-color: #316099;			font-size: 14px;
+			border: none;/*	7px solid #a00;	*/
+			box-sizing: border-box;
+		}
+		.footer_above_line
+		{	margin: 0px 60px 0px 60px;
+			border: none;/*	5px solid #f5f8d4;	*/
+			box-sizing: border-box;
+		}
+		.hr_class
+		{	height: 3px;
+			margin: 13px 60px 10px 60px;
+			border: none;
+			background-color: #83a0c2;
+		}
+		.footer_below_line
+		{	margin: 0px 60px 0px 60px;
+			border: none;/*	5px solid #caffbd;	*/
+			box-sizing: border-box;
+		}
+		.a_footer		{	color: #ffff80; text-decoration: none;	}
+		.a_footer:hover	{	color: orange;	text-decoration: none;	}
+		.ul_footer	{	list-style-type: none;	}
+		.li_footer	{	height: 25px;	line-height: 20px;	margin: 0px 0px 0px -40px;	}
+		.copyright	{	height: 40px;	line-height: 20px;	margin: 0px 0px 30px 0px;	/* top,rig,bot,lef */
+						box-sizing: border-box;		border: none;/*	3px solid #d8deff;	*/
 		}
 	</style>
 
 </head>
 <body ng-app="market-front">
-
 <div class="container">
 
 	<div ng-controller="indexController">
@@ -49,14 +78,14 @@
 						<!-- ng-show="isUserAdmin()" -->
 						<a class="nav-link" href="#!/edit_product">🎁&nbsp;{{edit_productPageTitle}}</a>
 					</li>
-					<li class="nav-item" style="background-color: #E0F8C3; margin: 1px;" ng-show="isUserLoggedIn()">
+					<li class="nav-item" style="background-color: #E0F8C3; margin: 1px;"><!--  ng-show="isUserLoggedIn()" !!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 						<a class="nav-link" href="#!/cart">🛒&nbsp;{{cartPageTitle}}</a>
 					</li>
 <!--					<li class="nav-item">-->
 <!--						<a class="nav-link" href="#!">{{}}</a>-->
 <!--					</li>-->
 
-					<li class="nav-item" ng-show="!isUserLoggedIn()" style="background-color: #E0F8C3; margin: 1px;">
+					<li class="nav-item" style="background-color: #E0F8C3; margin: 1px;" ng-show="!isUserLoggedIn()">
                         <form class="align-middle" ng-submit="tryToLogin()">
                             <div class="input-group input-group-sm" style="padding: 4px;">
                                 <input	id="navLoginField"
@@ -101,13 +130,33 @@
 			</div>
 		</nav>
 		<h1>{{appTitle}}</h1>
-		<p></p>
+		<p>&nbsp;</p>
+
 	</div>
 
 	<ng-view>
-
 	</ng-view>
 
+	<!-- footer start -->
+	<div class="page_footer">
+		<p>&nbsp;</p>
+		<div class="footer_above_line">
+			<ul class="ul_footer">
+				<li class="li_footer">Оставьте <a class="a_footer" href="contacts.html#aform" target="_blank">сообщение</a> на нашем сайте.</li>
+				<li class="li_footer">Позвоните нам по телефону : 8 (800) 700-68-41.</li>
+				<li class="li_footer">Отправьте сообщение на наш email : support@geekbrains.ru.</li>
+			</ul>
+		</div>
+		<hr class="hr_class"><!--  ------------------------------------------------------  -->
+		<div class="footer_below_line">
+			<div class="copyright">
+				2021&nbsp;&copy;&nbsp;Все права защищены.
+			</div>
+		</div>
+	</div>
+	<!-- footer end -->
+
+	<p>&nbsp;</p>
 	<script src="index.js"></script>
 	<script src="main/main.js"></script>
 	<script src="store/store.js"></script>
@@ -117,6 +166,5 @@
 	<script src="edit_product/edit_product.js"></script>
 	<script src="registration/registration.js"></script>
 </div>
-
 </body>
 </html>

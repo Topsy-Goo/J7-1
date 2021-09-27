@@ -44,8 +44,8 @@ CREATE TABLE categories
 );
 INSERT INTO categories (name) VALUES	('A'),	('B'),	('C'),	('D');
 -- ----------------------------------------------------------------------
-CREATE TABLE products
-(	id			bigserial,	-- flyway не знает слово IDENTITY (наверное, не поддерживает h2)
+CREATE TABLE products					-- TODO: помни о SOAP.
+(	id			bigserial,
 	title		VARCHAR(255)	NOT NULL,
 	price		DECIMAL(10,2),
 	rest		INT,
@@ -125,15 +125,3 @@ INSERT INTO orderitems (order_id, product_id, buying_price, quantity) VALUES
 -- ----------------------------------------------------------------------
 -- Оказывается, какой-то гений придумал «camelCase» в названиях таблиц и столбцов заменять на camel_case при составлении запросов…
 -- ----------------------------------------------------------------------
---carts (ouruser_id, product_id, quantity)
---	(1, 1, 1),
---	(1, 1, 1),
---	(1, 1, 1);
---ordered_products
---	order_id	,
---	product_id	bigint	NOT NULL,
---	quantity	INT,
-----	PRIMARY KEY (order_id, product_id),
---	FOREIGN KEY (ouruser_id) REFERENCES ourusers (id)
---	product_id	,
---	quantity	INT,

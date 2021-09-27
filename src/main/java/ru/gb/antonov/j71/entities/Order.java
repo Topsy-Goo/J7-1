@@ -53,7 +53,7 @@ public class Order
     public List<OrderItem> getOrderItems () { return Collections.unmodifiableList (orderItems); }
 //----------------------------------------------------------------------
     @Override public String toString()
-    {   return String.format ("Order:[id:%d, u:%s, phone:%s, addr:%s]_with_[%s]",
+    {   return String.format ("Order:[id:%d, user:%s, phone:%s, addr:%s]_with_[%s]",
                               id, ouruser.getLogin (), phone, address, orderItems);
     }
 }

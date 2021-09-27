@@ -32,16 +32,16 @@ public class OrderService
 
 /** Метод бросает исключение {@code UserNotFoundException}, если не может достать {@code OurUser} из БД.
  */
-    private OurUser userByPrincipal (Principal principal)
+/*    private OurUser userByPrincipal (Principal principal)
     {
         return ourUserService.userByPrincipal (principal);
-    }
+    }*/
 
     @Transactional
     public OrderDetalesDto getOrderDetales (Principal principal)
     {
-        OurUser ourUser = userByPrincipal (principal);
-        CartDto dryCartDto = cartService.getUsersDryCartDto (ourUser);
+        OurUser ourUser = ourUserService.userByPrincipal (principal);
+        CartDto dryCartDto = cartService.getUsersDryCartDto (ourUser.getLogin());
         OrderDetalesDto odt = new OrderDetalesDto();
         odt.setCartDto (dryCartDto);
         return odt;
@@ -61,7 +61,7 @@ public class OrderService
     public OrderDetalesDto applyOrderDetails (OrderDetalesDto detales, Principal principal)
     {
         CartDto cartDto = detales.getCartDto();
-        OurUser ourUser = userByPrincipal (principal);
+        OurUser ourUser = ourUserService.userByPrincipal (principal);
         OrderState oState = orderStatesService.getStatePending();
 
         Order o = new Order();
@@ -83,7 +83,11 @@ public class OrderService
         //detales.setDeliveryCost (0.0);        //TODO: поменять на чтение стоимости выбранной доставки.
         detales.setOverallCost (o.getCost() + detales.getDeliveryCost());
 
-        cartService.clearCart (ourUser); //< очищаем корзину юзера, но оставляем dryCart в OrderDetalesDto, чтобы юзер мог на неё посмотреть перед уходом со страницы заказа.
+        //(Оставляем dryCart в OrderDetalesDto, чтобы юзер мог на неё посмотреть перед уходом со
+        // страницы заказа.)
+        //Удаляем из корзины юзера НЕпустые позиции, — они были перенесены в dryCart. Пустые —
+        // оставляем, чтобы юзер их сам удалил, если захочет:
+        cartService./*clearCart*/removeNonEmptyItems (ourUser.getLogin());
         return detales;
     }
 
@@ -103,7 +107,7 @@ public class OrderService
     @Transactional
     public Collection<OrderDto> getUserOrdersAsOrderDtos (Principal principal)
     {
-        OurUser ourUser    = userByPrincipal (principal);
+        OurUser ourUser    = ourUserService.userByPrincipal (principal);
         List<Order> orders = ourUser.getOrders();
         Collection<OrderDto> list = new ArrayList<>((orders != null) ? orders.size () : 0);
 

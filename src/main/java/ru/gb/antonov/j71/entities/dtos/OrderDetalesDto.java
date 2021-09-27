@@ -6,19 +6,21 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
 
+import static ru.gb.antonov.j71.Factory.*;
+
 @Data
 @NoArgsConstructor
 public class OrderDetalesDto
 {
-    @NotNull (message="\nПолучена пустая корзина.\rЗаказ не может быть оформлен.")
+    @NotNull (message="\rПолучена пустая корзина.\rЗаказ не может быть оформлен.")
     private CartDto cartDto;
 
-    @NotNull (message="\nУкажите номер телефона.")
-    @Length (/*min=10, max=16,*/ message="\nНомер телефона должен содержать 10 цифр.\rПример: 8006004050.")
+    @NotNull (message="\rУкажите номер телефона.")
+    @Length (min=DELIVERING_PHONE_LEN_MIN, max=DELIVERING_PHONE_LEN_MAX, message="\rНомер телефона должен содержать 10…16 цифр.\rПример: 8006004050.")//TODO: поправить длину номера.
     private String phone;
 
     @NotNull (message="\rУкажите адрес доставки.")
-    @Length (max=255, message="\nМаксимальная длина адреса — 255 символов.")
+    @Length (max=DELIVERING_ADDRESS_LEN_MAX, message="\rМаксимальная длина адреса — 255 символов.")
     private String address;
 
     private Long          orderNumber;

@@ -1,5 +1,6 @@
 
-angular.module('market-front').controller('cartController', function ($rootScope, $scope, $http, $location)
+angular.module('market-front').controller('cartController',
+	function ($rootScope, $scope, $http, $location, $localStorage)
 {
 	const contextCartPath = 'http://localhost:8189/market/api/v1/cart';
 	var cartPageCurrent = 0;
@@ -11,7 +12,7 @@ angular.module('market-front').controller('cartController', function ($rootScope
 
 	$scope.loadCart = function ()
 	{
-		$http.get (contextCartPath)
+		$http.get (contextCartPath + '/' + $localStorage.gbj7MarketGuestCartId)
 		.then (
 		function successCallback (response)
 		{
@@ -19,26 +20,33 @@ angular.module('market-front').controller('cartController', function ($rootScope
 			$scope.cartLoad = response.data.load;	//< количество единиц товара
 			$scope.cartCost = response.data.cost;	//< общая стоимость товаров в корзине
 			$scope.titlesCount = response.data.titlesCount;	//< количество наименований (включая «пустые» позиции)
-//console.log (response.data);
 		},
 		function failureCallback (response)	//< вызывается асинхронно.
 		{
 			$scope.cartLoad = 0;
 			$scope.cartCost = 0;
 			$scope.titlesCount = 0;
-/*console.log ('Error: '+ response.data);
-console.log ('Error: '+ response.data.messages);*/
 			alert (response.data);
 		});
 	}
 
-	$scope.gotoOrder = function () { $location.path('/order'); }
+	$scope.gotoOrder = function ()
+	{
+		if ($scope.isAuthenticatedUser())
+		{
+			$location.path('/order');
+		}
+		else
+		{	alert ('Чтобы оформить заказ, Вы должны авторизоваться.\r\r'+
+				   'При авторизации выбранные Вами товары будут перемещены в корзину вашей учётной записи.');
+		}
+	}
 //----------------------------------------------------------------------- плюс/минус
 	$scope.cartMinus = function (pid, quantity)
 	{
 		if (quantity > 0)
 		{
-			$http.get (contextCartPath + '/minus/'+ pid)
+			$http.get (contextCartPath + '/minus/'+ pid + '/' + $localStorage.gbj7MarketGuestCartId)
 			.then (
 			function successCallback (response)
 			{
@@ -54,7 +62,7 @@ console.log ('Error: '+ response.data.messages);*/
 
 	$scope.cartPlus = function (pid)
 	{
-		$http.get (contextCartPath + '/plus/'+ pid)
+		$http.get (contextCartPath + '/plus/'+ pid + '/' + $localStorage.gbj7MarketGuestCartId)
 		.then (
 		function successCallback (response)
 		{
@@ -79,7 +87,7 @@ console.log ('Error: '+ response.data.messages);*/
 
 	$scope.removeFromCart = function (pid)
 	{
-		$http.get (contextCartPath + '/remove/' + pid)
+		$http.get (contextCartPath +'/remove/'+ pid +'/'+ $localStorage.gbj7MarketGuestCartId)
 		.then (
 		function successCallback (response)
 		{
@@ -93,7 +101,7 @@ console.log ('Error: '+ response.data.messages);*/
 
 	$scope.clearCart = function ()
 	{
-		$http.get (contextCartPath + '/clear')
+		$http.get (contextCartPath +'/clear/'+ $localStorage.gbj7MarketGuestCartId)
 		.then (
 		function successCallback (response)
 		{
@@ -105,6 +113,11 @@ console.log ('Error: '+ response.data.messages);*/
 		});
 	}
 //----------------------------------------------------------------------- условия
+	$scope.isAuthenticatedUser = function ()
+	{
+		if ($localStorage.webMarketUser) { return true; } else { return false; }
+	}
+
 	$scope.isCartEmpty = function ()
 	{
 		if ($scope.titlesCount <= 0) { return true; } else { return false; }

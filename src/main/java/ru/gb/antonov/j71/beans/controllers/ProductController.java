@@ -7,6 +7,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.gb.antonov.j71.beans.errorhandlers.OurValidationException;
+import ru.gb.antonov.j71.beans.errorhandlers.UnableToPerformException;
 import ru.gb.antonov.j71.beans.services.CartService;
 import ru.gb.antonov.j71.beans.services.ProductService;
 import ru.gb.antonov.j71.entities.Product;
@@ -32,7 +33,7 @@ public class ProductController
     //http://localhost:8189/market/api/v1/products/page?p=0
     @GetMapping ("/page")
     public Page<ProductDto> getProductsPage (
-                   @RequestParam (defaultValue="0", name="p", required = false) Integer pageIndex)
+                   @RequestParam (defaultValue="0", name="p", required=false) Integer pageIndex)
     {
         return productService.findAll (pageIndex, pageSize).map(ProductService::dtoFromProduct);
     }
@@ -43,6 +44,8 @@ public class ProductController
     @GetMapping ("/{id}")
     public ProductDto findById (@PathVariable Long id)
     {
+        if (id == null)
+            throw new UnableToPerformException ("Не могу выполнить поиск для товара id: "+ id);
         return ProductService.dtoFromProduct (productService.findById (id));
     }
 
@@ -74,7 +77,6 @@ public class ProductController
                                                   pdto.getTitle (),
                                                   pdto.getPrice (),
                                                   pdto.getCategory ());
-        //cartService.updateProductInCarts (p);
         return toOptionalProductDto (p);
     }
 
@@ -82,8 +84,9 @@ public class ProductController
     @GetMapping ("/delete/{id}")
     public void deleteProductById (@PathVariable Long id)
     {
+        if (id == null)
+            throw new UnableToPerformException ("Не могу выполнить удаление товара id: "+ id);
         productService.deleteById (id);
-        cartService.deleteById (id);
     }
 
     private static Optional<ProductDto> toOptionalProductDto (Product p)

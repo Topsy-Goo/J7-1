@@ -1,5 +1,6 @@
 
-angular.module('market-front').controller('storeController', function ($rootScope, $scope, $http, $location)
+angular.module('market-front').controller('storeController',
+	function ($rootScope, $scope, $http, $location, $localStorage)
 {
 /*	angular.module('market-front')	означает: используем приложение 'market-front'
 
@@ -12,19 +13,18 @@ angular.module('market-front').controller('storeController', function ($rootScop
 	Каждый раз, когда мы будем переходить на эту страницу, будет производиться её инициализация.
 */
 	const contextProductPath = 'http://localhost:8189/market/api/v1/products';
-	const contextCartPath = 'http://localhost:8189/market/api/v1/cart';
+	const contextAuthoPath	 = 'http://localhost:8189/market/api/v1/auth';
+	const contextCartPath	 = 'http://localhost:8189/market/api/v1/cart';
 
 	var productPageCurrent = 0;
 	var productPageTotal = 0;	//< такая переменная не видна в HTML-файле
-	$scope.cartLoad = 0;	//< такая переменная    видна в HTML-файле
+	$scope.cartLoad = 0;		//< такая переменная    видна в HTML-файле
 
 /*	для функций $scope. и var используются также, как для переменных	*/
 	$scope.loadProductsPage = function ()
 	{
-		$scope.getCartLoad();
 		$http
-		({
-			url: contextProductPath + '/page',
+		({	url: contextProductPath + '/page',
 			method: 'GET',
 			params:	{p: productPageCurrent}
 		})
@@ -37,6 +37,7 @@ angular.module('market-front').controller('storeController', function ($rootScop
 			$scope.paginationArray = $scope.generatePagesIndexes(1, productPageTotal);
 			console.log (response.data); //< в этом случае конкатенация не работает
 		});
+		$scope.getCartLoad();
 	}
 //----------------------------------------------------------------------- страницы
 	$scope.generatePagesIndexes = function (startPage, endPage)
@@ -88,9 +89,9 @@ angular.module('market-front').controller('storeController', function ($rootScop
 
 	$scope.getCartLoad = function()
 	{
-		if ($rootScope.isUserLoggedIn())
+		if ($rootScope.isUserLoggedIn() || $localStorage.gbj7MarketGuestCartId)
 		{
-			$http.get (contextCartPath + '/load')
+			$http.get (contextCartPath + '/load/' + $localStorage.gbj7MarketGuestCartId)
 			.then (
 			function successCallback (response)
 			{
@@ -108,7 +109,7 @@ angular.module('market-front').controller('storeController', function ($rootScop
 //----------------------------------------------------------------------- плюс/минус
 	$scope.cartPlus = function (pid)
 	{
-		$http.get (contextCartPath + '/plus/'+ pid)
+		$http.get (contextCartPath + '/plus/'+ pid + '/' + $localStorage.gbj7MarketGuestCartId)
 		.then (
 		function successCallback (response)
 		{
@@ -125,7 +126,7 @@ angular.module('market-front').controller('storeController', function ($rootScop
 	{
 		if ($scope.cartLoad > 0)
 		{
-			$http.get (contextCartPath + '/minus/' + pid)
+			$http.get (contextCartPath + '/minus/'+ pid + '/' + $localStorage.gbj7MarketGuestCartId)
 			.then (
 			function successCallback (response)
 			{
@@ -139,7 +140,7 @@ angular.module('market-front').controller('storeController', function ($rootScop
 		}
 	}
 
-	$scope.canShow = function()	{	return $rootScope.isUserLoggedIn();	}
+	$scope.canShow = function()	{  return $rootScope.isUserLoggedIn();  }
 //----------------------------------------------------------------------- вызовы
 	$scope.loadProductsPage();
 });
