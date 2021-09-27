@@ -3,8 +3,9 @@ package ru.gb.antonov.j71.entities;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.jetbrains.annotations.NotNull;
 import ru.gb.antonov.j71.beans.errorhandlers.BadCreationParameterException;
-import ru.gb.antonov.j71.beans.soap.ProductSoap;
+import ru.gb.antonov.j71.beans.soap.products.ProductSoap;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -118,13 +119,17 @@ public class Product
     {   return String.format ("[id:%d, «%s», %.2f]", id, title, price);
     }
 
+    @NotNull
     public static ProductSoap toProductSoap (Product p)
     {
+        if (p != null && p.id != null)
         return new ProductSoap (p.id,
                                 p.title,
                                 p.price,
                                 p.rest,
+                                p.getCategory().getName(),
                                 p.createdAt.getLong (ChronoField.MILLI_OF_SECOND),
                                 p.updatedAt.getLong (ChronoField.MILLI_OF_SECOND));
+        return new ProductSoap();
     }
 }
