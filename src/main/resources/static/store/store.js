@@ -12,9 +12,9 @@ angular.module('market-front').controller('storeController',
 
 	Каждый раз, когда мы будем переходить на эту страницу, будет производиться её инициализация.
 */
-	const contextProductPath = 'http://localhost:8189/market/api/v1/products';
-	const contextAuthoPath	 = 'http://localhost:8189/market/api/v1/auth';
-	const contextCartPath	 = 'http://localhost:8189/market/api/v1/cart';
+	const contextProductPath = 'http://localhost:12440/market/api/v1/products';
+	const contextAuthoPath	 = 'http://localhost:12440/market/api/v1/auth';
+	const contextCartPath	 = 'http://localhost:12440/market/api/v1/cart';
 
 	var productPageCurrent = 0;
 	var productPageTotal = 0;	//< такая переменная не видна в HTML-файле

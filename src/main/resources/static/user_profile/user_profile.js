@@ -1,7 +1,7 @@
 
 angular.module('market-front').controller('user_profileController', function ($rootScope, $scope, $http, $location)
 {
-	const contextUserProfilePath = 'http://localhost:8189/market/api/v1/user_profile';
+	const contextUserProfilePath = 'http://localhost:12440/market/api/v1/user_profile';
 
 	$scope.loadUserInfo = function ()
 	{

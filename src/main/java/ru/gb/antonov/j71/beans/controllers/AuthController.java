@@ -42,21 +42,6 @@ public class AuthController
     {
         String login = authRequest.getLogin();
         String password = authRequest.getPassword();
-
-/*        try
-        {   authenticationManager.authenticate (new UsernamePasswordAuthenticationToken (login, password));
-        }
-        catch (BadCredentialsException e)
-        {
-            String errMsg = String.format ("Incorrect login (%s) or password (%s).", login, password);
-            return new ResponseEntity<> (new ErrorMessage (errMsg), HttpStatus.UNAUTHORIZED);
-        }
-        catch (Exception e){e.printStackTrace();}
-
-        UserDetails userDetails = ourUserService.loadUserByUsername (login);
-        String token = jwtokenUtil.generateJWToken (userDetails);
-
-        return ResponseEntity.ok (new AuthResponse (token));*/
         return inlineAuthentificateAndResponseWithJwt (login, password);
     }
 

@@ -24,7 +24,7 @@ public class CartController
 //------------------------------------------------------------------------
 
     @GetMapping({"/uuid"})
-    public StringResponse generateCartUuid (/*Principal principal*/)
+    public StringResponse generateCartUuid ()
     {
         return new StringResponse (UUID.randomUUID().toString());
     }

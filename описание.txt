@@ -1,24 +1,13 @@
 
 
-				Проект на Spring boot
+				Проект на Spring boot. Интернет-магазин.
 
 
 Создан в рамках работы над курсовым проектом «Интерет-магазин» (Java 7).
 ДЗ, сделанные на базе этого проекта:
 • ДЗ-1, 2 и 4.
-
-SELECT * FROM CATEGORIES ;
-SELECT * FROM ORDERITEMS ;
-SELECT * FROM ORDERS ;
-SELECT * FROM ORDERSTATES ;
-SELECT * FROM OURUSERS ;
-SELECT * FROM ROLES ;
-SELECT * FROM OURUSERS_ROLES ;
-SELECT * FROM PRODUCTS ;
-SELECT * FROM DELIVERY_TYPES ;
-
-memurai-cli --scan
-memurai-cli flushall
+• ДЗ-3 сделано в j6-7
+• ДЗ-5 сделано в j7-5
 
 Домашнее задание 1:
 1. Сделать на backend'е оформление заказа с сохранением его в БД
@@ -29,7 +18,47 @@ memurai-cli flushall
 2. Если с кодом тяжело, то хотя бы текстом опишите логику работы (общую идею)
 
 Домашнее задание 3:
+1. С помощью Spring AOP посчитайте по каждому сервису суммарное время, затрачиваемоена выполнение методов этих сервисов. И по endpoint'у /statistic выдайте полученную статистику клиенту.
+Пример:
+ProductService: 1200 ms
+OrderService: 95 ms
+UserService: 2000 ms
+
+Домашнее задание 4:
 1. Используя Spring-WS, реализовать Web Service для выгрузки списка товаров
 
+Домашнее задание 5:
+1. Запускаете Eureka Server
+2. Делаете 2 микросервиса:
+- Products Service - управлялка продуктами (репо + сервис + контр). У сервиса server.port = 0
+- Фронт сервис на AngularJS, который умеет отобржать продукты на html странице
+
+Домашнее задание 6:
+Повторить прошлое задание, перейдя на актуальную версию spring-cloud, с добавлением gateway, фронт должен напрямую через gateway получать продукты.
+
+Домашнее задание :
+
+Домашнее задание :
+
+Домашнее задание :
+
+Домашнее задание :
+
+Домашнее задание :
+
+http://localhost:12440/market/h2-console
+SELECT * FROM CATEGORIES;
+SELECT * FROM ORDERITEMS;
+SELECT * FROM ORDERS;
+SELECT * FROM ORDERSTATES;
+SELECT * FROM OURUSERS;
+SELECT * FROM ROLES;
+SELECT * FROM OURUSERS_ROLES;
+SELECT * FROM PRODUCTS;
+SELECT * FROM DELIVERY_TYPES;
+
+memurai-cli --scan
+memurai-cli flushall
+
 Текст для следующего коммита:
-	Java7.Урок 4.Веб-инструментарий Spring Framework.ДЗ
+

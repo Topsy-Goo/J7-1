@@ -2,7 +2,7 @@
 angular.module('market-front').controller('cartController',
 	function ($rootScope, $scope, $http, $location, $localStorage)
 {
-	const contextCartPath = 'http://localhost:8189/market/api/v1/cart';
+	const contextCartPath = 'http://localhost:12440/market/api/v1/cart';
 	var cartPageCurrent = 0;
 	var cartPageTotal = 0;
 	$scope.cartLoad = 0;

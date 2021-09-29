@@ -6,7 +6,7 @@ angular.module('market-front').controller('edit_productController',
 
 	$location - позволяет переходить на др.страницу.
 */
-	const contextProductPath = 'http://localhost:8189/market/api/v1/products';
+	const contextProductPath = 'http://localhost:12440/market/api/v1/products';
 	var contextPrompt_Creation = "Создание нового продукта.";
 	var contextPrompt_Editing = "Изменение существующего продукта.";
 	$scope.contextPrompt = "";
