@@ -28,7 +28,6 @@ public class ProductDto
     private String category;
 //--------------------------------------------------------------
     public ProductDto (){}
-
     public ProductDto (Product product)
     {
         if (product != null)
@@ -37,5 +36,14 @@ public class ProductDto
             price     = product.getPrice();
             category  = product.getCategory ().getName ();
         }
+    }
+    public static ProductDto dummyProductDto (Long pProductId, String pTitle, double pPrice, String pCategory)
+    {
+        ProductDto pdt = new ProductDto();
+        pdt.productId = pProductId;
+        pdt.title     = pTitle;
+        pdt.price     = pPrice;
+        pdt.category  = pCategory;
+        return pdt;
     }
 }

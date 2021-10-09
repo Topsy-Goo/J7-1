@@ -47,16 +47,38 @@ public class Product
 //----------------------------------------------------------------------
     public Product(){}
 
-    public void update (String t, double c, ProductsCategory category)
+/** Любой из параметров может быть {@code null}. Равенство параметра {@code null} расценивается как
+нежелание изменять соответствующее ему свойство товара..
+@throws  BadCreationParameterException*/
+    public void update (String ttl, Double prc, ProductsCategory cat, Integer rst)
     {
-        if (!setTitle (t) || !setPrice (c) || !setCategory (category))
+        String newTitle = (ttl == null) ? title : ttl;
+        Double newPrice = (prc == null) ? price : prc;
+        ProductsCategory newCat = (cat == null) ? category : cat;
+        Integer newRest = (rst == null) ? rest : rst;
+
+        if (!setTitle (newTitle) || !setPrice (newPrice) || !setCategory (newCat) || !setRest (newRest))
         {
-            throw new BadCreationParameterException (String.format (
-                "Недопустимый набор значений:\r    " +
-                "• название продукта = %s,\r    " +
-                "• цена = %.2f,\r" +
-                "• категория = %s.", t, c, category));
+            String sb = "Недопустимый набор значений:\r" +
+                        "• название продукта = " + newTitle + ",\r" +
+                        "• цена = " + newPrice + ",\r" +
+                        "• категория = " + newCat.getName() + '.';
+            throw new BadCreationParameterException (sb);
         }
+    }
+//(метод используется в тестах, где корректность аргументов зависит от целей тестирования)
+    public static Product dummyProduct (Long id, String title, double price, int rest,
+                                        ProductsCategory category,
+                                        LocalDateTime createdAt, LocalDateTime updatedAt)
+    {   Product p = new Product();
+        p.id = id;
+        p.title = title;
+        p.price = price;
+        p.rest = rest;
+        p.category = category;
+        p.createdAt = createdAt;
+        p.updatedAt = updatedAt;
+        return p;
     }
 //----------------- Геттеры и сеттеры -----------------------------------
 
@@ -70,7 +92,7 @@ public class Product
         return ok;
     }
 
-    public boolean setPrice (double newvalue)
+    public boolean setPrice (Double newvalue)
     {
         boolean ok = isPriceValid (newvalue);
         if (ok)
@@ -86,9 +108,9 @@ public class Product
         return ok;
     }
 
-    public boolean setRest (int newvalue)
+    public boolean setRest (Integer newvalue)
     {
-        boolean ok = newvalue >= 0;
+        boolean ok = newvalue != null && newvalue >= 0;
         if (ok)
             rest = newvalue;
         return ok;
@@ -116,7 +138,7 @@ public class Product
     @Override public int hashCode()    {   return Objects.hash (id);   }
 
     @Override public String toString()
-    {   return String.format ("[id:%d, «%s», %.2f]", id, title, price);
+    {   return String.format ("[id:%d, «%s», %.2f, rt:%d]", id, title, price, rest);
     }
 
     @NotNull

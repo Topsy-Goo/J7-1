@@ -6,8 +6,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.gb.antonov.j71.beans.errorhandlers.AccessDeniedException;
 import ru.gb.antonov.j71.beans.errorhandlers.OurValidationException;
+import ru.gb.antonov.j71.beans.errorhandlers.UnauthorizedAccessException;
 import ru.gb.antonov.j71.beans.services.OrderService;
+import ru.gb.antonov.j71.beans.services.OurUserService;
 import ru.gb.antonov.j71.entities.dtos.OrderDetalesDto;
 
 import java.security.Principal;
@@ -19,11 +22,13 @@ import java.util.stream.Collectors;
 public class OrderController
 {
     private final OrderService   orderService;
+    private final OurUserService ourUserService;
 //-------------------------------------------------------------------------------------------
 
     @GetMapping ("/details")
     public OrderDetalesDto getOrderDetales (Principal principal)
     {
+        checkRightsToMakeOrder (principal);
         return orderService.getOrderDetales (principal);
     }
 
@@ -32,7 +37,8 @@ public class OrderController
     public OrderDetalesDto applyOrderDetails (@RequestBody @Validated OrderDetalesDto orderDetalesDto,
                                               BindingResult br,
                                               Principal principal)
-    {   if (br.hasErrors())
+    {   checkRightsToMakeOrder (principal);
+        if (br.hasErrors())
         {
             //преобразуем набор ошибок в список сообщений, и пакуем в одно общее исключение (в наше заранее для это приготовленное исключение).
             throw new OurValidationException (br.getAllErrors()
@@ -41,5 +47,13 @@ public class OrderController
                                                 .collect (Collectors.toList ()));
         }
         return orderService.applyOrderDetails (orderDetalesDto, principal);
+    }
+
+/** Проверяем, зарегистрирован ли пользователь и бросаем исключение, если он не зарегистрирован.
+    @throws UnauthorizedAccessException */
+    private void checkRightsToMakeOrder (Principal principal)
+    {
+        if (principal == null)
+            throw new UnauthorizedAccessException ("Заказ может оформить только аторизованый пользователь (It's only authorized user can make order.).");
     }
 }

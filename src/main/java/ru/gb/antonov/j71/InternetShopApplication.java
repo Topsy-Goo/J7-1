@@ -10,14 +10,9 @@ import javax.annotation.PostConstruct;
 @SpringBootApplication (scanBasePackages = "ru.gb.antonov.j71.beans")
 public class InternetShopApplication
 {
-    @Autowired
-    private Environment env;
+    @Autowired private Environment env;
 
-    @PostConstruct
-    private void init()
-    {
-        Factory.init (env);
-    }
+    @PostConstruct private void init() { Factory.init (env); }
 
     public static void main (String[] args)
     {

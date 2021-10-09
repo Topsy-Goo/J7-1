@@ -13,7 +13,7 @@ public class ProductCategoryService
 {
     private final ProductCategoryRepo productCategoryRepo;
 
-
+/** @throws ResourceNotFoundException */
     public ProductsCategory findByName (String name)
     {
         String errMsg = "Товарная категория не найдена: " + name;

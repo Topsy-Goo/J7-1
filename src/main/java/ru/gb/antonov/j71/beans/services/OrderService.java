@@ -29,14 +29,6 @@ public class OrderService
     private final ProductService productService;
     private final OrderStatesService orderStatesService;
 //---------------------------------------------------------------------------------------
-
-/** Метод бросает исключение {@code UserNotFoundException}, если не может достать {@code OurUser} из БД.
- */
-/*    private OurUser userByPrincipal (Principal principal)
-    {
-        return ourUserService.userByPrincipal (principal);
-    }*/
-
     @Transactional
     public OrderDetalesDto getOrderDetales (Principal principal)
     {

@@ -17,6 +17,17 @@ public class CartDto
     private int load;
 //-----------------------------------------------------------------------------
     public CartDto () { oitems = new LinkedList<> (); }
+
+    public static CartDto dummyCartDto (/*Метод готов переварить любые параметры.*/)
+    {
+        CartDto cdt = new CartDto();
+        //cdt.oitems = ;
+        cdt.titlesCount = 0;
+        cdt.cost = 0.0;
+        cdt.load = 0;
+        //cdt. = ;
+        return cdt;
+    }
 //--------------------- геттеры и сеттеры -------------------------------------
     public double getCost ()
     {

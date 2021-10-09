@@ -30,6 +30,7 @@ public class ProductService
 
 //-----------------------------------------------------------------------
 
+/** @throws ResourceNotFoundException */
     public Product findById (Long id)
     {
         String errMessage = "Не найден продукт с id = "+ id;
@@ -64,6 +65,11 @@ public class ProductService
 
         return Math.max(pageIndex, 0);
     }
+
+    public Page<ProductDto> getPageOfProducts (int pageIndex, int pageSize)
+    {
+        return findAll (pageIndex, pageSize).map(ProductService::dtoFromProduct);
+    }
 //-------------- Редактирование товаров ---------------------------------
 
     @Transactional
@@ -71,21 +77,23 @@ public class ProductService
     {
         Product p = new Product();
         ProductsCategory category = productCategoryService.findByName (productCategoryName); //< бросает ResourceNotFoundException
-        p.update (title, price, category);     //< бросает UnableToPerformException
+        p.update (title, price, category, 0);     //< бросает UnableToPerformException
         return productRepo.save (p);
     }
 
+/** @param id {@code ID} продукта, свойства которого нужно изменить. Этот параметр не может быть {@code null}.
+Любой другой параметр может быть {@code null}. Равенство параметра {@code null} расценивается как
+нежелание изменять соответствующее ему свойство товара. */
     @Transactional
-    public Product updateProduct (long id, String title, double price, String productCategoryName)
+    public Product updateProduct (@NotNull Long id, String title, Double price, String productCategoryName, Integer rest)
     {
-        Product p = findById (id);  //< бросает ResourceNotFoundException
-        ProductsCategory category = p.getCategory();
+        Product p = findById (id);
+        ProductsCategory category = null;
 
-        if (!category.getName().equals (productCategoryName))
-        {
-            category = productCategoryService.findByName (productCategoryName); //< бросает ResourceNotFoundException
-        }
-        p.update (title, price, category);     //< бросает UnableToPerformException
+        if (productCategoryName != null)
+            category = productCategoryService.findByName (productCategoryName);
+
+        p.update (title, price, category, rest);
         return productRepo.save (p);
     }
 

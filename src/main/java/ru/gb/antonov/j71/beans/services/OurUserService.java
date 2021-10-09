@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.gb.antonov.j71.beans.errorhandlers.UnableToPerformException;
 import ru.gb.antonov.j71.beans.errorhandlers.UserNotFoundException;
 import ru.gb.antonov.j71.beans.repositos.OurUserRepo;
 import ru.gb.antonov.j71.entities.OurUser;
@@ -31,6 +32,7 @@ public class OurUserService implements UserDetailsService
 //-----------------------------------------------------------------------------------
 //TODO: если юзера можно будет удалять из БД, то нужно не забыть удалить и его корзину из Memurai.
 
+/** @throws UserNotFoundException */
     public OurUser userByPrincipal (Principal principal)
     {
         String login = (principal != null) ? principal.getName() : STR_EMPTY;
@@ -62,15 +64,15 @@ public class OurUserService implements UserDetailsService
     public Optional<OurUser> createNewOurUser (String login, String password, String email)
     {
         OurUser dummyUser = OurUser.dummyOurUser (login, password, email);
-        Optional<Role> optionalRole = roleService.getRoleUser();
+        Role role = roleService.getRoleUser();  //< бросает UnableToPerformException
 
-        if (optionalRole.isPresent())
+        //if (optionalRole.isPresent())
         {
             OurUser saved = ourUserRepo.save (dummyUser);
-            saved.addRole (optionalRole.get());
+            saved.addRole (role);
             return Optional.of (saved);
         }
-        return Optional.empty();
+        //return Optional.empty();
     }
 
     public Optional<OurUser> findByLogin (String login)
@@ -83,5 +85,22 @@ public class OurUserService implements UserDetailsService
     {
         OurUser u = userByPrincipal (principal);
         return new UserInfoDto (u.getLogin(), u.getEmail());
+    }
+
+/** Упростим задачу — не станем прописывать разрешения в БД, а просто разрешим редактировать товары админам и суперадминам. */
+    @Transactional
+    public boolean canEditProduct (Principal principal)
+    {
+        OurUser ourUser = userByPrincipal (principal);
+        Role rAdmin = roleService.getRoleAdmin(); //< бросает UnableToPerformException
+        Role rSuper = roleService.getRoleSuperAdmin(); //< то же самое
+
+        Collection<Role> roles = ourUser.getRoles();
+        for (Role r : roles)
+        {
+            if (r.equals (rAdmin) || r.equals (rSuper))
+                return true;
+        }
+        return false;
     }
 }

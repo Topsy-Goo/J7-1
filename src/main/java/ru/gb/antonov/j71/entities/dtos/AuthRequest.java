@@ -19,4 +19,12 @@ public class AuthRequest
     @NotNull (message="\rНе указан пароль!")
     @Length (min=PASS_LEN_MIN, max=PASS_LEN_MAX, message="\rДлина пароля: 3…128 символов!")
     private String password;
+//--------------------------------------------------------------------------------
+    public static AuthRequest dummyAuthRequest (String login, String password)
+    {
+        AuthRequest ar = new AuthRequest();
+        ar.login = login;
+        ar.password = password;
+        return ar;
+    }
 }

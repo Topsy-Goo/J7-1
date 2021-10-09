@@ -22,9 +22,6 @@ public class ProductsCategory
     @Column(name="name", nullable=false)
     private String name;
 
-    @OneToMany(mappedBy="category")
-    private List<Product> products;
-
     @CreationTimestamp
     @Column(name="created_at", nullable=false)
     private LocalDateTime createdAt;
@@ -32,6 +29,9 @@ public class ProductsCategory
     @CreationTimestamp
     @Column(name="updated_at", nullable=false)
     private LocalDateTime updatedAt;
+//-------- неколонки
+    @OneToMany(mappedBy="category")
+    private List<Product> products;
 //----------------------------------------------------------------------
     public ProductsCategory (){}
     public ProductsCategory (String name)
@@ -39,6 +39,17 @@ public class ProductsCategory
         this.name = validateName (name);
         if (this.name == null)
             throw new BadCreationParameterException ("Некорректное название категории: "+ name);
+    }
+//(метод используется в тестах, где корректность аргументов зависит от целей тестирования)
+    public static ProductsCategory dummyProductsCategory (Long id, String name, List<Product> products,
+                                                          LocalDateTime createdAt, LocalDateTime updatedAt)
+    {   ProductsCategory pc = new ProductsCategory();
+        pc.id = id;
+        pc.name = name;
+        pc.createdAt = createdAt;
+        pc.updatedAt = updatedAt;
+        pc.products = products;
+        return pc;
     }
 //----------------------------------------------------------------------
     public static String validateName (String name)
