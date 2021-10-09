@@ -56,4 +56,4 @@ public class OrderController
         if (principal == null)
             throw new UnauthorizedAccessException ("Заказ может оформить только аторизованый пользователь (It's only authorized user can make order.).");
     }
-}
+}//1

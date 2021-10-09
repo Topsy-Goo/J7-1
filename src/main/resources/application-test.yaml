@@ -1,0 +1,37 @@
+#server:
+#  port: 12440
+#  servlet:
+#    context-path: /market
+
+spring:
+  flyway:
+    locations: classpath:/db/testdata
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:mydatabase;MODE=PostgreSQL
+    username: sa
+    password:
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+
+#jwt:
+#  secret: $2a$12$c4HYjryn7vo1bYQfSzkUDe8jPhYIpInbUKZmv5lGnmcyrQPLIWnVu
+#  lifetime: 36000000 #10ч
+
+app:
+  cart:
+    prefix: 'GB_RU_J7_WEBSHOP_V1_'
+    life: 130
+  product:
+    price:
+      min: 0.01
+      #max: 9999999.99 #если перед запятой >7 знаков, то число считывается в эксп.виде: 1.999999999E7.
+
+#views:
+#  shop:
+#    page:
+#      items: 6
+

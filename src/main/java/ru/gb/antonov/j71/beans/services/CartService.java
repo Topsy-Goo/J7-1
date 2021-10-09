@@ -124,7 +124,7 @@ public class CartService
     }
 //------------------------------------------------------------------------
 
-    @Transactional
+    @Transactional @NotNull
     public CartDto getUsersCartDto (Principal principal, String uuid)
     {
         CartsEntry ce = getUsersCartEntry (principal, uuid);
@@ -145,13 +145,13 @@ public class CartService
     }
 
     @NotNull
-    private CartService.CartsEntry getUsersCartEntry (String postfix, Duration cartLife)
+    private CartsEntry getUsersCartEntry (String postfix, Duration cartLife)
     {
         if ((postfix = validateString (postfix, LOGIN_LEN_MIN, LOGIN_LEN_MAX)) == null)
             throw new UnableToPerformException ("getUsersCart(): нет ключа — нет корзины!");
 
         String key = cartKeyByLogin (postfix);
-        if (!this.redisTemplate.hasKey (key))
+        if (!redisTemplate.hasKey (key))
         {
             redisTemplate.opsForValue().set (key, new InMemoryCart());
             if (cartLife != null)
@@ -164,7 +164,7 @@ public class CartService
         return new CartsEntry (key, imcart);
     }
 
-    @NotNull
+/*    @NotNull
     private CartsEntry getUsersCartEntry (OurUser ourUser)
     {
         if (ourUser == null)
@@ -180,7 +180,7 @@ public class CartService
             throw new UnableToPerformException ("getUsersCart(): не могу извлечь корзину пользователя: "
                                                 + ourUser.getLogin());
         return new CartsEntry (key, imcart);
-    }
+    }*/
 
     private void updateCart (CartsEntry cartsEntry)
     {
@@ -200,44 +200,60 @@ public class CartService
     }
 
 /** Метод должен вызываться в рамках к.-л. транзакции. */
-        public double calcCost (List<CartItem> citems) //TODO: статики ещё нужно посмотреть.
+    public double calcCost (List<CartItem> citems) //TODO: перенести обратно в InMemoryCart.
+    {
+        double cartcost = 0.0;
+        for (CartItem ci : citems)
         {
-            double cartcost = 0.0;
-            for (CartItem ci : citems)
-            {
-                int quantity = ci.quantity;
-                if (quantity > 0)
-                    cartcost += productService.findById (ci.pid).getPrice() * quantity;
-            }
-            return cartcost;
+            int quantity = ci.quantity;
+            if (quantity > 0)
+                cartcost += productService.findById (ci.pid).getPrice() * quantity;
         }
+        return cartcost;
+    }
 
     @Transactional
     public void changeProductQuantity (Principal principal, String uuid, long productId, int delta)
     {
-    /*(Считаем, что нет смысла создавать новую товарн.позицию для неположительных значений delta. Кроме того,
-     мы не ждём, что нам придёт значение delta == 0.)*/
+/*  Считаем, что нет смысла создавать новую товарн.позицию для неположительных значений delta. Кроме того, мы не ждём, что нам придёт значение delta == 0.
+    Товар не резервируем, при добавлении его в корзину. */
         if (delta == 0)
             return;
+        boolean ok = false;
+        Product product = productService.findById (productId);
+
         CartsEntry ce = getUsersCartEntry (principal, uuid);
         CartItem ci = ce.imcart.getItemByPid (productId);
+
         if (delta < 0)
         {
             if (ci != null)
             {
+                ok = ci.quantity > 0;
                 delta += ci.quantity;
                 ci.quantity = (delta < 0) ? 0 : delta;
             }
-            else throw new ResourceNotFoundException ("Не удалось изменить количество товара: "+ productId);
         }
         else //delta > 0
         {
-            if (ci != null)
+            int rest = product.getRest();
+            if (rest > 0)
+            {
+                if (ci == null)
+                    ce.imcart.citems.add (ci = new CartItem (productId, 0));
+
+                int initialQuantity = ci.quantity;
                 ci.quantity += delta;
-            else
-                ce.imcart.citems.add (new CartItem (productId, delta));
+
+                if (rest < ci.quantity)
+                    ci.quantity = rest;
+                ok = initialQuantity != ci.quantity;
+            }
         }
-        updateCart (ce);
+        if (ok)
+            updateCart (ce);
+        else
+            throw new ResourceNotFoundException ("Не удалось изменить количество товара:\r"+ product);
     }
 
     @Transactional
@@ -254,15 +270,15 @@ public class CartService
         clearCart (getUsersCartEntry (principal, uuid));
     }
 
+    public void clearCart (String login)
+    {
+        clearCart (getUsersCartEntry(login, null));
+    }
+
     private void clearCart (CartsEntry ce)
     {
         if (ce.imcart.clear())     //TODO: удалять корзины нужно поручить Memurai-ю.
             updateCart(ce);
-    }
-
-    public void clearCart (String login)
-    {
-        clearCart (getUsersCartEntry(login, null));
     }
 
     public CartDto getUsersDryCartDto (String login)
@@ -306,17 +322,17 @@ public class CartService
         if (postfixPr == null)
             throw new UnableToPerformException ("merge carts: вызов для НЕавторизованного пользователя.");
 
-        if (this.redisTemplate.hasKey (Factory.cartKeyByLogin (postfixUu)))
+        if (redisTemplate.hasKey (Factory.cartKeyByLogin (postfixUu)))
         {
             CartsEntry ceUu = getUsersCartEntry (postfixUu, null);
-            CartsEntry cePr = getUsersCartEntry (postfixPr, null);
+            CartsEntry cePr = getUsersCartEntry (postfixPr, null); //< если корзины нет, она будет создана
 
             if (inlineMergeCarts (ceUu.imcart, cePr.imcart))
             {
                 updateCart (cePr);
                 /*ceUu.imcart.clear();
                 updateCart (ceUu);*/
-                redisTemplate.delete (ceUu.key);
+                redisTemplate.delete (ceUu.key); //TODO: это не удаляет корзину из кэша!!!!
             }
         }
     }
@@ -337,5 +353,14 @@ public class CartService
         CartsEntry ce = getUsersCartEntry (login, null);
         if (ce.imcart.removeNonEmptyItems())
             updateCart(ce);
+    }
+
+    @SuppressWarnings ("all")
+    public boolean deleteCart (String postfix)
+    {
+        String key = cartKeyByLogin (postfix);
+        if (!redisTemplate.hasKey (key))
+            return redisTemplate.delete (getUsersCartEntry (postfix, null).key);
+        return false;
     }
 }
