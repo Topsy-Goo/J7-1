@@ -6,14 +6,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.auth.BasicUserPrincipal;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import ru.gb.antonov.j71.beans.errorhandlers.ResourceNotFoundException;
 import ru.gb.antonov.j71.beans.services.CartService;
 import ru.gb.antonov.j71.beans.services.ProductService;
 import ru.gb.antonov.j71.entities.Product;
+import ru.gb.antonov.j71.entities.ProductsCategory;
 
 import java.time.Duration;
 import java.util.UUID;
@@ -22,19 +26,67 @@ import java.util.UUID;
 @ActiveProfiles ("test") //< используем тестовый профиль настроек приложения (будет загружена тестовая БД)
 public class CartTest
 {
-//тестируемый бин
+    private static final boolean MOKED_PRODUCT_SERVICE = true; //< При смене значения на false нужно закомментировать объявление бина mockedProductService.
+// тестируемый бин:
     @Autowired private CartService cartService;
-//бины, которые подделывать не нужно:
+//Oбе следующие переменные являются одним и тем же бином и полностью взаимозаменяемы в коде этого класса (на момент инъекции бинов, в контексте приложения будет существовать только мок-версия бина, которая и будет инжектиться всюду, где бин требуется):
+    @MockBean private ProductService mockedProductService; //< закомментировать при MOKED_PRODUCT_SERVICE == false
     @Autowired private ProductService productService;
+// бины, которые подделывать не нужно:
     @Autowired private RedisTemplate<String, Object> redisTemplate;
-//-----------------------------------------------------------------------------
+
+
+/** Тестируем многократное добавление одного и того же товара, чтобы убедиться, что количество товарных позиций в корзине от этого не меняется.  */
+    @Test public void cartsSameProductAddingTest ()
+    {
+        long pid = 1L;
+        Product product;
+        if (!MOKED_PRODUCT_SERVICE)
+        {
+            product = productService.findById (pid);
+        }
+        else
+        {
+            product = Product.dummyProduct (pid, "Товар2", 20.0, 20, null, null, null);
+        }
+        String uuid = UUID.randomUUID().toString();
+        //Assertions.assertEquals (1, cartService.getCartLoad (null, uuid));
+
+/*  Инструктируем Mockito возвращать некий объект всякий раз, когда будет вызываться productService.findById (2L). Это будет работать даже тогда, когда productService.findById (2L) будет вызываться где-то в недрах экземпляра CartService.
+    Эта «инструкция» создаёт соотв.метод внутри поддельного ProductService. Тип параметра в doReturn() должен соответствовать типу, возвращаемому findById()!
+*/
+        if (MOKED_PRODUCT_SERVICE)
+            Mockito.doReturn (product).when (productService).findById (pid);
+        cartService.changeProductQuantity (null, uuid, pid, 1);
+        cartService.changeProductQuantity (null, uuid, pid, 1);
+        cartService.changeProductQuantity (null, uuid, pid, 1);
+        cartService.changeProductQuantity (null, uuid, pid, 1);
+
+        if (MOKED_PRODUCT_SERVICE)
+            Mockito.verify (productService, Mockito.times (4)).findById (ArgumentMatchers.eq (pid));
+        Assertions.assertEquals(1, cartService.getCartItemsCount (null, uuid));
+        Assertions.assertEquals(4, cartService.getCartLoad (null, uuid));
+        cartService.deleteCart (uuid);
+    }
+
 /** Добавление товара в корзину из непустой товарной позиции. */
     @Test public void cartLoadTest ()
     {
-        Product product = productService.createProduct ("Товар2", 20.0, "D");
-        long pid = product.getId();
-
-        product = productService.updateProduct (pid, null, null, null, 20);
+        Product product;
+        long pid;
+        if (!MOKED_PRODUCT_SERVICE)
+        {
+            //Код, который использует настоящий бин:
+            product = productService.createProduct ("Товар2", 20.0, "D");
+            pid = product.getId();
+            product = productService.updateProduct (pid, null, null, null, 20);
+        }
+        else //Код, который использует только поддельный бин
+        {
+            pid = 1L;
+            product = Product.dummyProduct (pid, "Товар2", 20.0, 20, null, null, null);
+            Mockito.doReturn (product).when (productService).findById (pid);
+        }
         String uuid = UUID.randomUUID().toString();
 
     //Тестируем добавление товара в корзину, …:
@@ -64,30 +116,70 @@ public class CartTest
 • тест того, как изменения в свойствах товара отражаются на содержимом корзины. */
     @Test public void cartMoreTests ()
     {
-        String uuid = UUID.randomUUID().toString();
-        Product product = productService.createProduct ("Продукт Ф", 99.99, "D");
-        final long pid = product.getId(); //< эффективли файнал, для лямбды
+        Product product, p;
+        long pid;
+        ProductsCategory pCat;
+        if (!MOKED_PRODUCT_SERVICE)
+        {
+            //Код, который использует только настоящий бин:
+            product = productService.createProduct ("Продукт Ф", 99.99, "D");
+            pid = product.getId(); //< эффективли файнал, для лямбды
+            product = productService.updateProduct (pid, null, null, null, 0);
+        }
+        else   //Код, который использует только поддельный бин.
+        {
+            pCat = ProductsCategory.dummyProductsCategory (100500L, "W", null, null, null);
+            pid = 1L;
+            product = Product.dummyProduct (pid, "Продукт Ф", 99.99, 0, pCat, null, null);
 
+            Mockito.doReturn (product).when (productService).findById (pid); //< ЗА ПРЕДЕЛАМИ этого класса такое объявление подменного метода работает в точности так, как было сказано на занятии.
+        }
+
+        String uuid = UUID.randomUUID().toString();
 //Добавление товара в корзину из пустой товарной позиции в корзину:
-        product = productService.updateProduct (pid, null, null, null, 0);
         Assertions.assertThrows (ResourceNotFoundException.class,
                                  ()->cartService.changeProductQuantity (null, uuid, pid, 1));
         Assertions.assertEquals (cartService.getCartLoad (null, uuid), 0);
 
+        if (MOKED_PRODUCT_SERVICE)
+        {
+/*  Совершенно случайно оказалось, что ВНУТРИ этого класса такое объявление метода:
+        Mockito.doReturn (product.update (,,,123)).when (productService).updateProduct (pid,,,,123);
+ является не просто объявлением, но ещё и является ВЫЗОВОМ МЕТОДА от имени подменённого бина. При этом последующий вызов
+        ProductService.updateProduct(,,,,123)
+ничего не делает, исключения не бросают и просто возвращает неизменённый объект типа Product. НО если этому методу не сделать мок-версию, то он будет возвращать null.
+*/
+            p = productService.updateProduct (pid, null, null, null, 4444); //< Возвращает null
+            p = productService.updateProduct (pid, null, null, null, 123); //< Возвращает null
+            Mockito.doReturn (product.update (null, null, null, 123))
+                   .when (productService).updateProduct (pid, null, null, null, 123); //< Устанавливает товару остаток в значение 123.
+            p = productService.updateProduct (pid, null, null, null, 4444); //< Возвращает null
+            p = productService.updateProduct (pid, null, null, null, 123); //< Возвращает product в неизменённом виде.
+        }
 //Тестируем то, как изменение товара отражается на товаре в корзине.
-        product = productService.updateProduct (product.getId(), null, null, null, 1);
+
+        if (MOKED_PRODUCT_SERVICE)
+            Mockito.doReturn (product.update (null, null, null, 1))
+                   .when (productService).updateProduct (pid, null, null, null, 1); //< Устанавливает товару остаток в значение 1.
+        p = productService.updateProduct (pid, null, null, null, 1);
         cartService.changeProductQuantity (null, uuid, pid, 10);
         Assertions.assertEquals (cartService.getCartLoad (null, uuid), 1);
         Assertions.assertEquals (cartService.getCartCost (null, uuid), 99.99);
 
-        product = productService.updateProduct (pid, null, 36.6, null, null);
+        if (MOKED_PRODUCT_SERVICE)
+            Mockito.doReturn (product.update (null, 36.6, null, null))
+                   .when (productService).updateProduct (pid, null, 36.6, null, null); //< Устанавливает товару цену в значение 36.6.
+        p = productService.updateProduct (pid, null, 36.6, null, null);
         Assertions.assertEquals (cartService.getCartLoad (null, uuid), 1);
         Assertions.assertEquals (cartService.getCartCost (null, uuid), 36.6);
 
+        if (MOKED_PRODUCT_SERVICE)
+            p = productService.updateProduct (pid, null, null, null, 123); //< Возвращает product в неизменённом
         cartService.deleteCart (uuid);
     }
 
-/*    @Test public void cartsMergeTest () throws JsonProcessingException //< для readValue
+/** (Этот метод не доделан: всё работает, но непонятно, как это применить к хоть сколько-нибудь интересному тестированию. Но зато в нём удалось попрактиковаться в работе с JSON.) */
+    @Test public void cartsMergeTest () throws JsonProcessingException //< для readValue
     {
 //создаём корзины admin и guest и наполняем их корзины товарнвми позициями (пустыми и непустыми)
         String jsonImcTest1 = "{\"citems\":[{\"pid\":1,\"quantity\":0},{\"pid\":2,\"quantity\":1},{\"pid\":3,\"quantity\":2},{\"pid\":4,\"quantity\":1}]}";
@@ -117,13 +209,5 @@ public class CartTest
         cartService.deleteCart (test1); //TODO: корзины не удаляются!!
         cartService.deleteCart (test2);
         cartService.deleteCart (admin);
-    }*/
+    }
 }
-/*  Инструктируем Mockito возвращать некий объект всякий раз, когда будет вызываться productService.findById (2L). Это будет работать даже тогда, когда productService.findById (2L) будет вызываться где-то в недрах экземпляра CartService.
-    Наверное, эта «инструкция» просто создаёт соотв.метод внутри поддельного ProductService. В пользу этого предположения говорит и то, что попытка вызвать из такого бина метод «без предупреждения» приведёт к исключению.
-    Тип параметра в doReturn() должен соответствовать типу, возвращаемому findById()!
-
-    Mockito.doReturn (product).when (mockedProductService).findById (2L);
-    ...
-    Mockito.verify (mockedProductService, Mockito.times (0)).findById (ArgumentMatchers.eq (2L));
-*/

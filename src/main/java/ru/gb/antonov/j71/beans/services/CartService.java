@@ -363,4 +363,10 @@ public class CartService
             return redisTemplate.delete (getUsersCartEntry (postfix, null).key);
         return false;
     }
+
+    public int getCartItemsCount (Principal principal, String uuid)
+    {
+        CartsEntry ce = getUsersCartEntry (principal, uuid);
+        return ce.imcart.citems.size();
+    }
 }

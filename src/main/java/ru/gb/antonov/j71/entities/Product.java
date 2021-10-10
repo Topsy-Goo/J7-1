@@ -50,7 +50,7 @@ public class Product
 /** Любой из параметров может быть {@code null}. Равенство параметра {@code null} расценивается как
 нежелание изменять соответствующее ему свойство товара..
 @throws  BadCreationParameterException*/
-    public void update (String ttl, Double prc, ProductsCategory cat, Integer rst)
+    public Product update (String ttl, Double prc, ProductsCategory cat, Integer rst)
     {
         String newTitle = (ttl == null) ? title : ttl;
         Double newPrice = (prc == null) ? price : prc;
@@ -65,6 +65,7 @@ public class Product
                         "• категория = " + newCat.getName() + '.';
             throw new BadCreationParameterException (sb);
         }
+        return this;
     }
 //(метод используется в тестах, где корректность аргументов зависит от целей тестирования)
     public static Product dummyProduct (Long id, String title, double price, int rest,

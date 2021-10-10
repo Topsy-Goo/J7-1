@@ -6,7 +6,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.gb.antonov.j71.beans.errorhandlers.AccessDeniedException;
 import ru.gb.antonov.j71.beans.errorhandlers.OurValidationException;
 import ru.gb.antonov.j71.beans.errorhandlers.UnauthorizedAccessException;
 import ru.gb.antonov.j71.beans.services.OrderService;
@@ -54,6 +53,6 @@ public class OrderController
     private void checkRightsToMakeOrder (Principal principal)
     {
         if (principal == null)
-            throw new UnauthorizedAccessException ("Заказ может оформить только аторизованый пользователь (It's only authorized user can make order.).");
+            throw new UnauthorizedAccessException ("Заказ может оформить только авторизованый пользователь (It's only authorized user can make order.).");
     }
-}//1
+}

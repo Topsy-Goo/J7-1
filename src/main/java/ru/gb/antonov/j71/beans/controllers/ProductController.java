@@ -108,4 +108,4 @@ public class ProductController
         if (principal == null || !ourUserService.canEditProduct (principal))
             throw new AccessDeniedException ("Отказано в досттупе. (Access denied.)"); //HttpStatus.FORBIDDEN 403
     }
-}//1
+}

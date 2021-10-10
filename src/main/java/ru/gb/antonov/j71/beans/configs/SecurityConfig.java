@@ -39,6 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
         httpSec.csrf().disable()
                .authorizeRequests()
                .antMatchers ("/h2_console/**").permitAll()
+               .antMatchers ("/api/v1/order/**").authenticated()
                .and()
                .sessionManagement().sessionCreationPolicy (SessionCreationPolicy.STATELESS)
                .and()
