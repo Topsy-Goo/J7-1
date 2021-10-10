@@ -9,10 +9,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.gb.antonov.j71.beans.errorhandlers.UnableToPerformException;
 import ru.gb.antonov.j71.beans.errorhandlers.UserNotFoundException;
 import ru.gb.antonov.j71.beans.repositos.OurUserRepo;
 import ru.gb.antonov.j71.entities.OurUser;
+import ru.gb.antonov.j71.entities.OurPermission;
 import ru.gb.antonov.j71.entities.Role;
 import ru.gb.antonov.j71.entities.dtos.UserInfoDto;
 
@@ -27,8 +27,9 @@ import static ru.gb.antonov.j71.Factory.STR_EMPTY;
 @RequiredArgsConstructor
 public class OurUserService implements UserDetailsService
 {
-    private final OurUserRepo ourUserRepo;
-    private final RoleService roleService;
+    private final OurUserRepo          ourUserRepo;
+    private final RoleService          roleService;
+    private final OurPermissionService ourPermissionService;
 //-----------------------------------------------------------------------------------
 //TODO: если юзера можно будет удалять из БД, то нужно не забыть удалить и его корзину из Memurai.
 
@@ -64,15 +65,13 @@ public class OurUserService implements UserDetailsService
     public Optional<OurUser> createNewOurUser (String login, String password, String email)
     {
         OurUser dummyUser = OurUser.dummyOurUser (login, password, email);
-        Role role = roleService.getRoleUser();  //< бросает UnableToPerformException
+        Role role = roleService.getRoleUser();
+        OurPermission ourPermission = ourPermissionService.getPermissionDefault ();
 
-        //if (optionalRole.isPresent())
-        {
-            OurUser saved = ourUserRepo.save (dummyUser);
-            saved.addRole (role);
-            return Optional.of (saved);
-        }
-        //return Optional.empty();
+        OurUser saved = ourUserRepo.save (dummyUser);
+        saved.addRole (role);
+        saved.addPermission (ourPermission);
+        return Optional.of (saved);
     }
 
     public Optional<OurUser> findByLogin (String login)

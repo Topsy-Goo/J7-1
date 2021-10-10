@@ -3,6 +3,7 @@ package ru.gb.antonov.j71.beans.configs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -40,6 +41,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                .authorizeRequests()
                .antMatchers ("/h2_console/**").permitAll()
                .antMatchers ("/api/v1/order/**").authenticated()
+               //TODO:сделать проверку разрешений на редактирование товаров.
+               //.antMatchers ("/api/v1/products/delete/**").hasRole("EDIT_PRODUCTS")
+               //.antMatchers (HttpMethod.POST, "/api/v1/products").hasRole ("EDIT_PRODUCTS")
+               //.antMatchers (HttpMethod.PUT, "/api/v1/products").hasRole ("EDIT_PRODUCTS")
                .and()
                .sessionManagement().sessionCreationPolicy (SessionCreationPolicy.STATELESS)
                .and()

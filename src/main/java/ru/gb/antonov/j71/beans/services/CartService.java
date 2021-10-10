@@ -286,8 +286,8 @@ public class CartService
         return inMemoryCartToDto (getUsersCartEntry (login, null).imcart, DRYCART);
     }
 
-    @NotNull
-    private CartDto inMemoryCartToDto (InMemoryCart imcart, boolean dtycart)
+/** При формирвоании DTO-шки проверяем остаток товара «на складе». */
+    @NotNull private CartDto inMemoryCartToDto (InMemoryCart imcart, boolean dtycart)
     {
         CartDto cdto = new CartDto();
         for (CartItem ci : imcart.citems)
@@ -337,6 +337,7 @@ public class CartService
         }
     }
 
+/** В этом методе не проверяем остаток товара в товарной позиции. Сделаем это позже, при отправке корзины на фронт. */
     private boolean inlineMergeCarts (@NotNull InMemoryCart srcCart, @NotNull InMemoryCart dstCart)
     {
         boolean ok = false;

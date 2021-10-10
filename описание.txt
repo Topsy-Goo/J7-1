@@ -56,6 +56,8 @@ SELECT * FROM ORDERSTATES;
 SELECT * FROM OURUSERS;
 SELECT * FROM ROLES;
 SELECT * FROM OURUSERS_ROLES;
+SELECT * FROM OURPERMISSIONS;
+SELECT * FROM OURUSERS_OURPERMISSIONS;
 SELECT * FROM PRODUCTS;
 SELECT * FROM DELIVERY_TYPES;
 
@@ -67,3 +69,4 @@ memurai-cli flushall
 
 //TODO: сделать домашку.
 //TODO: разобраться с удалением корзины из кэша.
+//TODO: сделать проверку разрешений на редактирование товаров. В SecurityConfig уже есть набросок. Разрешения уже есть в базе и в юзере, но пока нигде не проверяются.

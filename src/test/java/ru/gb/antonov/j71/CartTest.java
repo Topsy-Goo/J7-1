@@ -57,6 +57,7 @@ public class CartTest
 */
         if (MOKED_PRODUCT_SERVICE)
             Mockito.doReturn (product).when (productService).findById (pid);
+
         cartService.changeProductQuantity (null, uuid, pid, 1);
         cartService.changeProductQuantity (null, uuid, pid, 1);
         cartService.changeProductQuantity (null, uuid, pid, 1);

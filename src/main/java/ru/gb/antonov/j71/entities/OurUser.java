@@ -46,6 +46,12 @@ public class OurUser/* implements Comparable<OurUser>*/
                 inverseJoinColumns = @JoinColumn (name="role_id"))    @Getter @Setter
     private Collection<Role> roles;
 
+    @ManyToMany
+    @JoinTable (name="ourusers_ourpermissions",
+                joinColumns        = @JoinColumn (name="ouruser_id"),
+                inverseJoinColumns = @JoinColumn (name="ourpermission_id"))    @Getter @Setter
+    private Collection<OurPermission> ourPermissions;
+
     @OneToMany (mappedBy = "ouruser")    @Setter
     private List<Order> orders;
 //------------------------ Конструкторы -------------------------------------
@@ -59,7 +65,8 @@ public class OurUser/* implements Comparable<OurUser>*/
                 "\rНедопустимый набор значений:\r    логин = %s,\r    пароль = %s,\r    почта = %s",
                 login, password, email));
         }
-        u.roles = new HashSet<>();
+        u.roles          = new HashSet<>();
+        u.ourPermissions = new HashSet<>();
         return u;
     }
 //----------------------- Геттеры и сеттеры ---------------------------------
@@ -101,7 +108,8 @@ public class OurUser/* implements Comparable<OurUser>*/
         return ok;
     }
 
-    public boolean addRole (Role role)  {   return (role != null) && roles.add (role);   }
+    public boolean addRole (Role role)                      { return (role != null) && roles.add (role); }
+    public boolean addPermission (OurPermission permission) { return (permission != null) && ourPermissions.add (permission); }
 //--------------------- Другие методы ---------------------------------------
 
     @Override public String toString()
