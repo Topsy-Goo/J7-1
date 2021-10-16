@@ -69,7 +69,7 @@ public class ProductController
     @PostMapping ("/new_review")
     public void newProductReview (@RequestBody ProductReviewDto reviewDto, Principal principal)
     {
-        productReviewService.newProductReview (reviewDto.getProductId (), reviewDto.getText (), principal);
+        productReviewService.newProductReview (reviewDto.getProductId(), reviewDto.getText(), principal);
     }
 
     @GetMapping ("/can_review/{pid}")

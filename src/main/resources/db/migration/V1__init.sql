@@ -129,8 +129,9 @@ CREATE TABLE orders
 	FOREIGN KEY (ouruser_id) REFERENCES ourusers (id)
 );
 INSERT INTO orders (ouruser_id, phone, address, cost, orderstate_id) VALUES
-	(2, '+78006004050', 'г.Китеж, ул.Алхимиков, 17-3-12', 140.0, 4),
-	(2,  '84957772211', 'г.Китеж, ул.Алхимиков, 17-3-12', 300.0, 5);
+	(2, '+78006004050', 'г.Китеж, ул.Алхимиков, 17-3-12',	140.0, 4),
+	(2,  '84957772211', 'г.Китеж, ул.Алхимиков, 17-3-12',	300.0, 5),
+	(3,  '3141592656', 'пос.Мирный, ул.Физиков, 33/7',	500.0, 4);
 -- ----------------------------------------------------------------------
 CREATE TABLE orderitems
 (	id				bigserial,
@@ -146,7 +147,8 @@ CREATE TABLE orderitems
 );
 INSERT INTO orderitems (order_id, product_id, buying_price, quantity) VALUES
 	(1,  1,  10.0, 1),	(1,  2,  20.0, 2),	(1,  3,  30.0, 3),
-	(2, 18, 180.0, 1),	(2, 12, 120.0, 1);
+	(2, 18, 180.0, 1),	(2, 12, 120.0, 1),
+	(3, 10, 100.0, 1),	(3, 20, 200.0, 2);
 -- ----------------------------------------------------------------------
 CREATE TABLE productreviews
 (	id				bigserial,
@@ -154,7 +156,7 @@ CREATE TABLE productreviews
 	ouruser_id		bigint	NOT NULL,
 	product_id  	bigint	NOT NULL,
 	created_at		TIMESTAMP DEFAULT current_timestamp,
---	updated_at		TIMESTAMP DEFAULT current_timestamp,
+	updated_at		TIMESTAMP DEFAULT current_timestamp,
 	FOREIGN KEY (ouruser_id) REFERENCES ourusers (id),
 	FOREIGN KEY (product_id) REFERENCES products (id),
 	PRIMARY KEY (id)

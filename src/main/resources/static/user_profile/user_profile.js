@@ -76,6 +76,21 @@ angular.module('market-front').controller('user_profileController', function ($r
 			console.log ('ОШИБКА.');
 		});
 	}
+
+	$scope.statusColor = function (s)
+	{
+		if (s == 'Оплачен')	return 'blue';
+		else
+		if (s == 'Ожидает подтверждения')	return 'green';
+		else
+		if (s == 'Выполняется')	return 'red';
+		else
+		if (s == 'Отменён')	return 'grey';
+/*		else
+		if (s == '(Нет статуса)')	return '';*/
+		else
+		return 'black';
+	}
 //----------------------------------------------------------------------- вызовы
 	$scope.loadUserInfo();
 	$scope.loadOrders();

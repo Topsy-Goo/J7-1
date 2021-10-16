@@ -22,7 +22,7 @@ public class ProductReviewDto
             authorName = review.getOurUser().getLogin();
             text = review.getText();
             date = review.getCreatedAt().toLocalDate().format (DateTimeFormatter.ofLocalizedDate (FormatStyle.SHORT));
-            productId = review.getProduct().getId();
+            productId = review.getProductId();
         }
     }
 }

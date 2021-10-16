@@ -1,7 +1,9 @@
 package ru.gb.antonov.j71.entities;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -18,26 +20,29 @@ public class ProductReview
     @Column (name="id")
     private Long id;
 
-    @Column(name="text")
+    @Column(name="text", nullable=false)
     private String text;
 
     @ManyToOne
     @JoinColumn(name="ouruser_id", nullable=false)
     private OurUser ourUser;
 
-    @ManyToOne
-    @JoinColumn(name="product_id", nullable=false)
-    private Product product;
+    @Column(name="product_id", nullable=false)
+    private Long productId;
 
     @CreationTimestamp
     @Column(name="created_at", nullable=false)
     private LocalDateTime createdAt;
+
+    @CreationTimestamp
+    @Column(name="updated_at", nullable=false)
+    private LocalDateTime updatedAt;
 //-----------------------------------------------------------
     @Override public String toString()
     {   return String.format ("review:[%d, u:%s, p:%s, «%s»]",
                               id,
                               (ourUser == null) ? null : ourUser.getLogin(),
-                              (product == null) ? null : product.getTitle(),
+                              productId,
                               text);
     }
 }

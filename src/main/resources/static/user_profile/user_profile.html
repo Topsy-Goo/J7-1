@@ -22,7 +22,7 @@
 			<table class="table table-striped">
 				<tr><td class="col-3">
 						Заказ № <b>{{order.orderNumber}}</b>.<br>
-						<!--Статус заказа: --><b>{{order.state}}</b>.
+					<!--Статус заказа: --><b><font style="color: {{statusColor(order.state)}};">{{order.state}}</font></b>.
 					</td>
 					<td class="col-3">
 						Всего товаров: <b>{{order.load}}</b><br>

@@ -8,6 +8,7 @@ function ($rootScope, $scope, $http, $location, $routeParams)
 	const contextOrderPath   = 'http://localhost:12440/market/api/v1/order';
 	$scope.showReviewForm = false;
 //	$scope.contextPrompt = 'Свойства товара';
+	$scope.reviewHalfHeader = 'Пока нет отзывов';
 	var failedToLoadProductDescription = 'Не удалось загрузить свойства товара.';
 	var failedToLoadReviews = 'Не удалось загрузить отзывы о товаре.';
 
@@ -33,6 +34,8 @@ function ($rootScope, $scope, $http, $location, $routeParams)
 		function successCallback (response)
 		{
 			$scope.prodReviews = response.data;
+			if ($scope.prodReviews.length > 0)
+				$scope.reviewHalfHeader = 'Отзывы наших покупателей';
 		},
 		function failureCallback (response)
 		{
@@ -46,12 +49,9 @@ function ($rootScope, $scope, $http, $location, $routeParams)
 		$scope.review.productId = $routeParams.pid;
 		$scope.review.authorName = null;
 		$scope.review.date = null;
-		console.log ($scope.review);		//http://localhost:12440/market/api/v1/products/new_review
+		console.log ($scope.review);
+
 		$http.post (contextProductPath + '/new_review', $scope.review)
-/*		({	url:	contextProductPath + '/new_review',
-			method:	'POST',
-			params:	{pid: $routeParams.pid, text: $scope.revieText}
-		})*/
 		.then (
 		function successCallback (response)
 		{

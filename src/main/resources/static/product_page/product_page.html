@@ -1,7 +1,7 @@
 <div style="margin: 10px;">
 	<h3>{{contextPrompt}}</h3>
 	<p>&nbsp;</p>
-
+<!--	{{productDto}}<br>{{prodReviews}} -->
 	<dl class="row">
 <!--		<dt class="col-sm-3">Название:&nbsp;</dt>
 		<dd class="col-sm-9">{{productDto.title}}</dd>-->
@@ -18,10 +18,9 @@
 		<dt class="col-sm-3">Артикул:&nbsp;</dt>
 		<dd class="col-sm-9">{{productDto.productId}}</dd>
 	</dl>
-<!--	{{productDto}}-->
-	<p>&nbsp;</p>
 
 	<div ng-show="showReviewForm">
+		<p>&nbsp;</p>
 		<h4>Оставьте свой отзыв об этом товаре:</h4>
 		<form novalidate ng-submit="appendReview()">
 				<div class="col-12">
@@ -32,8 +31,8 @@
 	</div>
 	<p>&nbsp;</p>
 
-	<h4>Отзывы наших покупателей о товаре «{{productDto.title}}»</h4>
-<!--	{{prodReviews}}-->
+	<h4>{{reviewHalfHeader}} о товаре «{{productDto.title}}»</h4>
+
 	<div ng-repeat="r in prodReviews">
 		<p>&nbsp;</p>
 		<h6><b>{{r.authorName}} •</b> {{r.date}}</h6>

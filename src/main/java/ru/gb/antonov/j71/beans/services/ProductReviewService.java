@@ -44,13 +44,12 @@ public class ProductReviewService
         if (pid == null || principal == null || text == null || text.isBlank())
             throw new BadCreationParameterException ("Не могу выполнить запрошенное действие.");
 
-        Product product = productService.findById (pid);
         OurUser ourUser = ourUserService.userByPrincipal (principal);
 
         ProductReview review = new ProductReview();
         review.setText (text);
         review.setOurUser (ourUser);
-        review.setProduct (product);
+        review.setProductId (pid);
         productReviewsRepo.save (review);
     }
 
@@ -62,13 +61,13 @@ public class ProductReviewService
         if (principal != null && pid != null)
         {
             OurUser ourUser = ourUserService.userByPrincipal (principal);
-            Product product = productService.findById (pid);
+            Long uid = ourUser.getId();
         //проверяем отсутствие отзывов юзера на товар:
-            if (productReviewsRepo.findByProductAndOurUser (product, ourUser).isEmpty())
+            if (productReviewsRepo.findByProductIdAndOurUser (pid, ourUser).isEmpty())
             {
         //товар должен числиться в оплаченном заказе:
                 Integer stateId = orderStatesService.getOrderStatePayed().getId(); //PAYED
-                Collection<OrderItem> orderItems = orderItemRepo.userOrderItemsByProductId (ourUser.getId(), pid, stateId);
+                Collection<OrderItem> orderItems = orderItemRepo.userOrderItemsByProductId (uid, pid, stateId);
                 ok = !orderItems.isEmpty();
             }
         }
