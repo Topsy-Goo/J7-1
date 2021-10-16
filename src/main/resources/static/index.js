@@ -37,6 +37,11 @@
 				templateUrl: 'store/store.html',	//<	адрес страницы с товарами и…
 				controller:	 'storeController'		//	…имя её контроллера
 			})
+			.when('/product_page/:pid',
+			{
+				templateUrl: 'product_page/product_page.html',
+				controller:	 'product_pageController'
+			})
 			.when('/edit_product/:pid',	//< для возможности передавать параметр требуется указать $routeParams в объявлении edit_productController'а.
 			{
 				templateUrl: 'edit_product/edit_product.html',
@@ -122,11 +127,7 @@ angular.module('market-front').controller('indexController',
 	$scope.storePageTitle = 'Каталог продуктов';
 	$scope.edit_productPageTitle = 'Создать продукт';
 	$scope.cartPageTitle = 'Ваша корзина';
-
-	$rootScope.isUserLoggedIn = function ()
-	{
-		if ($localStorage.webMarketUser) { return true; } else { return false; }
-	}
+	$rootScope.canEditProducts = false;
 
 	$scope.tryToRegister = function ()
 	{
@@ -153,6 +154,8 @@ angular.module('market-front').controller('indexController',
 					$scope.clearUserFields();
 				}
 				$scope.tryMergeCarts();
+
+				$rootScope.canEditProducts = $scope.canUserEditProducts();
 			},
 			function failureCallback (response)
 			{
@@ -163,9 +166,10 @@ angular.module('market-front').controller('indexController',
 
 	$scope.tryToLogout = function ()
 	{
+		$rootScope.canEditProducts = false;
 		$scope.removeUserFromLocalStorage();
 		$scope.clearUserFields();
-		$location.path('/main');
+		$location.path('/store');
 	}
 
 	$scope.removeUserFromLocalStorage = function ()
@@ -188,6 +192,19 @@ angular.module('market-front').controller('indexController',
 			{
 				alert (response.data);
 			});
+		}
+	}
+
+//----------------------------------------------------------------------- разрешения
+	$rootScope.isUserLoggedIn = function ()
+	{
+		if ($localStorage.webMarketUser)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
 		}
 	}
 });

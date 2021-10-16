@@ -1,7 +1,9 @@
 package ru.gb.antonov.j71;
 
 import org.springframework.core.env.Environment;
+import org.springframework.util.MultiValueMap;
 import ru.gb.antonov.j71.beans.errorhandlers.UnableToPerformException;
+import ru.gb.antonov.j71.entities.Product;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -17,32 +19,42 @@ public class Factory
     public static final Double MAX_PRICE = Double.MAX_VALUE;
 
     public static int PROD_PAGESIZE_DEF = 6;
-    public static final int PROD_TITLELEN_MIN = 3;
+    public static final int PROD_TITLELEN_MIN   = 3;
     public static final int PROD_TITLELEN_MAX   = 255;
     public static final int PRODCAT_NAMELEN_MIN = 1;
     public static final int PRODCAT_NAMELEN_MAX = 255;
     public static final int LOGIN_LEN_MIN = 3;
     public static final int LOGIN_LEN_MAX = 36;
-    public static final int PASS_LEN_MIN = 3;
-    public static final int PASS_LEN_MAX = 128;
+    public static final int PASS_LEN_MIN  = 3;
+    public static final int PASS_LEN_MAX  = 128;
     public static final int EMAIL_LEN_MIN = 5;
     public static final int EMAIL_LEN_MAX = 64;
-    public static final int DELIVERING_ADDRESS_LEN_MAX = 255;
-    public static final int DELIVERING_PHONE_LEN_MAX = 16;
-    public static final int DELIVERING_PHONE_LEN_MIN = 1;   //TODO: исправить на 10.
-    public static final int ORDERSTATE_SHORTNAME_LEN = 16;  //TODO: исправить на 10 в т.ч. в sql.
+    public static final int DELIVERING_ADDRESS_LEN_MAX  = 255;
+    public static final int DELIVERING_PHONE_LEN_MAX    = 16;
+    public static final int DELIVERING_PHONE_LEN_MIN    = 1;   //TODO: исправить на 10.
+    public static final int ORDERSTATE_SHORTNAME_LEN    = 16;  //TODO: исправить на 10 в т.ч. в sql.
     public static final int ORDERSTATE_FRIENDLYNAME_LEN = 64;
 
     public static final String STR_EMPTY = "";
-    public static final String ORDERSTATE_NONE = "NONE";
-    public static final String ORDERSTATE_PENDING = "PENDING";
-    public static final String ORDERSTATE_SERVING = "SERVING";
-    public static final String ORDERSTATE_PAYED = "PAYED";
+    public static final String PRODUCT_PRICE_FIELD_NAME = Product.getPriceFieldName();
+    public static final String PRODUCT_TITLE_FIELD_NAME = Product.getTitleFieldName();
+    public static final String ORDERSTATE_NONE     = "NONE";
+    public static final String ORDERSTATE_PENDING  = "PENDING";
+    public static final String ORDERSTATE_SERVING  = "SERVING";
+    public static final String ORDERSTATE_PAYED    = "PAYED";
     public static final String ORDERSTATE_CANCELED = "CANCELED";
     public static String CART_PREFIX_ = STR_EMPTY;
+    public static final String ROLE_USER       = "ROLE_USER";
+    public static final String ROLE_ADMIN      = "ROLE_ADMIN";
+    public static final String ROLE_SUPERADMIN = "ROLE_SUPERADMIN";
+    public static final String ROLE_MANAGER    = "ROLE_MANAGER";
+    public static final String PERMISSION_EDIT_PRODUCT = "EDIT_PRODUCTS";
+    public static final String PERMISSION_SHOPPING     = "SIMLE_SHOPPING";
 
     public static final Locale RU_LOCALE = new Locale ("ru", "RU");
     public static Duration CART_LIFE = Duration.ofDays (30L);
+
+    public static final MultiValueMap<String, String> NO_FILTERS = null;
 //------------------------------------------------------------------------
     public static void init (Environment env)
     {
@@ -138,4 +150,3 @@ public class Factory
         return true;
     }
 }
-//uuid:6214f46e-d11a-4349-826b-9d999ca21bb1

@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.gb.antonov.j71.Factory;
 import ru.gb.antonov.j71.beans.errorhandlers.ResourceNotFoundException;
 import ru.gb.antonov.j71.beans.errorhandlers.UnableToPerformException;
-import ru.gb.antonov.j71.entities.OurUser;
 import ru.gb.antonov.j71.entities.Product;
 import ru.gb.antonov.j71.entities.dtos.CartDto;
 import ru.gb.antonov.j71.entities.dtos.OrderItemDto;
@@ -253,7 +252,7 @@ public class CartService
         if (ok)
             updateCart (ce);
         else
-            throw new ResourceNotFoundException ("Не удалось изменить количество товара:\r"+ product);
+            throw new ResourceNotFoundException ("Не удалось изменить количество товара в корзине:\r"+ product);
     }
 
     @Transactional

@@ -74,7 +74,7 @@
 					<li class="nav-item" style="background-color: #E0F8C3; margin: 1px;"><!--  ng-show="isUserLoggedIn()" -->
 						<a class="nav-link" href="#!/store">📚&nbsp;{{storePageTitle}}</a>
 					</li>
-					<li class="nav-item"  style="background-color: #E0F8C3; margin: 1px;" ng-show="isUserLoggedIn()">
+					<li class="nav-item"  style="background-color: #E0F8C3; margin: 1px;" ng-show="canEditProducts"><!--isUserLoggedIn() Если вместо isUserLoggedIn() поставить canEditProducts(), то этот запрос начинает выполняться бесконечно. -->
 						<!-- ng-show="isUserAdmin()" -->
 						<a class="nav-link" href="#!/edit_product">🎁&nbsp;{{edit_productPageTitle}}</a>
 					</li>
@@ -165,6 +165,7 @@
 	<script src="user_profile/user_profile.js"></script>
 	<script src="edit_product/edit_product.js"></script>
 	<script src="registration/registration.js"></script>
+	<script src="product_page/product_page.js"></script>
 </div>
 </body>
 </html>

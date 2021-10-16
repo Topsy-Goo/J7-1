@@ -11,7 +11,8 @@ INSERT INTO ourusers (login, password, email) VALUES
 	('super',	'$2a$12$c4HYjryn7vo1bYQfSzkUDe8jPhYIpInbUKZmv5lGnmcyrQPLIWnVu',	'super@post.ru'),	-- пароль 100
 	('admin',	'$2a$12$c4HYjryn7vo1bYQfSzkUDe8jPhYIpInbUKZmv5lGnmcyrQPLIWnVu',	'admin@post.ru'),	-- пароль 100
 	('user1',	'$2a$12$c4HYjryn7vo1bYQfSzkUDe8jPhYIpInbUKZmv5lGnmcyrQPLIWnVu',	'user1@post.ru'),	-- пароль 100
-	('user2',	'$2a$12$c4HYjryn7vo1bYQfSzkUDe8jPhYIpInbUKZmv5lGnmcyrQPLIWnVu',	'user2@post.ru');	-- пароль 100
+	('user2',	'$2a$12$c4HYjryn7vo1bYQfSzkUDe8jPhYIpInbUKZmv5lGnmcyrQPLIWnVu',	'user2@post.ru'),	-- пароль 100
+	('manager',	'$2a$12$c4HYjryn7vo1bYQfSzkUDe8jPhYIpInbUKZmv5lGnmcyrQPLIWnVu',	'manager@post.ru');	-- пароль 100
 -- ----------------------------------------------------------------------
 CREATE TABLE roles
 (	id			serial,
@@ -20,7 +21,7 @@ CREATE TABLE roles
 	updated_at	TIMESTAMP DEFAULT current_timestamp,
 	PRIMARY KEY (id)
 );
-INSERT INTO roles (name) VALUES	('ROLE_SUPERADMIN'),('ROLE_ADMIN'),('ROLE_USER');
+INSERT INTO roles (name) VALUES	('ROLE_SUPERADMIN'),('ROLE_ADMIN'),('ROLE_USER'),('ROLE_MANAGER');
 -- ----------------------------------------------------------------------
 CREATE TABLE ourusers_roles
 (	ouruser_id	bigint	NOT NULL,
@@ -30,10 +31,34 @@ CREATE TABLE ourusers_roles
 	FOREIGN KEY (role_id) REFERENCES roles (id)
 );
 INSERT INTO ourusers_roles (ouruser_id, role_id) VALUES
-	(1, 1), -- super	ROLE_SUPERADMIN
-	(2, 2), -- admin	ROLE_ADMIN
-	(3, 3),	-- user1	ROLE_USER
-	(4, 3); -- user2	ROLE_USER
+	(1, 1), -- super	- ROLE_SUPERADMIN
+	(2, 2), -- admin	- ROLE_ADMIN
+	(3, 3),	-- user1	- ROLE_USER
+	(4, 3), -- user2	- ROLE_USER
+	(5, 4);	-- manager	- ROLE_MANAGER
+-- ----------------------------------------------------------------------
+CREATE TABLE ourpermissions
+(	id			serial,
+	name		VARCHAR(64) NOT NULL UNIQUE,
+	created_at	TIMESTAMP DEFAULT current_timestamp,
+	updated_at	TIMESTAMP DEFAULT current_timestamp,
+	PRIMARY KEY (id)
+);
+INSERT INTO ourpermissions (name) VALUES	('EDIT_PRODUCTS'),('SIMLE_SHOPPING');
+-- ----------------------------------------------------------------------
+CREATE TABLE ourusers_ourpermissions
+(	ouruser_id		bigint	NOT NULL,
+	ourpermission_id	INT		NOT NULL,
+	PRIMARY KEY (ouruser_id, ourpermission_id),
+	FOREIGN KEY (ouruser_id) REFERENCES ourusers (id),
+	FOREIGN KEY (ourpermission_id) REFERENCES ourpermissions (id)
+);
+INSERT INTO ourusers_ourpermissions (ouruser_id, ourpermission_id) VALUES
+	(1, 1),(1, 2),	-- super: EDIT_PRODUCTS + SIMLE_SHOPPING
+	(2, 1),(2, 2),	-- admin: EDIT_PRODUCTS + SIMLE_SHOPPING
+	(3, 2),			-- user1: SIMLE_SHOPPING
+	(4, 2),			-- user2: SIMLE_SHOPPING
+	(5, 1),(5, 2);	-- manager: EDIT_PRODUCTS + SIMLE_SHOPPING
 -- ----------------------------------------------------------------------
 CREATE TABLE categories
 (	id			serial,
@@ -92,8 +117,8 @@ INSERT INTO delivery_types (friendly_name, cost) VALUES
 CREATE TABLE orders
 (	id				bigserial,
 	ouruser_id		bigint	NOT NULL,
-	phone			VARCHAR(16) NOT NULL,
-	address			VARCHAR(255) NOT NULL,
+	phone			VARCHAR(16) NOT NULL,	-- +7(800)600-40-50
+	address			VARCHAR(255) NOT NULL,	-- 123456789_123456789_
 	cost			DECIMAL(10,2),
 	orderstate_id	INT NOT NULL,
 --	comment			VARCHAR(512),
@@ -105,7 +130,7 @@ CREATE TABLE orders
 );
 INSERT INTO orders (ouruser_id, phone, address, cost, orderstate_id) VALUES
 	(2, '+78006004050', 'г.Китеж, ул.Алхимиков, 17-3-12', 140.0, 4),
-	(2, '+78006004050', 'г.Китеж, ул.Алхимиков, 17-3-12', 300.0, 5);
+	(2,  '84957772211', 'г.Китеж, ул.Алхимиков, 17-3-12', 300.0, 5);
 -- ----------------------------------------------------------------------
 CREATE TABLE orderitems
 (	id				bigserial,

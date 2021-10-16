@@ -12,13 +12,14 @@ public class OrderItemDto
     private String category;
     private String title;
     private double price;
+    private int    rest;
     private int    quantity;
     private double cost;
 //------------------------------------------------------------------
 
     public OrderItemDto () {}
 
-    public OrderItemDto (Product p)  //< создаём «пустой» объект : без количества и цен.
+    public OrderItemDto (Product p)  //< создаём «пустой» объект : без количества и общей стоимости.
     {
         if (p == null)
             throw new BadCreationParameterException ("A new OrderItemDto() have got null as parameter.");
@@ -32,6 +33,7 @@ public class OrderItemDto
         title     = oi.title;
         category  = oi.category;
         price     = oi.price;
+        rest      = oi.rest;
         quantity  = oi.quantity;
         cost      = oi.cost;
     }
@@ -66,6 +68,7 @@ public class OrderItemDto
             title     = p.getTitle();
             category  = p.getCategory().getName();
             price     = p.getPrice();
+            rest      = p.getRest();
     //Следующие поля не нужно заполнять при создании объекта, а при обновлении их заполнять ещё и не рекомендуется!
             //quantity = ?;
             //cost = ?;

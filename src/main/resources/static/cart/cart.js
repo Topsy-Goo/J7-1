@@ -82,6 +82,7 @@ angular.module('market-front').controller('cartController',
 		   ',\rназвание:        '+ oitem.title +
 		   ',\rцена:            '+ oitem.price +
 		   ',\rколичество:      '+ oitem.quantity +
+		   ',\rостаток:         '+ oitem.rest +
 		   ',\rобщая стоимость: '+ oitem.cost);
 	}
 

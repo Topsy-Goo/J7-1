@@ -7,8 +7,11 @@ angular.module('market-front').controller('edit_productController',
 	$location - позволяет переходить на др.страницу.
 */
 	const contextProductPath = 'http://localhost:12440/market/api/v1/products';
-	var contextPrompt_Creation = "Создание нового продукта.";
-	var contextPrompt_Editing = "Изменение существующего продукта.";
+	const contextAuthoPath = 'http://localhost:12440/market/api/v1/auth';
+
+	var contextPrompt_Creation = "Создание нового товара.";
+	var contextPrompt_Editing = "Изменение существующего товара.";
+	var contextPrompt_AccessDenied = "У вас нет разрешения для редактирования товаров.";
 	$scope.contextPrompt = "";
 
 	$scope.prepareEditProductPage = function ()
@@ -35,7 +38,7 @@ angular.module('market-front').controller('edit_productController',
 			});
 		}
 	}
-
+//----------------------------------------------------------------------- редактирование
 	$scope.createOrUpdateProduct = function ()
 	{
 		if ($scope.new_product != null)
@@ -85,14 +88,14 @@ angular.module('market-front').controller('edit_productController',
 			$scope.contextPrompt = 'Не удалось изменить товар!';
 			alert (response.data.messages);	//< название параметра взято из ErrorMessage
 		});
-		//TODO: при изменении товара, товар не изменяется в корзине.!!!!!!!
 	}
 
-	$scope.cancelProductEditing = function()
+	$scope.cancelProductEditing = function ()
 	{
 		$scope.new_product = null;
 		$location.path('/store');
 	}
+//----------------------------------------------------------------------- разрешения
 //----------------------------------------------------------------------- вызовы
 	$scope.prepareEditProductPage();	//< вызов описанной выше функции
 });

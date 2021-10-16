@@ -73,14 +73,15 @@ public class CartTest
 /** Добавление товара в корзину из непустой товарной позиции. */
     @Test public void cartLoadTest ()
     {
+//TODO:после изменений в ProductDto некоторые методы выглядят лишними?
         Product product;
         long pid;
         if (!MOKED_PRODUCT_SERVICE)
         {
             //Код, который использует настоящий бин:
-            product = productService.createProduct ("Товар2", 20.0, "D");
+            product = productService.createProduct ("Товар2", 20.0, 20, "D");
             pid = product.getId();
-            product = productService.updateProduct (pid, null, null, null, 20);
+            product = productService.updateProduct (pid, null, null, 20, null);//TODO:удалить этот вызов?
         }
         else //Код, который использует только поддельный бин
         {
@@ -117,15 +118,17 @@ public class CartTest
 • тест того, как изменения в свойствах товара отражаются на содержимом корзины. */
     @Test public void cartMoreTests ()
     {
+//TODO:после изменений в ProductDto некоторые методы выглядят лишними?
+
         Product product, p;
         long pid;
         ProductsCategory pCat;
         if (!MOKED_PRODUCT_SERVICE)
         {
             //Код, который использует только настоящий бин:
-            product = productService.createProduct ("Продукт Ф", 99.99, "D");
+            product = productService.createProduct ("Продукт Ф", 99.99, 0, "D");
             pid = product.getId(); //< эффективли файнал, для лямбды
-            product = productService.updateProduct (pid, null, null, null, 0);
+            product = productService.updateProduct (pid, null, null, 0, null);//TODO:удалить этот вызов?
         }
         else   //Код, который использует только поддельный бин.
         {
@@ -150,19 +153,19 @@ public class CartTest
         ProductService.updateProduct(,,,,123)
 ничего не делает, исключения не бросают и просто возвращает неизменённый объект типа Product. НО если этому методу не сделать мок-версию, то он будет возвращать null.
 */
-            p = productService.updateProduct (pid, null, null, null, 4444); //< Возвращает null
-            p = productService.updateProduct (pid, null, null, null, 123); //< Возвращает null
-            Mockito.doReturn (product.update (null, null, null, 123))
-                   .when (productService).updateProduct (pid, null, null, null, 123); //< Устанавливает товару остаток в значение 123.
-            p = productService.updateProduct (pid, null, null, null, 4444); //< Возвращает null
-            p = productService.updateProduct (pid, null, null, null, 123); //< Возвращает product в неизменённом виде.
+            p = productService.updateProduct (pid, null, null, 4444, null); //< Возвращает null
+            p = productService.updateProduct (pid, null, null, 123, null); //< Возвращает null
+            Mockito.doReturn (product.update (null, null, 123, null))
+                   .when (productService).updateProduct (pid, null, null, 123, null); //< Устанавливает товару остаток в значение 123.
+            p = productService.updateProduct (pid, null, null, 4444, null); //< Возвращает null
+            p = productService.updateProduct (pid, null, null, 123, null); //< Возвращает product в неизменённом виде.
         }
 //Тестируем то, как изменение товара отражается на товаре в корзине.
 
         if (MOKED_PRODUCT_SERVICE)
-            Mockito.doReturn (product.update (null, null, null, 1))
-                   .when (productService).updateProduct (pid, null, null, null, 1); //< Устанавливает товару остаток в значение 1.
-        p = productService.updateProduct (pid, null, null, null, 1);
+            Mockito.doReturn (product.update (null, null, 1, null))
+                   .when (productService).updateProduct (pid, null, null, 1, null); //< Устанавливает товару остаток в значение 1.
+        p = productService.updateProduct (pid, null, null, 1, null);
         cartService.changeProductQuantity (null, uuid, pid, 10);
         Assertions.assertEquals (cartService.getCartLoad (null, uuid), 1);
         Assertions.assertEquals (cartService.getCartCost (null, uuid), 99.99);
@@ -175,7 +178,7 @@ public class CartTest
         Assertions.assertEquals (cartService.getCartCost (null, uuid), 36.6);
 
         if (MOKED_PRODUCT_SERVICE)
-            p = productService.updateProduct (pid, null, null, null, 123); //< Возвращает product в неизменённом
+            p = productService.updateProduct (pid, null, null, 123, null); //< Возвращает product в неизменённом
         cartService.deleteCart (uuid);
     }
 

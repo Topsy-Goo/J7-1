@@ -48,7 +48,7 @@
 							<th>id</th>				<!-- 0 -->
 							<th>category</th>		<!-- 1 -->
 							<th>title</th>			<!-- 2 -->
-							<th>buying price</th>			<!-- 3 -->
+							<th>buying price</th>	<!-- 3 -->
 							<th>quantity cost</th>	<!-- 5 -->
 							<th>quantity</th>		<!-- 4 -->
 							<!--<th>more actions</th>-->	<!-- 6 -->
@@ -58,23 +58,23 @@
 						<tr ng-repeat="oitem in order.oitems">
 							<td>{{oitem.productId}}</td>				<!-- 0 -->
 							<td>{{oitem.category}}</td>					<!-- 1 -->
-							<th scope="row">{{oitem.title}}</td>		<!-- 2 -->
+							<th scope="row"><a href="#!/product_page/{{oitem.productId}}">{{oitem.title}}</a></th>		<!-- 2 -->
 							<td>{{oitem.price}}</td>					<!-- 3 -->
 							<td>{{oitem.cost}}</td>						<!-- 5 -->
 							<td>{{oitem.quantity}}</td>					<!-- 4 -->
 						<!--<td><button class="btn btn-info" ng-click="infoProduct(oitem)" title="Посмотреть информацию о товаре."
 										style="font-family: Webdings;">s</button>
-							</td>-->										<!-- 6 -->
+							</td>-->									<!-- 6 -->
 						</tr>
 					</tbody>
 					<tfoot class="table-primary">
-						<tr><td></td>							<!-- 0 -->
+						<tr><td></td>								<!-- 0 -->
 							<td></td>			 					<!-- 1 -->
 							<td></td>								<!-- 2 -->
 							<td></td>								<!-- 3 -->
 							<td>Общая стоимость: {{order.cost}}</td><!-- 5 -->
 							<td>Всего товаров: {{order.load}}</td>	<!-- 4 -->
-							<!--<td></td>-->								<!-- 6 -->
+							<!--<td></td>-->						<!-- 6 -->
 						</tr>
 					</tfoot>
 				</table>
@@ -88,6 +88,9 @@
 	</div>
 <!--	<p>&nbsp;</p>-->
 	<button class="btn btn-secondary" ng-click="gotoStore()">В магазин</button>
+	&nbsp;
+	<button class="btn btn-warning" ng-click="enableEditProducts()"
+			ng-show="canUserEditProducts">Режим редактирования товаров</button>
 	<p>&nbsp;</p>
 </div>
 

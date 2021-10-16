@@ -21,12 +21,18 @@ angular.module('market-front').controller('storeController',
 	$scope.cartLoad = 0;		//< такая переменная    видна в HTML-файле
 
 /*	для функций $scope. и var используются также, как для переменных	*/
-	$scope.loadProductsPage = function ()
+	$scope.loadProductsPageCurrent = function ()
 	{
 		$http
 		({	url: contextProductPath + '/page',
 			method: 'GET',
-			params:	{p: productPageCurrent}
+			params:
+			{	p: productPageCurrent,
+			//это фильтры:
+                title: $scope.filter ? $scope.filter.title : null,
+                min_price: $scope.filter ? $scope.filter.min_price : null,
+                max_price: $scope.filter ? $scope.filter.max_price : null
+			}
 		})
 		.then (function (response)
 		{
@@ -39,6 +45,22 @@ angular.module('market-front').controller('storeController',
 		});
 		$scope.getCartLoad();
 	}
+
+	$scope.resetFilters = function ()
+	{
+		console.log ('resetFilters() call start.');
+		$scope.filter = null;
+		productPageCurrent = 0;
+		$scope.loadProductsPageCurrent();
+		console.log ('resetFilters() call end.');
+
+/*		$scope.productsPage = response.data;	//< переменную можно объявлять где угодно в коде
+		productPageCurrent = $scope.productsPage.pageable.pageNumber;
+		productPageTotal = $scope.productsPage.totalPages;
+
+		$scope.paginationArray = $scope.generatePagesIndexes(1, productPageTotal);
+		console.log (response.data); //< в этом случае конкатенация не работает*/
+	}
 //----------------------------------------------------------------------- страницы
 	$scope.generatePagesIndexes = function (startPage, endPage)
 	{
@@ -50,43 +72,24 @@ angular.module('market-front').controller('storeController',
 		return arr;
 	}
 
-	$scope.loadProducts = function (pageIndex = 1)	//< загрузка страницы по индексу
+	$scope.loadProductsPage = function (pageIndex = 1)	//< загрузка страницы по индексу
 	{
 		productPageCurrent = pageIndex -1;
-		$scope.loadProductsPage();
+		$scope.loadProductsPageCurrent();
 	}
 
 	$scope.prevProductsPage = function ()	//< загрузка левой соседней страницы
 	{
 		productPageCurrent --;
-		$scope.loadProductsPage();
+		$scope.loadProductsPageCurrent();
 	}
 
 	$scope.nextProductsPage = function ()	//< загрузка правой соседней страницы
 	{
 		productPageCurrent ++;
-		$scope.loadProductsPage();
+		$scope.loadProductsPageCurrent();
 	}
 //----------------------------------------------------------------------- действия
-	$scope.deleteProduct = function (pid)
-	{
-		$http.get (contextProductPath + '/delete/' + pid)
-		.then (function (response)
-		{
-			$scope.loadProductsPage();
-		});
-	}
-
-	$scope.infoProduct = function (p)
-	{
-		alert('id: '      + p.productId +
-		   ',\rCategory: '+ p.category +
-		   ',\rTitle: '   + p.title +
-		   ',\rPrice: '   + p.price);
-	}
-
-	$scope.startEditProduct = function (pid)	{	$location.path ('/edit_product/'+ pid);	}
-
 	$scope.getCartLoad = function()
 	{
 		if ($rootScope.isUserLoggedIn() || $localStorage.gbj7MarketGuestCartId)
@@ -105,6 +108,28 @@ angular.module('market-front').controller('storeController',
 				console.log ('Error: '+ response.data.messages); //< конкатенация работает
 			});
 		}
+	}
+
+	$scope.productInfo = function (p)
+	{
+//		$scope.gotoProductPage (p.productId);
+		alert('id: '      + p.productId +
+		   ',\rCategory: '+ p.category +
+		   ',\rTitle: '   + p.title +
+		   ',\rPrice: '   + p.price +
+		   ',\rRest: '    + p.rest);
+	}
+
+//	$scope.gotoProductPage = function (pid)	 {	$location.path ('/product_page/'+ pid);	}
+	$scope.startEditProduct = function (pid) {	$location.path ('/edit_product/'+ pid);	}
+
+	$scope.deleteProduct = function (pid)
+	{
+		$http.get (contextProductPath + '/delete/' + pid)
+		.then (function (response)
+		{
+			$scope.loadProductsPageCurrent();
+		});
 	}
 //----------------------------------------------------------------------- плюс/минус
 	$scope.cartPlus = function (pid)
@@ -140,7 +165,7 @@ angular.module('market-front').controller('storeController',
 		}
 	}
 
-	$scope.canShow = function()	{  return $rootScope.isUserLoggedIn();  }
+	$scope.canShow = function()	{  return $rootScope.canEditProducts;  }
 //----------------------------------------------------------------------- вызовы
-	$scope.loadProductsPage();
+	$scope.loadProductsPageCurrent();
 });

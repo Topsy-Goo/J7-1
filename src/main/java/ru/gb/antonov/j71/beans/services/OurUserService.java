@@ -18,6 +18,7 @@ import ru.gb.antonov.j71.entities.dtos.UserInfoDto;
 
 import java.security.Principal;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -46,19 +47,28 @@ public class OurUserService implements UserDetailsService
     public UserDetails loadUserByUsername (String login)
     {
         String errMsg = String.format ("Логин (%s) не зарегистрирован.", login);
-        OurUser ourUser = findByLogin(login)
-                            .orElseThrow(()->new UsernameNotFoundException (errMsg));
+        OurUser ourUser = findByLogin(login).orElseThrow(()->new UsernameNotFoundException (errMsg));
 
         return new User(ourUser.getLogin(),
                         ourUser.getPassword(),
-                        mapRolesToAuthorities (ourUser.getRoles()));
+                        mapRolesToAuthorities (ourUser.getRoles(), ourUser.getOurPermissions()));
     }
 
-    private Collection<? extends GrantedAuthority> mapRolesToAuthorities (Collection<Role> roles)
-    {
-        return roles.stream()
-                    .map (role->new SimpleGrantedAuthority(role.getName()))
-                    .collect (Collectors.toList());
+    private Collection<? extends GrantedAuthority> mapRolesToAuthorities (
+                                        Collection<Role> roles,
+                                        Collection<OurPermission> permissions)
+    {   List<String> list =
+        roles.stream()
+             .map (Role::getName)
+             .collect (Collectors.toList());
+
+        list.addAll (permissions.stream()
+                                .map (OurPermission::getName)
+                                .collect (Collectors.toList()));
+
+        return list.stream()
+                   .map (SimpleGrantedAuthority::new)
+                   .collect (Collectors.toList());
     }
 
     @Transactional
@@ -66,7 +76,7 @@ public class OurUserService implements UserDetailsService
     {
         OurUser dummyUser = OurUser.dummyOurUser (login, password, email);
         Role role = roleService.getRoleUser();
-        OurPermission ourPermission = ourPermissionService.getPermissionDefault ();
+        OurPermission ourPermission = ourPermissionService.getPermissionDefault();
 
         OurUser saved = ourUserRepo.save (dummyUser);
         saved.addRole (role);
@@ -88,18 +98,10 @@ public class OurUserService implements UserDetailsService
 
 /** Упростим задачу — не станем прописывать разрешения в БД, а просто разрешим редактировать товары админам и суперадминам. */
     @Transactional
-    public boolean canEditProduct (Principal principal)
+    public Boolean canEditProduct (Principal principal)
     {
         OurUser ourUser = userByPrincipal (principal);
-        Role rAdmin = roleService.getRoleAdmin(); //< бросает UnableToPerformException
-        Role rSuper = roleService.getRoleSuperAdmin(); //< то же самое
-
-        Collection<Role> roles = ourUser.getRoles();
-        for (Role r : roles)
-        {
-            if (r.equals (rAdmin) || r.equals (rSuper))
-                return true;
-        }
-        return false;
+        Collection<OurPermission> permissions = ourUser.getOurPermissions();
+        return permissions.contains (ourPermissionService.getPermissionEditProducts());
     }
 }

@@ -15,7 +15,7 @@ import java.security.Principal;
 import java.util.UUID;
 
 @RestController
-@RequestMapping ("/api/v1/cart")    //http://localhost:8189/market/api/v1/cart
+@RequestMapping ("/api/v1/cart")    //http://localhost:12440/market/api/v1/cart
 @RequiredArgsConstructor
 public class CartController
 {

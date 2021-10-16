@@ -16,7 +16,7 @@ import static ru.gb.antonov.j71.Factory.*;
 @Entity
 @Table (name="ourusers")
 @NoArgsConstructor
-public class OurUser/* implements Comparable<OurUser>*/
+public class OurUser
 {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)    @Getter
@@ -53,7 +53,7 @@ public class OurUser/* implements Comparable<OurUser>*/
     private Collection<OurPermission> ourPermissions;
 
     @OneToMany (mappedBy = "ouruser")    @Setter
-    private List<Order> orders;
+    private List<Order> orders;   //TODO:наверное, оно зря здесь.
 //------------------------ Конструкторы -------------------------------------
 
     public static OurUser dummyOurUser (String login, String password, String email)
@@ -95,7 +95,6 @@ public class OurUser/* implements Comparable<OurUser>*/
     public List<Order> getOrders() { return Collections.unmodifiableList (orders); }
 
 //----------------------- Аутентификация ------------------------------------
-
 /*  Отдельный метод для установки пароля вручную, чтобы иметь возможность сообщать юзеру о некорректно
 заданном пароле и при этом выводить в сообщении пароль, а не хэш пароля.
 */
@@ -108,8 +107,11 @@ public class OurUser/* implements Comparable<OurUser>*/
         return ok;
     }
 
-    public boolean addRole (Role role)                      { return (role != null) && roles.add (role); }
-    public boolean addPermission (OurPermission permission) { return (permission != null) && ourPermissions.add (permission); }
+    public boolean addRole (Role role) { return (role != null) && roles.add (role); }
+
+    public boolean addPermission (OurPermission permission)
+    {   return (permission != null) && ourPermissions.add (permission);
+    }
 //--------------------- Другие методы ---------------------------------------
 
     @Override public String toString()

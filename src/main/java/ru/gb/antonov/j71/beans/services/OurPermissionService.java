@@ -9,6 +9,9 @@ import ru.gb.antonov.j71.entities.OurPermission;
 
 import java.util.Optional;
 
+import static ru.gb.antonov.j71.Factory.PERMISSION_EDIT_PRODUCT;
+import static ru.gb.antonov.j71.Factory.PERMISSION_SHOPPING;
+
 @Service
 @RequiredArgsConstructor
 public class OurPermissionService
@@ -29,13 +32,13 @@ public class OurPermissionService
 /** @throws UnableToPerformException */
     @NotNull public OurPermission getPermissionEditProducts ()
     {
-        return findByName ("EDIT_PRODUCTS").orElseThrow (()->new UnableToPerformException (PERMISSION_ABSENT));
+        return findByName (PERMISSION_EDIT_PRODUCT).orElseThrow (()->new UnableToPerformException (PERMISSION_ABSENT));
     }
 
 /** @throws UnableToPerformException*/
     @NotNull public OurPermission getPermissionDefault ()
     {
-        return findByName ("SIMLE_SHOPPING").orElseThrow (()->new UnableToPerformException (PERMISSION_ABSENT));
+        return findByName (PERMISSION_SHOPPING).orElseThrow (()->new UnableToPerformException (PERMISSION_ABSENT));
     }
 
 ///** @throws UnableToPerformException*/

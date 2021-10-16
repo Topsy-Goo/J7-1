@@ -50,19 +50,21 @@ public class Product
 /** Любой из параметров может быть {@code null}. Равенство параметра {@code null} расценивается как
 нежелание изменять соответствующее ему свойство товара..
 @throws  BadCreationParameterException*/
-    public Product update (String ttl, Double prc, ProductsCategory cat, Integer rst)
+    public Product update (String ttl, Double prc, Integer rst, ProductsCategory cat)
     {
         String newTitle = (ttl == null) ? title : ttl;
         Double newPrice = (prc == null) ? price : prc;
-        ProductsCategory newCat = (cat == null) ? category : cat;
         Integer newRest = (rst == null) ? rest : rst;
+        ProductsCategory newCat = (cat == null) ? category : cat;
 
-        if (!setTitle (newTitle) || !setPrice (newPrice) || !setCategory (newCat) || !setRest (newRest))
+        if (!setTitle (newTitle) || !setPrice (newPrice) || !setRest (newRest) || !setCategory (newCat))
         {
+            String newCategoryName = (newCat != null) ? newCat.getName() : "null";
             String sb = "Недопустимый набор значений:\r" +
                         "• название продукта = " + newTitle + ",\r" +
                         "• цена = " + newPrice + ",\r" +
-                        "• категория = " + newCat.getName() + '.';
+                        "• остаток = " + newRest + ",\r" +
+                        "• категория = " + newCategoryName + '.';
             throw new BadCreationParameterException (sb);
         }
         return this;
@@ -116,6 +118,9 @@ public class Product
             rest = newvalue;
         return ok;
     }
+
+    public static String getPriceFieldName ()  {   return "price";   }
+    public static String getTitleFieldName ()  {   return "title";   }
 //-----------------------------------------------------------------------
 
     public static boolean isTitleValid (String title)

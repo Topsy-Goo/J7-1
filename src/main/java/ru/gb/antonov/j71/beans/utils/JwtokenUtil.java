@@ -36,13 +36,14 @@ public class JwtokenUtil
         claims.put("roles", roles);
         Date dateIssued = new Date();
         Date dateExpired = new Date (dateIssued.getTime() + lifetime);
-        return Jwts.builder()
+        String s = Jwts.builder()
                    .setClaims(claims)
                    .setSubject(userDetails.getUsername())
                    .setIssuedAt(dateIssued)
                    .setExpiration(dateExpired)
                    .signWith(SignatureAlgorithm.HS256, secret)
                    .compact();
+        return s;
     }
 
     public String getLoginFromToken (String token)
@@ -58,10 +59,12 @@ public class JwtokenUtil
 
     private Claims getAllClaimsFromToken(String token)
     {
-        return Jwts.parser()
+
+        Claims c = Jwts.parser()
                    .setSigningKey (secret)  //< нужет для проверки подлинности и актуальности токена
                    .parseClaimsJws (token)
                    .getBody();
+        return c;
     }
 
     public List<String> getRoles(String token)
@@ -69,6 +72,7 @@ public class JwtokenUtil
     /*    return getClaimFromToken (
                 token,
                 (Function<Claims, List<String>>) claims -> claims.get("roles", List.class));*/
-        return getClaimFromToken (token, claims -> claims.get("roles", List.class));
+        List<String> list = getClaimFromToken (token, claims -> claims.get ("roles", List.class));
+        return list;
     }
 }

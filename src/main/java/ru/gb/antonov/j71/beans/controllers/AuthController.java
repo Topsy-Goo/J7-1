@@ -10,10 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.gb.antonov.j71.beans.errorhandlers.ErrorMessage;
 import ru.gb.antonov.j71.beans.errorhandlers.OurValidationException;
 import ru.gb.antonov.j71.beans.services.OurUserService;
@@ -23,6 +20,7 @@ import ru.gb.antonov.j71.entities.dtos.AuthRequest;
 import ru.gb.antonov.j71.entities.dtos.AuthResponse;
 import ru.gb.antonov.j71.entities.dtos.RegisterRequest;
 
+import java.security.Principal;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -36,7 +34,7 @@ public class AuthController
     private final AuthenticationManager authenticationManager;
 
 
-    //http://localhost:8189/market/api/v1/auth/login
+    //http://localhost:12440/market/api/v1/auth/login
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser (@RequestBody AuthRequest authRequest)
     {
@@ -45,7 +43,7 @@ public class AuthController
         return inlineAuthentificateAndResponseWithJwt (login, password);
     }
 
-    //http://localhost:8189/market/api/v1/auth/register
+    //http://localhost:12440/market/api/v1/auth/register
     @PostMapping ("/register")
     public ResponseEntity<?> registerNewUser (@RequestBody @Validated RegisterRequest registerRequest,
                                               BindingResult br)
@@ -66,11 +64,16 @@ public class AuthController
         Optional<OurUser> optionalOurUser = ourUserService.createNewOurUser (
                                                     login, password, email);
         if (optionalOurUser.isPresent())
-        {
             return inlineAuthentificateAndResponseWithJwt (login, password);
-        }
+
         return new ResponseEntity<> (new ErrorMessage ("Новый пользователь создан некорректно."),
                                      HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @GetMapping("/can_edit_product")
+    public Boolean checkPermissionEditProducts (Principal principal)
+    {
+        return ourUserService.canEditProduct (principal);
     }
 
     private ResponseEntity<?> inlineAuthentificateAndResponseWithJwt (String login, String password)

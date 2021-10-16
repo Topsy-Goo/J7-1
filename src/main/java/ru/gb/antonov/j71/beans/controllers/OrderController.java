@@ -34,14 +34,11 @@ public class OrderController
     @PostMapping ("/confirm")
     @ResponseStatus (HttpStatus.CREATED)
     public OrderDetalesDto applyOrderDetails (@RequestBody @Validated OrderDetalesDto orderDetalesDto,
-                                              BindingResult br,
-                                              Principal principal)
+                                              BindingResult br, Principal principal)
     {   checkRightsToMakeOrder (principal);
         if (br.hasErrors())
-        {
-            //преобразуем набор ошибок в список сообщений, и пакуем в одно общее исключение (в наше заранее для это приготовленное исключение).
-            throw new OurValidationException (br.getAllErrors()
-                                                .stream()
+        {   //преобразуем набор ошибок в список сообщений, и пакуем в одно общее исключение (в наше заранее для это приготовленное исключение).
+            throw new OurValidationException (br.getAllErrors().stream()
                                                 .map (ObjectError::getDefaultMessage)
                                                 .collect (Collectors.toList ()));
         }

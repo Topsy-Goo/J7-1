@@ -2,6 +2,9 @@
 angular.module('market-front').controller('user_profileController', function ($rootScope, $scope, $http, $location)
 {
 	const contextUserProfilePath = 'http://localhost:12440/market/api/v1/user_profile';
+	const contextAuthoPath	= 'http://localhost:12440/market/api/v1/auth';
+	$scope.canUserEditProducts = false;
+
 
 	$scope.loadUserInfo = function ()
 	{
@@ -10,7 +13,7 @@ angular.module('market-front').controller('user_profileController', function ($r
 		function successCallback (response)
 		{
 			$scope.userInfo = response.data;
-			console.log (response.data);
+//			$scope.canEdit();
 		},
 		function failureCallback (response)
 		{
@@ -48,8 +51,33 @@ angular.module('market-front').controller('user_profileController', function ($r
 	}
 	$scope.gotoStore = function () { $location.path('/store'); }
 //----------------------------------------------------------------------- условия
-	$scope.canShow = function () { return $rootScope.isUserLoggedIn(); }
+	$scope.canShow = function ()	{	return $rootScope.isUserLoggedIn();	}
+
+	$scope.enableEditProducts = function ()
+	{
+		$rootScope.canEditProducts = !$rootScope.canEditProducts;
+	}
+
+	$scope.canEdit = function ()
+	{
+/*	Почему-то этот метод вызывается бесконечно, если его вызывать из html.
+	Кажется, такие методы вызываются асинхронно.
+	В какой-то момент он вдруг начал выводить в консоль комментарии, находящиеся внутри него, и кусочки своего кода. Разумеется, синтаксис при этом был в полном порядке. Сейчас метод работает нормально, но его тело значительно изменено.
+*/
+		$http.get (contextAuthoPath + '/can_edit_product')
+		.then (
+		function successCallback (response)
+		{
+			$scope.canUserEditProducts = response.data;
+		},
+		function failureCallback (response)
+		{
+			$scope.canUserEditProducts = false;
+			console.log ('ОШИБКА.');
+		});
+	}
 //----------------------------------------------------------------------- вызовы
 	$scope.loadUserInfo();
 	$scope.loadOrders();
+	$scope.canEdit();
 });

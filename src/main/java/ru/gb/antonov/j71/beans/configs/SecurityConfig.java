@@ -15,6 +15,8 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.gb.antonov.j71.beans.services.OurUserService;
 
+import static ru.gb.antonov.j71.Factory.PERMISSION_EDIT_PRODUCT;
+
 @EnableWebSecurity  //< «включатель» правил безопасности, описанных в нижеописанном классе
 @RequiredArgsConstructor
 @Slf4j
@@ -39,12 +41,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
     {
         httpSec.csrf().disable()
                .authorizeRequests()
-               .antMatchers ("/h2_console/**").permitAll()
                .antMatchers ("/api/v1/order/**").authenticated()
-               //TODO:сделать проверку разрешений на редактирование товаров.
-               //.antMatchers ("/api/v1/products/delete/**").hasRole("EDIT_PRODUCTS")
-               //.antMatchers (HttpMethod.POST, "/api/v1/products").hasRole ("EDIT_PRODUCTS")
-               //.antMatchers (HttpMethod.PUT, "/api/v1/products").hasRole ("EDIT_PRODUCTS")
+               .antMatchers ("/api/v1/user_profile/**").authenticated()
+               .antMatchers ("/api/v1/products/can_review").authenticated()
+               .antMatchers ("/api/v1/products/new_review").authenticated()
+               .antMatchers ("/api/v1/products/delete/**").hasAuthority (PERMISSION_EDIT_PRODUCT)
+               .antMatchers (HttpMethod.POST, "/api/v1/products").hasAuthority (PERMISSION_EDIT_PRODUCT)
+               .antMatchers (HttpMethod.PUT, "/api/v1/products").hasAuthority (PERMISSION_EDIT_PRODUCT)
+               .antMatchers ("/h2_console/**").permitAll()
                .and()
                .sessionManagement().sessionCreationPolicy (SessionCreationPolicy.STATELESS)
                .and()

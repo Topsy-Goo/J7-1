@@ -42,7 +42,7 @@ public class JwtRequestFilter extends OncePerRequestFilter
 
         if (authHeader != null && authHeader.startsWith (prefixBearer))
         {
-            jwt = authHeader.substring (prefixBearer.length ());
+            jwt = authHeader.substring (prefixBearer.length());
             try
             {   login = jwtokenUtil.getLoginFromToken (jwt);
             }
@@ -51,12 +51,12 @@ public class JwtRequestFilter extends OncePerRequestFilter
                 log.debug ("The token is expired");
             }
         }
-        if (login != null && SecurityContextHolder.getContext ().getAuthentication () == null)
+        if (login != null && SecurityContextHolder.getContext ().getAuthentication() == null)
         {
-        //  UsernamePasswordAuthenticationToken token = trustYourUser (login, jwt);
+            //UsernamePasswordAuthenticationToken token = trustYourUser (login, jwt);
             UsernamePasswordAuthenticationToken token = trustDatabaseOnly (login, jwt, request);
 
-            SecurityContextHolder.getContext ().setAuthentication (token);
+            SecurityContextHolder.getContext().setAuthentication (token);
         }
         filterChain.doFilter (request, response);
     }
@@ -71,7 +71,6 @@ public class JwtRequestFilter extends OncePerRequestFilter
 
         UsernamePasswordAuthenticationToken token =
             new UsernamePasswordAuthenticationToken (login, null, gaCollection);
-
         return token;
     }
 

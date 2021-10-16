@@ -2,22 +2,31 @@ package ru.gb.antonov.j71.beans.services;
 
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.MultiValueMap;
+import ru.gb.antonov.j71.beans.errorhandlers.BadCreationParameterException;
 import ru.gb.antonov.j71.beans.errorhandlers.ResourceNotFoundException;
-import ru.gb.antonov.j71.beans.errorhandlers.UnableToPerformException;
 import ru.gb.antonov.j71.beans.repositos.ProductRepo;
+import ru.gb.antonov.j71.beans.repositos.ProductReviewsRepo;
+import ru.gb.antonov.j71.beans.repositos.specifications.ProductSpecification;
 import ru.gb.antonov.j71.beans.soap.products.ProductSoap;
-import ru.gb.antonov.j71.entities.Product;
-import ru.gb.antonov.j71.entities.ProductsCategory;
+import ru.gb.antonov.j71.entities.*;
+import ru.gb.antonov.j71.entities.dtos.ProductReviewDto;
 import ru.gb.antonov.j71.entities.dtos.ProductDto;
 
+import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.gb.antonov.j71.Factory.NO_FILTERS;
 
 @Service
 @RequiredArgsConstructor
@@ -25,9 +34,13 @@ public class ProductService
 {
     private final ProductRepo productRepo;
     private final ProductCategoryService productCategoryService;
+    private final OurUserService ourUserService;
+    //private final OrderService orderService;  кольцует
 
-    private static int pageIndexLast = 0;
-
+//названия фильтров, использующиеся на фронте:
+    private static final String FILTER_MIN_PRICE = "min_price";
+    private static final String FILTER_MAX_PRICE = "max_price";
+    private static final String FILTER_TITLE = "title";
 //-----------------------------------------------------------------------
 
 /** @throws ResourceNotFoundException */
@@ -47,10 +60,12 @@ public class ProductService
                           .orElseThrow (()->new ResourceNotFoundException (errMsg));
     }
 
-    public Page<Product> findAll (int pageIndex, int pageSize)
+    public Page<Product> findAll (int pageIndex, int pageSize, @Nullable MultiValueMap<String, String> filters)
     {
         pageIndex = validatePageIndex (pageIndex, pageSize, productRepo.count());
-        return productRepo.findAll (PageRequest.of (pageIndex, pageSize));
+        return (filters == NO_FILTERS)
+                    ? productRepo.findAll (PageRequest.of (pageIndex, pageSize))
+                    : productRepo.findAll (constructSpecification (filters), PageRequest.of (pageIndex, pageSize));
     }
 
     private int validatePageIndex (int pageIndex, int pageSize, long productsCount)
@@ -66,18 +81,19 @@ public class ProductService
         return Math.max(pageIndex, 0);
     }
 
-    public Page<ProductDto> getPageOfProducts (int pageIndex, int pageSize)
+    @Transactional
+    public Page<ProductDto> getPageOfProducts (int pageIndex, int pageSize, @Nullable MultiValueMap<String, String> filters)
     {
-        return findAll (pageIndex, pageSize).map(ProductService::dtoFromProduct);
+        return findAll (pageIndex, pageSize, filters).map(ProductService::dtoFromProduct);
     }
 //-------------- Редактирование товаров ---------------------------------
 
     @Transactional
-    public Product createProduct (String title, double price, String productCategoryName)
+    public Product createProduct (String title, double price, int rest, String productCategoryName)
     {
         Product p = new Product();
         ProductsCategory category = productCategoryService.findByName (productCategoryName); //< бросает ResourceNotFoundException
-        p.update (title, price, category, 0);     //< бросает UnableToPerformException
+        p.update (title, price, rest, category);     //< бросает UnableToPerformException
         return productRepo.save (p);
     }
 
@@ -85,7 +101,7 @@ public class ProductService
 Любой другой параметр может быть {@code null}. Равенство параметра {@code null} расценивается как
 нежелание изменять соответствующее ему свойство товара. */
     @Transactional
-    public Product updateProduct (@NotNull Long id, String title, Double price, String productCategoryName, Integer rest)
+    public Product updateProduct (@NotNull Long id, String title, Double price, Integer rest, String productCategoryName)
     {
         Product p = findById (id);
         ProductsCategory category = null;
@@ -93,7 +109,7 @@ public class ProductService
         if (productCategoryName != null)
             category = productCategoryService.findByName (productCategoryName);
 
-        p.update (title, price, category, rest);
+        p.update (title, price, rest, category);
         return productRepo.save (p);
     }
 
@@ -109,14 +125,6 @@ public class ProductService
         p.setRest (0);
         //productRepo.delete(p);
     }
-//-------------- Фильтры ------------------------------------------------
-    /*public List<Product> getProductsByPriceRange (Integer min, Integer max)
-    {
-        double minPrice = min != null ? min.doubleValue() : Product.MIN_PRICE;
-        double maxPrice = max != null ? max.doubleValue() : Product.MAX_PRICE;
-
-        return productRepo.findAllByPriceBetween (minPrice, maxPrice);
-    }*/
 //--------- Методы для преобразований Product в ProductDto --------------
 
     public static ProductDto dtoFromProduct (Product product)
@@ -159,7 +167,7 @@ public class ProductService
         if (from != null && to != null && from > 0L && from.compareTo(to) <= 0)
         {
             long range = to - from +1L;
-            if (range <= (long)(Integer.MAX_VALUE))
+            if (range <= (Integer.MAX_VALUE))
             {
                 List<Product> products = findAllByIdBetween (from, to);
                 result = new ArrayList<>((int)range);
@@ -170,5 +178,33 @@ public class ProductService
             }
         }
         return result;
+    }
+//-------------- Фильтры ------------------------------------------------
+    @NotNull private Specification<Product> constructSpecification (@Nullable MultiValueMap<String, String> params)
+    {
+        Specification<Product> spec = Specification.where (null); //< создаём пустую спецификацию
+        if (params != null)
+        {
+    //MultiValueMap.getFirst() returns the first value for the specified key, or null if none.
+            String s;
+            if ((s = params.getFirst (FILTER_MIN_PRICE)) != null && !s.isBlank())
+            {
+                double minPrice = Integer.parseInt (s);
+                spec = spec.and (ProductSpecification.priceGreaterThanOrEqualsTo (minPrice));
+            }
+
+            if ((s = params.getFirst (FILTER_MAX_PRICE)) != null && !s.isBlank())
+            {
+                double maxPrice = Integer.parseInt (s);
+                spec = spec.and (ProductSpecification.priceLessThanOrEqualsTo (maxPrice));
+            }
+
+            if ((s = params.getFirst (FILTER_TITLE)) != null && !s.isBlank())
+            {
+                spec = spec.and (ProductSpecification.titleLike (s));
+            }
+/*  Если, например, понадобится добавить фильтр, состоящий из ряда необязательных элементов, то для него нужно создать отдельную спецификацию, заполнить её при пом. Specification.or(…), а потом добавить в основную спецификайию при пом. Specification.add(…). */
+        }
+        return spec;
     }
 }

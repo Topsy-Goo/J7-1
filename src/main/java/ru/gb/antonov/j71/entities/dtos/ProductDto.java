@@ -24,6 +24,9 @@ public class ProductDto
     @PositiveOrZero (message="Цена товара должна быть НЕОТРИЦАТЕЛЬНЫМ числом!")
     private double price;
 
+    @PositiveOrZero (message="Остаток товара должен быть НЕОТРИЦАТЕЛЬНЫМ числом!")
+    private int rest;
+
     @NotNull (message="Не указано название категории товара!")
     private String category;
 //--------------------------------------------------------------
@@ -34,15 +37,17 @@ public class ProductDto
         {   productId = product.getId();
             title     = product.getTitle();
             price     = product.getPrice();
+            rest      = product.getRest();
             category  = product.getCategory ().getName ();
         }
     }
-    public static ProductDto dummyProductDto (Long pProductId, String pTitle, double pPrice, String pCategory)
+    public static ProductDto dummyProductDto (Long pProductId, String pTitle, double pPrice, int pRest, String pCategory)
     {
         ProductDto pdt = new ProductDto();
         pdt.productId = pProductId;
         pdt.title     = pTitle;
         pdt.price     = pPrice;
+        pdt.rest      = pRest;
         pdt.category  = pCategory;
         return pdt;
     }
