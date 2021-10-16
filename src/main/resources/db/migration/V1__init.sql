@@ -117,8 +117,8 @@ INSERT INTO delivery_types (friendly_name, cost) VALUES
 CREATE TABLE orders
 (	id				bigserial,
 	ouruser_id		bigint	NOT NULL,
-	phone			VARCHAR(16) NOT NULL,
-	address			VARCHAR(255) NOT NULL,
+	phone			VARCHAR(16) NOT NULL,	-- +7(800)600-40-50
+	address			VARCHAR(255) NOT NULL,	-- 123456789_123456789_
 	cost			DECIMAL(10,2),
 	orderstate_id	INT NOT NULL,
 --	comment			VARCHAR(512),
@@ -130,7 +130,7 @@ CREATE TABLE orders
 );
 INSERT INTO orders (ouruser_id, phone, address, cost, orderstate_id) VALUES
 	(2, '+78006004050', 'г.Китеж, ул.Алхимиков, 17-3-12', 140.0, 4),
-	(2, '+78006004050', 'г.Китеж, ул.Алхимиков, 17-3-12', 300.0, 5);
+	(2,  '84957772211', 'г.Китеж, ул.Алхимиков, 17-3-12', 300.0, 5);
 -- ----------------------------------------------------------------------
 CREATE TABLE orderitems
 (	id				bigserial,
@@ -147,6 +147,25 @@ CREATE TABLE orderitems
 INSERT INTO orderitems (order_id, product_id, buying_price, quantity) VALUES
 	(1,  1,  10.0, 1),	(1,  2,  20.0, 2),	(1,  3,  30.0, 3),
 	(2, 18, 180.0, 1),	(2, 12, 120.0, 1);
+-- ----------------------------------------------------------------------
+CREATE TABLE productreviews
+(	id				bigserial,
+	text			VARCHAR(2048) NOT NULL,
+	ouruser_id		bigint	NOT NULL,
+	product_id  	bigint	NOT NULL,
+	created_at		TIMESTAMP DEFAULT current_timestamp,
+--	updated_at		TIMESTAMP DEFAULT current_timestamp,
+	FOREIGN KEY (ouruser_id) REFERENCES ourusers (id),
+	FOREIGN KEY (product_id) REFERENCES products (id),
+	PRIMARY KEY (id)
+);
+INSERT INTO productreviews (ouruser_id, product_id, text) VALUES
+	(1, 3, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nisl tincidunt eget nullam non. Quis hendrerit dolor magna eget est lorem ipsum dolor sit. Volutpat odio facilisis mauris sit amet massa. Commodo odio aenean sed adipiscing diam donec adipiscing tristique. Mi eget mauris pharetra et. Elementum nibh tellus molestie nunc. Non tellus orci ac auctor augue.'),--
+	(2, 2, 'Et malesuada fames ac turpis egestas sed. Sit amet nisl suscipit adipiscing bibendum est ultricies. Arcu ac tortor dignissim convallis aenean et tortor at. Pretium viverra suspendisse potenti nullam ac tortor vitae purus. Eros donec ac odio tempor orci dapibus ultrices. Et magnis dis parturient montes nascetur. Est placerat in egestas erat imperdiet.'),--
+	(3, 1, 'Sit amet nulla facilisi morbi tempus. Nulla facilisi cras fermentum odio eu. Etiam erat velit scelerisque in dictum non consectetur a erat. Enim nulla aliquet porttitor lacus luctus accumsan tortor posuere. Ut sem nulla pharetra diam. Fames ac turpis egestas maecenas. Bibendum neque egestas congue quisque egestas diam. Laoreet id donec ultrices tincidunt arcu non sodales neque. Eget felis eget nunc lobortis mattis aliquam faucibus purus. Faucibus interdum posuere lorem ipsum dolor sit.'),--
+	(2, 3, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nisl tincidunt eget nullam non. Quis hendrerit dolor magna eget est lorem ipsum dolor sit. Volutpat odio facilisis mauris sit amet massa. Commodo odio aenean sed adipiscing diam donec adipiscing tristique. Mi eget mauris pharetra et. Elementum nibh tellus molestie nunc. Non tellus orci ac auctor augue.'),--
+	(3, 2, 'Et malesuada fames ac turpis egestas sed. Sit amet nisl suscipit adipiscing bibendum est ultricies. Arcu ac tortor dignissim convallis aenean et tortor at. Pretium viverra suspendisse potenti nullam ac tortor vitae purus. Eros donec ac odio tempor orci dapibus ultrices. Et magnis dis parturient montes nascetur. Est placerat in egestas erat imperdiet.'),--
+	(1, 1, 'Sit amet nulla facilisi morbi tempus. Nulla facilisi cras fermentum odio eu. Etiam erat velit scelerisque in dictum non consectetur a erat. Enim nulla aliquet porttitor lacus luctus accumsan tortor posuere. Ut sem nulla pharetra diam. Fames ac turpis egestas maecenas. Bibendum neque egestas congue quisque egestas diam. Laoreet id donec ultrices tincidunt arcu non sodales neque. Eget felis eget nunc lobortis mattis aliquam faucibus purus. Faucibus interdum posuere lorem ipsum dolor sit.');--
 -- ----------------------------------------------------------------------
 -- Оказывается, какой-то гений придумал «camelCase» в названиях таблиц и столбцов заменять на camel_case при составлении запросов…
 -- ----------------------------------------------------------------------

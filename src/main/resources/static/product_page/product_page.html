@@ -1,0 +1,45 @@
+<div style="margin: 10px;">
+	<h3>{{contextPrompt}}</h3>
+	<p>&nbsp;</p>
+
+	<dl class="row">
+<!--		<dt class="col-sm-3">Название:&nbsp;</dt>
+		<dd class="col-sm-9">{{productDto.title}}</dd>-->
+
+		<dt class="col-sm-3">Цена:&nbsp;</dt>
+		<dd class="col-sm-9">{{productDto.price}}</dd>
+
+		<dt class="col-sm-3">Остаток на складе:&nbsp;</dt>
+		<dd class="col-sm-9">{{productDto.rest}}</dd>
+
+		<dt class="col-sm-3">Категория:&nbsp;</dt>
+		<dd class="col-sm-9">{{productDto.category}}</dd>
+
+		<dt class="col-sm-3">Артикул:&nbsp;</dt>
+		<dd class="col-sm-9">{{productDto.productId}}</dd>
+	</dl>
+<!--	{{productDto}}-->
+	<p>&nbsp;</p>
+
+	<div ng-show="showReviewForm">
+		<h4>Оставьте свой отзыв об этом товаре:</h4>
+		<form novalidate ng-submit="appendReview()">
+				<div class="col-12">
+					<textarea class="col-12" name="comment" ng-model="review.text" placeholder="Введите текст отзыва здесь и нажмите кнопку «Готово». Ориентирововчная длина сообщения составляет 2000 символов."></textarea>
+				</div>
+				<button type="submit" class="btn btn-primary">Готово</button>
+		</form>
+	</div>
+	<p>&nbsp;</p>
+
+	<h4>Отзывы наших покупателей о товаре «{{productDto.title}}»</h4>
+<!--	{{prodReviews}}-->
+	<div ng-repeat="r in prodReviews">
+		<p>&nbsp;</p>
+		<h6><b>{{r.authorName}} •</b> {{r.date}}</h6>
+		<div class="almost_windows">
+		{{r.text}}
+		</div>
+	</div>
+	<p>&nbsp;</p>
+</div>
