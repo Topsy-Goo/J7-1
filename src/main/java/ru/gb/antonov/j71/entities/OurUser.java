@@ -45,15 +45,12 @@ public class OurUser
                 joinColumns        = @JoinColumn (name="ouruser_id"),
                 inverseJoinColumns = @JoinColumn (name="role_id"))    @Getter @Setter
     private Collection<Role> roles;
-
+/*  Роли и разрешения не стоит убирать из класса т.к. при создании юзера они должны сохарняться одновременно с ним.   */
     @ManyToMany
     @JoinTable (name="ourusers_ourpermissions",
                 joinColumns        = @JoinColumn (name="ouruser_id"),
                 inverseJoinColumns = @JoinColumn (name="ourpermission_id"))    @Getter @Setter
     private Collection<OurPermission> ourPermissions;
-
-    @OneToMany (mappedBy = "ouruser")    @Setter
-    private List<Order> orders;   //TODO:наверное, оно зря здесь.
 //------------------------ Конструкторы -------------------------------------
 
     public static OurUser dummyOurUser (String login, String password, String email)
@@ -86,14 +83,11 @@ public class OurUser
     private boolean setEmail (String email)
     {
         String s = validateString (email, EMAIL_LEN_MIN, EMAIL_LEN_MAX);
-        boolean ok = s != null /*&& hasEmailFormat (email)*/; //TODO: раскомментировать вызов hasEmailFormat().
+        boolean ok = s != null && hasEmailFormat (email);
         if (ok)
             this.email = s;
         return ok;
     }
-
-    public List<Order> getOrders() { return Collections.unmodifiableList (orders); }
-
 //----------------------- Аутентификация ------------------------------------
 /*  Отдельный метод для установки пароля вручную, чтобы иметь возможность сообщать юзеру о некорректно
 заданном пароле и при этом выводить в сообщении пароль, а не хэш пароля.

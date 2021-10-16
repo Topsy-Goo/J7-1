@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.gb.antonov.j71.beans.errorhandlers.BadCreationParameterException;
-import ru.gb.antonov.j71.beans.repositos.OrderItemRepo;
 import ru.gb.antonov.j71.beans.repositos.OrdersRepo;
 import ru.gb.antonov.j71.entities.*;
 import ru.gb.antonov.j71.entities.dtos.CartDto;
@@ -24,10 +23,10 @@ import static ru.gb.antonov.j71.Factory.orderCreationTimeToString;
 @RequiredArgsConstructor
 public class OrderService
 {
-    private final CartService cartService;
-    private final OrdersRepo ordersRepo;
-    private final OurUserService ourUserService;
-    private final ProductService productService;
+    private final CartService        cartService;
+    private final OrdersRepo         ordersRepo;
+    private final OurUserService     ourUserService;
+    private final ProductService     productService;
     private final OrderStatesService orderStatesService;
 //---------------------------------------------------------------------------------------
     @Transactional
@@ -101,8 +100,8 @@ public class OrderService
     public Collection<OrderDto> getUserOrdersAsOrderDtos (Principal principal)
     {
         OurUser ourUser    = ourUserService.userByPrincipal (principal);
-        List<Order> orders = ourUser.getOrders();
-        Collection<OrderDto> list = new ArrayList<>((orders != null) ? orders.size () : 0);
+        List<Order> orders = ordersRepo.findAllByOuruser (ourUser);
+        Collection<OrderDto> list = new ArrayList<>((orders != null) ? orders.size() : 0);
 
         if (orders != null)
         for (Order o : orders)

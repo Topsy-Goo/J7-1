@@ -85,8 +85,7 @@ public class OurUserService implements UserDetailsService
     }
 
     public Optional<OurUser> findByLogin (String login)
-    {
-        return ourUserRepo.findByLogin (login);
+    {   return ourUserRepo.findByLogin (login);
     }
 
     @Transactional

@@ -28,15 +28,13 @@ public class OurPermission
     @Column(name="updated_at", nullable=false)
     private LocalDateTime updatedAt;
 //------------------------------------------------------------
-    @Override
-    public boolean equals (Object o)
+    @Override public boolean equals (Object o)
     {
         if (this == o)   return true;
         if (o == null || getClass () != o.getClass ())   return false;
         OurPermission ourPermission = (OurPermission) o;
         return name.equals (ourPermission.name);
     }
-    @Override
-    public int hashCode () { return Objects.hash (name); }
+    @Override public int hashCode () { return Objects.hash (name); }
 
 }
