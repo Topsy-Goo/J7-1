@@ -33,16 +33,16 @@ public class JwtokenUtil
                                 .map(GrantedAuthority::getAuthority)
                                 .collect(Collectors.toList());
 
-        claims.put("roles", roles);
+        claims.put ("roles", roles);
         Date dateIssued = new Date();
         Date dateExpired = new Date (dateIssued.getTime() + lifetime);
         String s = Jwts.builder()
-                   .setClaims(claims)
-                   .setSubject(userDetails.getUsername())
-                   .setIssuedAt(dateIssued)
-                   .setExpiration(dateExpired)
-                   .signWith(SignatureAlgorithm.HS256, secret)
-                   .compact();
+                       .setClaims (claims)
+                       .setSubject (userDetails.getUsername())
+                       .setIssuedAt (dateIssued)
+                       .setExpiration (dateExpired)
+                       .signWith (SignatureAlgorithm.HS256, secret)
+                       .compact();
         return s;
     }
 

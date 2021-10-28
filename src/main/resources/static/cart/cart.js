@@ -70,8 +70,8 @@ angular.module('market-front').controller('cartController',
 		},
 		function failureCallback (response)
 		{
-			alert (response.data);
-			console.log ('Error: '+ response.data);
+			alert ('ОШИБКА: '+ response.data.messages);
+//			console.log ('ОШИБКА: '+ response.data.messages);
 		});
 	}
 

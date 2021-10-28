@@ -3,9 +3,11 @@ angular.module('market-front').controller('product_pageController',
 function ($rootScope, $scope, $http, $location, $routeParams)
 {
 	const contextProductPath = 'http://localhost:12440/market/api/v1/products';
-	const contextAuthoPath	 = 'http://localhost:12440/market/api/v1/auth';
-	const contextCartPath	 = 'http://localhost:12440/market/api/v1/cart';
-	const contextOrderPath   = 'http://localhost:12440/market/api/v1/order';
+//	const contextAuthoPath	 = 'http://localhost:12440/market/api/v1/auth';
+//	const contextCartPath	 = 'http://localhost:12440/market/api/v1/cart';
+//	const contextOrderPath   = 'http://localhost:12440/market/api/v1/order';
+	const contextProductReviewPath = 'http://localhost:12440/market/api/v1/productreviews';
+
 	$scope.showReviewForm = false;
 //	$scope.contextPrompt = 'Свойства товара';
 	$scope.reviewHalfHeader = 'Пока нет отзывов';
@@ -29,7 +31,7 @@ function ($rootScope, $scope, $http, $location, $routeParams)
 
 	$scope.loadReviews = function ()
 	{
-		$http.get (contextProductPath + '/load_reviews/' + $routeParams.pid)
+		$http.get (contextProductReviewPath + '/load_reviews/' + $routeParams.pid)
 		.then (
 		function successCallback (response)
 		{
@@ -51,7 +53,7 @@ function ($rootScope, $scope, $http, $location, $routeParams)
 		$scope.review.date = null;
 		console.log ($scope.review);
 
-		$http.post (contextProductPath + '/new_review', $scope.review)
+		$http.post (contextProductReviewPath + '/new_review', $scope.review)
 		.then (
 		function successCallback (response)
 		{
@@ -73,7 +75,7 @@ function ($rootScope, $scope, $http, $location, $routeParams)
 		}
 		else
 		{
-			$http.get (contextProductPath + '/can_review/' + $routeParams.pid)
+			$http.get (contextProductReviewPath + '/can_review/' + $routeParams.pid)
 			.then (
 			function successCallback (response)
 			{

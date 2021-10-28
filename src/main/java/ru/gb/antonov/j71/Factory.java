@@ -13,7 +13,7 @@ import java.util.Locale;
 public class Factory
 {
     public static final boolean DRYCART = true;
-    public static final boolean FLOAT_POINT = true;
+    public static final boolean FLOAT_POINT = true; //< в isDecimalNumber() указывает, нужно ли считать точку/запятую частью числа.
 
     public static Double MIN_PRICE = 0.01;
     public static final Double MAX_PRICE = Double.MAX_VALUE;
@@ -36,6 +36,7 @@ public class Factory
     public static final int ORDERSTATE_FRIENDLYNAME_LEN = 64;
 
     public static final String STR_EMPTY = "";
+    public static final String BEARER_   = "Bearer ";
     public static final String PRODUCT_PRICE_FIELD_NAME = Product.getPriceFieldName();
     public static final String PRODUCT_TITLE_FIELD_NAME = Product.getTitleFieldName();
     public static final String ORDERSTATE_NONE     = "NONE";
@@ -43,19 +44,23 @@ public class Factory
     public static final String ORDERSTATE_SERVING  = "SERVING";
     public static final String ORDERSTATE_PAYED    = "PAYED";
     public static final String ORDERSTATE_CANCELED = "CANCELED";
-    public static String CART_PREFIX_ = STR_EMPTY;
     public static final String ROLE_USER       = "ROLE_USER";
     public static final String ROLE_ADMIN      = "ROLE_ADMIN";
     public static final String ROLE_SUPERADMIN = "ROLE_SUPERADMIN";
     public static final String ROLE_MANAGER    = "ROLE_MANAGER";
     public static final String PERMISSION_EDIT_PRODUCT = "EDIT_PRODUCTS";
     public static final String PERMISSION_SHOPPING     = "SIMLE_SHOPPING";
+    public static final String AUTHORIZATION_HDR_TITLE = "Authorization";
+
+    public static String   CART_PREFIX_        = STR_EMPTY;
+    public static Duration CART_LIFE           = Duration.ofDays(30L);
+    public static Duration DONOT_SET_CART_LIFE = null;
 
     public static final Locale RU_LOCALE = new Locale ("ru", "RU");
-    public static Duration CART_LIFE = Duration.ofDays (30L);
-
     public static final MultiValueMap<String, String> NO_FILTERS = null;
 //------------------------------------------------------------------------
+
+/** Считываем настройки из файла настроек. */
     public static void init (Environment env)
     {
         System.out.println ("\n************************* Считывание настроек: *************************");

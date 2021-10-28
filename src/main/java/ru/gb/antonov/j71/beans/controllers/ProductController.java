@@ -7,19 +7,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.gb.antonov.j71.beans.errorhandlers.BadCreationParameterException;
 import ru.gb.antonov.j71.beans.errorhandlers.OurValidationException;
 import ru.gb.antonov.j71.beans.errorhandlers.UnableToPerformException;
-import ru.gb.antonov.j71.beans.services.CartService;
-import ru.gb.antonov.j71.beans.services.OurUserService;
-import ru.gb.antonov.j71.beans.services.ProductReviewService;
 import ru.gb.antonov.j71.beans.services.ProductService;
 import ru.gb.antonov.j71.entities.Product;
 import ru.gb.antonov.j71.entities.dtos.ProductDto;
-import ru.gb.antonov.j71.entities.dtos.ProductReviewDto;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -31,9 +25,6 @@ import static ru.gb.antonov.j71.Factory.PROD_PAGESIZE_DEF;
 public class ProductController
 {
     private final ProductService productService;
-    private final CartService cartService;
-    private final OurUserService       ourUserService;
-    private final ProductReviewService productReviewService;
 
     //@Value ("${views.shop.items-per-page-def}")
     private final int pageSize = PROD_PAGESIZE_DEF;
@@ -56,26 +47,6 @@ public class ProductController
         if (id == null)
             throw new UnableToPerformException ("Не могу выполнить поиск для товара id: "+ id);
         return ProductService.dtoFromProduct (productService.findById (id));
-    }
-
-    @GetMapping ("/load_reviews/{id}")
-    public List<ProductReviewDto> productReviews (@PathVariable(name="id") Long pid)
-    {
-        if (pid == null)
-            throw new BadCreationParameterException ("Не могу выполнить поиск для товара id: "+ pid);
-        return productReviewService.getReviewListById (pid);
-    }
-
-    @PostMapping ("/new_review")
-    public void newProductReview (@RequestBody ProductReviewDto reviewDto, Principal principal)
-    {
-        productReviewService.newProductReview (reviewDto.getProductId(), reviewDto.getText(), principal);
-    }
-
-    @GetMapping ("/can_review/{pid}")
-    public Boolean canReviews (@PathVariable Long pid, Principal principal)
-    {
-        return productReviewService.canReview (principal, pid);
     }
 //------------------- Редактирование товара ----------------------------
 

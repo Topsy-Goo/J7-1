@@ -7,7 +7,6 @@ import ru.gb.antonov.j71.entities.Product;
 @Data
 public class OrderItemDto
 {
-//TODO: Кажется, здесь validator.constraints не нужны, т.к. ожидаем, что все поля будут заполнятся НЕ юзером.
     private Long   productId;
     private String category;
     private String title;
@@ -27,7 +26,7 @@ public class OrderItemDto
         updateFromProduct (p);
     }
 
-    public OrderItemDto (OrderItemDto oi) //TODO: проверить, используется ли этот метод ?
+/*    public OrderItemDto (OrderItemDto oi) //TODO: проверить, используется ли этот метод ?
     {
         productId = oi.productId;
         title     = oi.title;
@@ -36,27 +35,22 @@ public class OrderItemDto
         rest      = oi.rest;
         quantity  = oi.quantity;
         cost      = oi.cost;
-    }
+    }*/
 //--------- Геттеры и сеттеры (JSON работает с публичными полями!) --------------
 
-    //Возвращает true, если количество было изменено.
+/** Возвращает true, если количество было изменено. */
     public boolean setQuantity (int newQuantity)
     {
         boolean ok = newQuantity >= 0 && quantity != newQuantity;
-        //boolean recalc = quantity != newQuantity;
         if (ok)
-        {
             quantity = newQuantity;
-            //if (recalc) calcCost();
-        }
         return ok;
     }
 
     public double getCost () { return price * quantity; }
-
 //----------------- Другие методы ----------------------------------
 
-    //Возвращает true, если количество было изменено.
+/** Возвращает true, если количество было изменено. */
     public boolean changeQuantity (int delta) {   return setQuantity (quantity + delta);   }
 
     //private void calcCost () {   setCost (price * quantity);   }

@@ -110,6 +110,7 @@
 			<artifactId>jedis</artifactId>
 			<version>3.6.0</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.jetbrains</groupId>
 			<artifactId>annotations</artifactId>
@@ -123,7 +124,7 @@
 			<version>1.0</version>
 		</dependency> -->
 
-<!-- Следующие 5 зависимости нужны для SOAP. -->
+<!-- Следующие 5 зависимостей нужны для SOAP. -->
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>

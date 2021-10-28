@@ -11,8 +11,10 @@ import ru.gb.antonov.j71.beans.errorhandlers.UnauthorizedAccessException;
 import ru.gb.antonov.j71.beans.services.OrderService;
 import ru.gb.antonov.j71.beans.services.OurUserService;
 import ru.gb.antonov.j71.entities.dtos.OrderDetalesDto;
+import ru.gb.antonov.j71.entities.dtos.OrderDto;
 
 import java.security.Principal;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 @RequestMapping ("/api/v1/order")
@@ -43,6 +45,12 @@ public class OrderController
                                                 .collect (Collectors.toList ()));
         }
         return orderService.applyOrderDetails (orderDetalesDto, principal);
+    }
+
+    @GetMapping ("/orders")
+    public Collection<OrderDto> getOrders (Principal principal)
+    {
+        return orderService.getUserOrdersAsOrderDtos (principal);
     }
 
 /** Проверяем, зарегистрирован ли пользователь и бросаем исключение, если он не зарегистрирован.

@@ -138,7 +138,7 @@ public class CartService
         if (principal != null)
         {
             postfix = ourUserService.userByPrincipal (principal).getLogin();
-            cartLife = null;
+            cartLife = DONOT_SET_CART_LIFE;
         }
         return getUsersCartEntry (postfix, cartLife);
     }
@@ -153,7 +153,7 @@ public class CartService
         if (!redisTemplate.hasKey (key))
         {
             redisTemplate.opsForValue().set (key, new InMemoryCart());
-            if (cartLife != null)
+            if (cartLife != DONOT_SET_CART_LIFE)
                 redisTemplate.expire (key, cartLife);
         }
         InMemoryCart imcart = (InMemoryCart) redisTemplate.opsForValue().get (key);
@@ -252,7 +252,11 @@ public class CartService
         if (ok)
             updateCart (ce);
         else
-            throw new ResourceNotFoundException ("Не удалось изменить количество товара в корзине:\r"+ product);
+        {   String err = String.format ("не удалось изменить количество товара в корзине:\rтовар: %s\rостаток на складе: %d\rколичество этого товара в вашей корзине: %s",
+                                        product.getTitle(), product.getRest(),
+                                        (ci != null) ? ci.quantity : "?");
+            throw new ResourceNotFoundException (err);
+        }
     }
 
     @Transactional
@@ -269,10 +273,10 @@ public class CartService
         clearCart (getUsersCartEntry (principal, uuid));
     }
 
-    public void clearCart (String login)
+/*    public void clearCart (String login)
     {
-        clearCart (getUsersCartEntry(login, null));
-    }
+        clearCart(getUsersCartEntry(login, DONOT_SET_CART_LIFE));
+    }*/
 
     private void clearCart (CartsEntry ce)
     {
@@ -282,7 +286,7 @@ public class CartService
 
     public CartDto getUsersDryCartDto (String login)
     {
-        return inMemoryCartToDto (getUsersCartEntry (login, null).imcart, DRYCART);
+        return inMemoryCartToDto(getUsersCartEntry(login, DONOT_SET_CART_LIFE).imcart, DRYCART);
     }
 
 /** При формирвоании DTO-шки проверяем остаток товара «на складе». */
@@ -323,8 +327,8 @@ public class CartService
 
         if (redisTemplate.hasKey (Factory.cartKeyByLogin (postfixUu)))
         {
-            CartsEntry ceUu = getUsersCartEntry (postfixUu, null);
-            CartsEntry cePr = getUsersCartEntry (postfixPr, null); //< если корзины нет, она будет создана
+            CartsEntry ceUu = getUsersCartEntry(postfixUu, DONOT_SET_CART_LIFE);
+            CartsEntry cePr = getUsersCartEntry(postfixPr, DONOT_SET_CART_LIFE); //< если корзины нет, она будет создана
 
             if (inlineMergeCarts (ceUu.imcart, cePr.imcart))
             {
@@ -348,9 +352,9 @@ public class CartService
         return ok;
     }
 
-    public void removeNonEmptyItems(String login)
+    public void removeNonEmptyItems (String login)
     {
-        CartsEntry ce = getUsersCartEntry (login, null);
+        CartsEntry ce = getUsersCartEntry (login, DONOT_SET_CART_LIFE);
         if (ce.imcart.removeNonEmptyItems())
             updateCart(ce);
     }
@@ -360,7 +364,7 @@ public class CartService
     {
         String key = cartKeyByLogin (postfix);
         if (!redisTemplate.hasKey (key))
-            return redisTemplate.delete (getUsersCartEntry (postfix, null).key);
+            return redisTemplate.delete (getUsersCartEntry (postfix, DONOT_SET_CART_LIFE).key);
         return false;
     }
 

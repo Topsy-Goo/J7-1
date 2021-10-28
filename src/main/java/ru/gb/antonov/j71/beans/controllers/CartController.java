@@ -20,10 +20,10 @@ import java.util.UUID;
 public class CartController
 {
     private final ProductService productService;
-    private final CartService cartService;
+    private final CartService    cartService;
 //------------------------------------------------------------------------
 
-    @GetMapping({"/uuid"})
+    @GetMapping({"/generate_uuid"})
     public StringResponse generateCartUuid ()
     {
         return new StringResponse (UUID.randomUUID().toString());
@@ -40,12 +40,6 @@ public class CartController
     {
         return cartService.getCartLoad (principal, uuid);
     }
-
-/*    @GetMapping ("/cost/{uuid}")
-    public Double getCartCost (Principal principal, @PathVariable String uuid)
-    {
-        return cartService.getCartCost (principal, uuid);
-    }*/
 
     @GetMapping ("/plus/{productId}/{uuid}")
     public void increaseProductQuantity (Principal principal, @PathVariable Long productId, @PathVariable String uuid)
@@ -83,3 +77,8 @@ public class CartController
         this.cartService.mergeCarts (principal, uuid);
     }
 }
+/*    @GetMapping ("/cost/{uuid}")
+    public Double getCartCost (Principal principal, @PathVariable String uuid)
+    {
+        return cartService.getCartCost (principal, uuid);
+    }*/

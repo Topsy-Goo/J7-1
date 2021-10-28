@@ -48,9 +48,9 @@ angular.module('market-front').controller('orderController',
 		},
 		function failureCallback (response)
 		{
-			$scope.contextPrompt = "Произошла ошибка!";
-			//console.log (response.data);
-			alert ($scope.contextPrompt);
+			$scope.contextPrompt = "Произошла ошибка! ";
+			console.log (response.data.messages);
+			alert ($scope.contextPrompt + response.data.messages);
 			/* если выводим сообщение от валидатора, то нужно укзаывать имя поля с сообщением,
 			например:	response.data.messages,
 			а для всех нормальных сообщений — указываем только response.data.	*/

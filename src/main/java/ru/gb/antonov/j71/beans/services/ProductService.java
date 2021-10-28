@@ -9,19 +9,15 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
-import ru.gb.antonov.j71.beans.errorhandlers.BadCreationParameterException;
 import ru.gb.antonov.j71.beans.errorhandlers.ResourceNotFoundException;
 import ru.gb.antonov.j71.beans.repositos.ProductRepo;
-import ru.gb.antonov.j71.beans.repositos.ProductReviewsRepo;
 import ru.gb.antonov.j71.beans.repositos.specifications.ProductSpecification;
 import ru.gb.antonov.j71.beans.soap.products.ProductSoap;
-import ru.gb.antonov.j71.entities.*;
-import ru.gb.antonov.j71.entities.dtos.ProductReviewDto;
+import ru.gb.antonov.j71.entities.Product;
+import ru.gb.antonov.j71.entities.ProductsCategory;
 import ru.gb.antonov.j71.entities.dtos.ProductDto;
 
-import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,10 +28,8 @@ import static ru.gb.antonov.j71.Factory.NO_FILTERS;
 @RequiredArgsConstructor
 public class ProductService
 {
-    private final ProductRepo productRepo;
+    private final ProductRepo            productRepo;
     private final ProductCategoryService productCategoryService;
-    private final OurUserService ourUserService;
-    //private final OrderService orderService;  кольцует
 
 //названия фильтров, использующиеся на фронте:
     private static final String FILTER_MIN_PRICE = "min_price";

@@ -105,7 +105,7 @@ angular.module('market-front').controller('storeController',
 			{
 				$scope.cartLoad = 0;
 				alert (response.data.messages);	//< название параметра взято из ErrorMessage
-				console.log ('Error: '+ response.data.messages); //< конкатенация работает
+				console.log ('Error @ getCartLoad(): '+ response.data.messages); //< конкатенация работает
 			});
 		}
 	}
@@ -142,8 +142,8 @@ angular.module('market-front').controller('storeController',
 		},
 		function failureCallback (response)
 		{
-			alert (response.data.messages);	//< название параметра взято из ErrorMessage
-			console.log ('Error: '+ response.data.messages);
+			alert ('ОШИБКА: '+ response.data.messages);	//< название параметра взято из ErrorMessage
+//			console.log ('ОШИБКА: '+ response.data.messages);
 		});
 	}
 

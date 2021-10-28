@@ -11,11 +11,11 @@ angular.module('market-front').controller('registrationController',
 	$localStorage - локальное хранилище браузера (требуется подкл. скрипт ngStorage.min.js.)
 */
 	const contextAuthoPath = 'http://localhost:12440/market/api/v1/auth';
-	const contextCartPath = 'http://localhost:12440/market/api/v1/cart';
+	const contextCartPath  = 'http://localhost:12440/market/api/v1/cart';
 
 	var contextPrompt_Registered = "Вы успешно зарегистрированы.";
 	var contextPrompt_Unathorized = "Введите логин, паоль и адрес электронной почты.";
-	var contextPrompt_LogedIn = "Вы уже авторизованы.";
+	var contextPrompt_LogedIn = "Вы авторизованы.";
 	var contextPrompt_Error = "Ошибка регистрации.";
 	$scope.contextPrompt = "";
 
@@ -72,14 +72,16 @@ angular.module('market-front').controller('registrationController',
 	{
 		if ($localStorage.gbj7MarketGuestCartId)
 		{
-			$http.get (contextCartPath + '/merge' + '/' + $localStorage.gbj7MarketGuestCartId)
+			$http.get (contextCartPath + '/merge/' + $localStorage.gbj7MarketGuestCartId)
 			.then (
 			function successCallback (response)
 			{
-				$scope.loadCart();
+				console.log ('registration - $scope.tryMergeCarts - OK');
+//////////////////////////				$scope.loadCart();
 			},
 			function failureCallback (response)
 			{
+				console.log ('Ой! @ registration - $scope.tryMergeCarts');
 				alert (response.data);
 			});
 		}

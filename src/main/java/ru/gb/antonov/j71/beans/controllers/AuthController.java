@@ -29,8 +29,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AuthController
 {
-    private final OurUserService ourUserService;
-    private final JwtokenUtil    jwtokenUtil;
+    private final OurUserService        ourUserService;
+    private final JwtokenUtil           jwtokenUtil;
     private final AuthenticationManager authenticationManager;
 
 

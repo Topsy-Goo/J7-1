@@ -2,7 +2,9 @@
 angular.module('market-front').controller('user_profileController', function ($rootScope, $scope, $http, $location)
 {
 	const contextUserProfilePath = 'http://localhost:12440/market/api/v1/user_profile';
-	const contextAuthoPath	= 'http://localhost:12440/market/api/v1/auth';
+	const contextAuthoPath		 = 'http://localhost:12440/market/api/v1/auth';
+	const contextOrderPath		 = 'http://localhost:12440/market/api/v1/order';
+
 	$scope.canUserEditProducts = false;
 
 
@@ -17,26 +19,28 @@ angular.module('market-front').controller('user_profileController', function ($r
 		},
 		function failureCallback (response)
 		{
-			alert (response.data);
-			console.log ('Error: '+ response.data);
+			errorMessage = 'Не удалось загрузить информацию о пользователе. \rОшибка : ';
+			alert (errorMessage + response.data);
+			console.log ('Error @ loadUserInfo(): '+ errorMessage + response.data);
 		});
 	}
 
 	$scope.loadOrders = function ()
 	{
-		$http.get (contextUserProfilePath + '/orders')
+		$http.get (contextOrderPath + '/orders')
 		.then(
 		function successCallback (response)
 		{
 			$scope.orders = response.data;
 			$scope.ordersLength = response.data.length;
 			console.log (response.data);
-			console.log ($scope.paginationArray);
+//			console.log ($scope.paginationArray);
 		},
 		function failureCallback (response)
 		{
-			alert (response.data);
-			console.log ('Error: '+ response.data.messages);
+			errorMessage = 'Не удалось загрузить заказы пользователя. \rОшибка : ';
+			alert (errorMessage + response.data);
+			console.log ('Error @ loadOrders(): '+ errorMessage + response.data.messages);
 		});
 	}
 //----------------------------------------------------------------------- действия

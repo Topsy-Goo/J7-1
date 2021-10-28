@@ -31,6 +31,8 @@ public class OurUserService implements UserDetailsService
     private final OurUserRepo          ourUserRepo;
     private final RoleService          roleService;
     private final OurPermissionService ourPermissionService;
+
+    public static final String NO_SUCH_LOGIN_ = "Логин не зарегистрирован: ";
 //-----------------------------------------------------------------------------------
 //TODO: если юзера можно будет удалять из БД, то нужно не забыть удалить и его корзину из Memurai.
 
@@ -38,29 +40,25 @@ public class OurUserService implements UserDetailsService
     public OurUser userByPrincipal (Principal principal)
     {
         String login = (principal != null) ? principal.getName() : STR_EMPTY;
-        String errMsg = "Логин не зарегистрирован: " + login;
-        return findByLogin(login).orElseThrow (()->new UserNotFoundException (errMsg));
+        return findByLogin(login).orElseThrow (()->new UserNotFoundException (NO_SUCH_LOGIN_+ login));
     }
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername (String login)
     {
-        String errMsg = String.format ("Логин (%s) не зарегистрирован.", login);
-        OurUser ourUser = findByLogin(login).orElseThrow(()->new UsernameNotFoundException (errMsg));
+        OurUser ourUser = findByLogin (login).orElseThrow(()->new UsernameNotFoundException (NO_SUCH_LOGIN_+ login));
 
-        return new User(ourUser.getLogin(),
-                        ourUser.getPassword(),
-                        mapRolesToAuthorities (ourUser.getRoles(), ourUser.getOurPermissions()));
+        return new User (ourUser.getLogin(),
+                         ourUser.getPassword(),
+                         mapRolesToAuthorities (ourUser.getRoles(), ourUser.getOurPermissions()));
     }
 
-    private Collection<? extends GrantedAuthority> mapRolesToAuthorities (
-                                        Collection<Role> roles,
-                                        Collection<OurPermission> permissions)
-    {   List<String> list =
-        roles.stream()
-             .map (Role::getName)
-             .collect (Collectors.toList());
+    private Collection<? extends GrantedAuthority> mapRolesToAuthorities ( Collection<Role> roles, Collection<OurPermission> permissions)
+    {
+        List<String> list = roles.stream()
+                                 .map (Role::getName)
+                                 .collect (Collectors.toList());
 
         list.addAll (permissions.stream()
                                 .map (OurPermission::getName)
@@ -95,7 +93,8 @@ public class OurUserService implements UserDetailsService
         return new UserInfoDto (u.getLogin(), u.getEmail());
     }
 
-/** Упростим задачу — не станем прописывать разрешения в БД, а просто разрешим редактировать товары админам и суперадминам. */
+/** Редактировать информацию о товарах могут только те пользователи, у которых есть
+разрешение {@code PERMISSION_EDIT_PRODUCT}. */
     @Transactional
     public Boolean canEditProduct (Principal principal)
     {

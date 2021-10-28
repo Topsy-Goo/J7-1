@@ -24,18 +24,17 @@ public class ProductReviewService
     private final ProductReviewsRepo productReviewsRepo;
     private final ProductService     productService;
     private final OurUserService     ourUserService;
-    private final OrderItemRepo      orderItemRepo;
+    private final OrderService       orderService;
     private final OrderStatesService orderStatesService;
 
     @Transactional
     public List<ProductReviewDto> getReviewListById (long pid)
     {
         Product product = productService.findById (pid);
-        List<ProductReviewDto> reviews = productReviewsRepo.findAllByProductId (pid)
-                                                           .stream()
-                                                           .map (ProductReviewDto::new)
-                                                           .collect (Collectors.toList ());
-        return reviews;
+        return productReviewsRepo.findAllByProductId (pid)
+                                 .stream()
+                                 .map (ProductReviewDto::new)
+                                 .collect (Collectors.toList ());
     }
 
     @Transactional
@@ -67,8 +66,7 @@ public class ProductReviewService
             {
         //товар должен числиться в оплаченном заказе:
                 Integer stateId = orderStatesService.getOrderStatePayed().getId(); //PAYED
-                Collection<OrderItem> orderItems = orderItemRepo.userOrderItemsByProductId (uid, pid, stateId);
-                ok = !orderItems.isEmpty();
+                ok = !orderService.userOrderItemsByProductId (uid, pid, stateId).isEmpty();
             }
         }
         return ok;

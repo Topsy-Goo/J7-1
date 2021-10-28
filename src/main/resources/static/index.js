@@ -97,13 +97,12 @@
 
 		if (!$localStorage.gbj7MarketGuestCartId)
 		{
-			$http.get(contextCartPath + '/uuid')
+			$http.get(contextCartPath + '/generate_uuid')
 			.then(
 			function successCallback(response)
 			{
 				$localStorage.gbj7MarketGuestCartId = response.data.value;
 				console.log ('Temporary cartID is generated:'+ response.data.value);
-//				console.log ();
 			});
 		}
 	}
@@ -154,8 +153,12 @@ angular.module('market-front').controller('indexController',
 					$scope.clearUserFields();
 				}
 				$scope.tryMergeCarts();
+				location.reload(false); /* перезагружает страницу (false=кэша, true=из сервера);
+				 место вызова в коде имеет значение, т.к. при перезагрузке, например, могут потеряться
+				 данные о регистрации, если они не были записаны в хранилище браузера или не были
+				 сохранены иным способом */
 
-				$rootScope.canEditProducts = $scope.canUserEditProducts();
+//				$rootScope.canEditProducts = $scope.canUserEditProducts();
 			},
 			function failureCallback (response)
 			{
@@ -186,10 +189,12 @@ angular.module('market-front').controller('indexController',
 			.then (
 			function successCallback (response)
 			{
-				$scope.loadCart();
+				console.log ('index - $scope.tryMergeCarts - OK');
+///////////////////////				$scope.loadCart();
 			},
 			function failureCallback (response)
 			{
+				console.log ('Ой! @ index - $scope.tryMergeCarts');
 				alert (response.data);
 			});
 		}

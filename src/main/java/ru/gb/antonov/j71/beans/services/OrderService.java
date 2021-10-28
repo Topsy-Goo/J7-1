@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.gb.antonov.j71.beans.errorhandlers.BadCreationParameterException;
+import ru.gb.antonov.j71.beans.repositos.OrderItemRepo;
 import ru.gb.antonov.j71.beans.repositos.OrdersRepo;
 import ru.gb.antonov.j71.entities.*;
 import ru.gb.antonov.j71.entities.dtos.CartDto;
@@ -23,10 +24,11 @@ import static ru.gb.antonov.j71.Factory.orderCreationTimeToString;
 @RequiredArgsConstructor
 public class OrderService
 {
-    private final CartService        cartService;
     private final OrdersRepo         ordersRepo;
-    private final OurUserService     ourUserService;
+    private final OrderItemRepo      orderItemRepo;
     private final ProductService     productService;
+    private final OurUserService     ourUserService;
+    private final CartService        cartService;
     private final OrderStatesService orderStatesService;
 //---------------------------------------------------------------------------------------
     @Transactional
@@ -54,7 +56,7 @@ public class OrderService
     {
         CartDto cartDto = detales.getCartDto();
         OurUser ourUser = ourUserService.userByPrincipal (principal);
-        OrderState oState = orderStatesService.getStatePending();
+        OrderState oState = orderStatesService.getOrderStatePending();
 
         Order o = new Order();
         o.setState (oState);
@@ -150,5 +152,10 @@ public class OrderService
         oidto.setCost (price * quantity);
         oitemLoad[0] += quantity;
         return oidto;
+    }
+
+    public List<OrderItem> userOrderItemsByProductId (Long uid, Long pid, Integer stateId)
+    {
+        return orderItemRepo.userOrderItemsByProductId (uid, pid, stateId);
     }
 }
