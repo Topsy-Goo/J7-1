@@ -14,13 +14,13 @@ import static ru.gb.antonov.j71.Factory.PRODCAT_NAMELEN_MIN;
 @NoArgsConstructor
 public class ProductCategoryDto
 {
-    private Long             id;
+    private Long   id;
 
     @NotNull (message="Не указано название категории товара!")
     @Length (min= PRODCAT_NAMELEN_MIN,
              max= PRODCAT_NAMELEN_MAX,
              message="Длина названия категории товара: 1…255 символов!")
-    private String           name;
+    private String name;
 //-----------------------------------------------------------------------
     public ProductCategoryDto (ProductsCategory category)
     {

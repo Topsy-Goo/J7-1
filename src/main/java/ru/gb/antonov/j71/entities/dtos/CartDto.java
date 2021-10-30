@@ -2,6 +2,7 @@ package ru.gb.antonov.j71.entities.dtos;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,28 +14,31 @@ public class CartDto
 
     //следующ. 2 поля никогда не хранят актуальные значения! При попытке получить их значения, последние
     // вычисляются и возвращаются геттерами.
-    private double cost;
-    private int load;
+    private BigDecimal cost;
+    private int        load;
 //-----------------------------------------------------------------------------
-    public CartDto () { oitems = new LinkedList<> (); }
+    public CartDto ()
+    {   oitems = new LinkedList<> ();
+        cost = BigDecimal.ZERO;
+    }
 
     public static CartDto dummyCartDto (/*Метод готов переварить любые параметры.*/)
     {
-        CartDto cdt = new CartDto();
-        //cdt.oitems = ;
+        CartDto cdt     = new CartDto();
         cdt.titlesCount = 0;
-        cdt.cost = 0.0;
-        cdt.load = 0;
+        cdt.cost        = BigDecimal.ZERO;
+        cdt.load        = 0;
         //cdt. = ;
+        //cdt.oitems = ;
         return cdt;
     }
 //--------------------- геттеры и сеттеры -------------------------------------
-    public double getCost ()
+    public BigDecimal getCost ()
     {
-        double cost = 0.0;
+        BigDecimal cost = BigDecimal.ZERO;
         for (OrderItemDto oitem : oitems)
         {
-            cost += oitem.getCost();
+            cost = cost.add (oitem.getCost());
         }
         return cost;
     }
@@ -64,7 +68,7 @@ public class CartDto
 
                 ok = oitems.add (oitem);
                 load += quantity;
-                cost += oitem.getCost();
+                cost = cost.add (oitem.getCost());
             }
         }
         return ok;

@@ -4,19 +4,23 @@ import lombok.Data;
 import ru.gb.antonov.j71.beans.errorhandlers.BadCreationParameterException;
 import ru.gb.antonov.j71.entities.Product;
 
+import java.math.BigDecimal;
+
 @Data
 public class OrderItemDto
 {
-    private Long   productId;
-    private String category;
-    private String title;
-    private double price;
-    private int    rest;
-    private int    quantity;
-    private double cost;
+    private Long       productId;
+    private String     category;
+    private String     title;
+    private BigDecimal price;
+    private int        rest;
+    private int        quantity;
+    private BigDecimal cost;
 //------------------------------------------------------------------
-
-    public OrderItemDto () {}
+    public OrderItemDto ()
+    {   price = BigDecimal.ZERO;
+        cost = BigDecimal.ZERO;
+    }
 
     public OrderItemDto (Product p)  //< создаём «пустой» объект : без количества и общей стоимости.
     {
@@ -25,17 +29,6 @@ public class OrderItemDto
         productId = p.getId();
         updateFromProduct (p);
     }
-
-/*    public OrderItemDto (OrderItemDto oi) //TODO: проверить, используется ли этот метод ?
-    {
-        productId = oi.productId;
-        title     = oi.title;
-        category  = oi.category;
-        price     = oi.price;
-        rest      = oi.rest;
-        quantity  = oi.quantity;
-        cost      = oi.cost;
-    }*/
 //--------- Геттеры и сеттеры (JSON работает с публичными полями!) --------------
 
 /** Возвращает true, если количество было изменено. */
@@ -47,7 +40,7 @@ public class OrderItemDto
         return ok;
     }
 
-    public double getCost () { return price * quantity; }
+    public BigDecimal getCost () { return price.multiply(BigDecimal.valueOf(quantity)); }
 //----------------- Другие методы ----------------------------------
 
 /** Возвращает true, если количество было изменено. */

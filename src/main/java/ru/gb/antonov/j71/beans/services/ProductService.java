@@ -17,6 +17,7 @@ import ru.gb.antonov.j71.entities.Product;
 import ru.gb.antonov.j71.entities.ProductsCategory;
 import ru.gb.antonov.j71.entities.dtos.ProductDto;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -83,7 +84,7 @@ public class ProductService
 //-------------- Редактирование товаров ---------------------------------
 
     @Transactional
-    public Product createProduct (String title, double price, int rest, String productCategoryName)
+    public Product createProduct (String title, BigDecimal price, int rest, String productCategoryName)
     {
         Product p = new Product();
         ProductsCategory category = productCategoryService.findByName (productCategoryName); //< бросает ResourceNotFoundException
@@ -95,7 +96,7 @@ public class ProductService
 Любой другой параметр может быть {@code null}. Равенство параметра {@code null} расценивается как
 нежелание изменять соответствующее ему свойство товара. */
     @Transactional
-    public Product updateProduct (@NotNull Long id, String title, Double price, Integer rest, String productCategoryName)
+    public Product updateProduct (@NotNull Long id, String title, BigDecimal price, Integer rest, String productCategoryName)
     {
         Product p = findById (id);
         ProductsCategory category = null;

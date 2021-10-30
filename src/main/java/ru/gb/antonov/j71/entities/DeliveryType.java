@@ -4,6 +4,7 @@ import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,18 +16,24 @@ public class DeliveryType
     @Column (name="id")
     private Long id;
 
-    @Column (name="friendly_name")
+    @Column (name="friendly_name", nullable=false, unique = true)
     private String name;
 
-    @Column (name="cost")
-    private double cost;
+    //@Column (name="short_name", nullable=false, unique = true)
+    //private String shortName;
+
+    @Column (name="cost", nullable=false)
+    private BigDecimal cost;
 
     @CreationTimestamp
-    @Column(name="created_at", nullable=false)
+    @Column(name="created_at")
     private LocalDateTime createdAt;
 
     @CreationTimestamp
-    @Column(name="updated_at", nullable=false)
+    @Column(name="updated_at")
     private LocalDateTime updatedAt;
 //----------------------------------------------------------------------
+    public DeliveryType ()
+    {   cost = BigDecimal.ZERO;
+    }
 }

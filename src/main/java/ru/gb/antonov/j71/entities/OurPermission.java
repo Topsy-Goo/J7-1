@@ -7,26 +7,23 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Entity
-@Data
-@Table (name="ourpermissions")
+@Entity    @Data    @Table (name="ourpermissions")
 public class OurPermission
 {
-    @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @Id    @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column (name="id")
     private Long id;
 
     @Column (name="name", nullable=false, unique=true)
     private String name;
 
-    @CreationTimestamp
-    @Column(name="created_at", nullable=false)
+    @CreationTimestamp    @Column(name="created_at")
     private LocalDateTime createdAt;
 
-    @CreationTimestamp
-    @Column(name="updated_at", nullable=false)
+    @CreationTimestamp    @Column(name="updated_at")
     private LocalDateTime updatedAt;
+//------------------------------------------------------------
+    public OurPermission (){}
 //------------------------------------------------------------
     @Override public boolean equals (Object o)
     {

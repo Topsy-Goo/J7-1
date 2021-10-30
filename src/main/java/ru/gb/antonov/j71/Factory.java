@@ -5,6 +5,7 @@ import org.springframework.util.MultiValueMap;
 import ru.gb.antonov.j71.beans.errorhandlers.UnableToPerformException;
 import ru.gb.antonov.j71.entities.Product;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -15,8 +16,8 @@ public class Factory
     public static final boolean DRYCART = true;
     public static final boolean FLOAT_POINT = true; //< в isDecimalNumber() указывает, нужно ли считать точку/запятую частью числа.
 
-    public static Double MIN_PRICE = 0.01;
-    public static final Double MAX_PRICE = Double.MAX_VALUE;
+    public static       BigDecimal MIN_PRICE = BigDecimal.valueOf(0.01);
+    public static final BigDecimal MAX_PRICE = BigDecimal.valueOf(Double.MAX_VALUE);
 
     public static int PROD_PAGESIZE_DEF = 6;
     public static final int PROD_TITLELEN_MIN   = 3;
@@ -35,8 +36,9 @@ public class Factory
     public static final int ORDERSTATE_SHORTNAME_LEN    = 16;  //TODO: исправить на 10 в т.ч. в sql.
     public static final int ORDERSTATE_FRIENDLYNAME_LEN = 64;
 
-    public static final String STR_EMPTY = "";
-    public static final String BEARER_   = "Bearer ";
+    public static final String BRAND_NAME_ENG = "Marketplace";
+    public static final String STR_EMPTY      = "";
+    public static final String BEARER_        = "Bearer ";
     public static final String PRODUCT_PRICE_FIELD_NAME = Product.getPriceFieldName();
     public static final String PRODUCT_TITLE_FIELD_NAME = Product.getTitleFieldName();
     public static final String ORDERSTATE_NONE     = "NONE";
@@ -81,8 +83,9 @@ public class Factory
         }
         if (isDecimalNumber (s = env.getProperty ("app.product.price.min"), FLOAT_POINT))
         {
-            MIN_PRICE = Double.valueOf (s);
-            if (MIN_PRICE < 0.0) MIN_PRICE = 0.0;
+            MIN_PRICE = BigDecimal.valueOf(Double.parseDouble(s));
+            if (MIN_PRICE.compareTo(BigDecimal.ZERO) < 0)
+                MIN_PRICE = BigDecimal.ZERO;
             System.out.println ("app.product.price.min: "+ MIN_PRICE);
         }
 //        if (isDecimalNumber (s = env.getProperty (""), FLOAT_POINT))      ;

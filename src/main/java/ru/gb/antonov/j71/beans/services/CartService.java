@@ -12,6 +12,7 @@ import ru.gb.antonov.j71.entities.Product;
 import ru.gb.antonov.j71.entities.dtos.CartDto;
 import ru.gb.antonov.j71.entities.dtos.OrderItemDto;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.time.Duration;
 import java.util.LinkedList;
@@ -43,6 +44,7 @@ public class CartService
         private final InMemoryCart imcart;
 
         private CartsEntry (String k, InMemoryCart v) {  key = k;    imcart = v;  }
+        @Override public String toString () { return "[k:" + key + ", imcart:" + imcart + ']'; }
     }
 
     public static class CartItem
@@ -163,50 +165,29 @@ public class CartService
         return new CartsEntry (key, imcart);
     }
 
-/*    @NotNull
-    private CartsEntry getUsersCartEntry (OurUser ourUser)
-    {
-        if (ourUser == null)
-            throw new UnableToPerformException ("getUsersCart(): нет юзера — нет корзины!");
-
-        String key = cartKeyByLogin (ourUser.getLogin());
-        if (!redisTemplate.hasKey (key))
-        {
-            redisTemplate.opsForValue().set (key, new InMemoryCart());
-        }
-        InMemoryCart imcart = (InMemoryCart) redisTemplate.opsForValue().get(key);
-        if (imcart == null)
-            throw new UnableToPerformException ("getUsersCart(): не могу извлечь корзину пользователя: "
-                                                + ourUser.getLogin());
-        return new CartsEntry (key, imcart);
-    }*/
-
     private void updateCart (CartsEntry cartsEntry)
-    {
-        redisTemplate.opsForValue().set(cartsEntry.key, cartsEntry.imcart);
+    {   redisTemplate.opsForValue().set(cartsEntry.key, cartsEntry.imcart);
     }
 
     @Transactional
     public int getCartLoad (Principal principal, String uuid)
-    {
-        return getUsersCartEntry (principal, uuid).imcart.calcLoad();
+    {   return getUsersCartEntry (principal, uuid).imcart.calcLoad();
     }
 
     @Transactional
-    public double getCartCost (Principal principal, String uuid)
-    {
-        return calcCost (getUsersCartEntry (principal, uuid).imcart.citems);
+    public BigDecimal getCartCost (Principal principal, String uuid)
+    {   return calcCost (getUsersCartEntry (principal, uuid).imcart.citems);
     }
 
 /** Метод должен вызываться в рамках к.-л. транзакции. */
-    public double calcCost (List<CartItem> citems) //TODO: перенести обратно в InMemoryCart.
+    public BigDecimal calcCost (List<CartItem> citems) //TODO: перенести обратно в InMemoryCart.
     {
-        double cartcost = 0.0;
+        BigDecimal cartcost = BigDecimal.ZERO;
         for (CartItem ci : citems)
         {
             int quantity = ci.quantity;
             if (quantity > 0)
-                cartcost += productService.findById (ci.pid).getPrice() * quantity;
+                cartcost = cartcost.add (productService.findById (ci.pid).getPrice().multiply(BigDecimal.valueOf(quantity)));
         }
         return cartcost;
     }
@@ -272,11 +253,6 @@ public class CartService
     {
         clearCart (getUsersCartEntry (principal, uuid));
     }
-
-/*    public void clearCart (String login)
-    {
-        clearCart(getUsersCartEntry(login, DONOT_SET_CART_LIFE));
-    }*/
 
     private void clearCart (CartsEntry ce)
     {

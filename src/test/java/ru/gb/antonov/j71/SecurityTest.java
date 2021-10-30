@@ -16,6 +16,7 @@ import ru.gb.antonov.j71.entities.dtos.AuthResponse;
 import ru.gb.antonov.j71.entities.dtos.OrderDetalesDto;
 import ru.gb.antonov.j71.entities.dtos.ProductDto;
 
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -155,7 +156,7 @@ public class SecurityTest
                .andDo (print())
                .andExpect (status().isOk()); //200
 
-        ProductDto pdto = ProductDto.dummyProductDto (null, "Товар0", 99.9, 20, "D");
+        ProductDto pdto = ProductDto.dummyProductDto (null, "Товар0", BigDecimal.valueOf(99.9), 20, "D");
         strJson = oMapper.writeValueAsString (pdto);
 
         strJson = mockMvc.perform (post ("/api/v1/products")

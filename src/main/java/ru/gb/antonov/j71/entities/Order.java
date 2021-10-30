@@ -5,13 +5,13 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
 @Entity
 @Data
-@NoArgsConstructor
 @Table (name="orders")
 public class Order
 {
@@ -24,14 +24,14 @@ public class Order
     @JoinColumn(name="ouruser_id", nullable=false)
     private OurUser ouruser;
 
-    @Column (name="phone")
+    @Column (name="phone", nullable=false)
     private String phone;
 
-    @Column (name="address")
+    @Column (name="address", nullable=false)
     private String address;
 
-    @Column (name="cost")
-    private double cost;    //< общая стоимость выбранных/купленных товаров
+    @Column (name="cost", nullable=false)
+    private BigDecimal cost;    //< общая стоимость выбранных/купленных товаров
 
     @CreationTimestamp
     @Column(name="created_at", nullable=false)
@@ -50,7 +50,13 @@ public class Order
     //У OrderItem'мов не нужно указывать cascade, т.к. мы их тянем за собой в БД,
     // а не они нас.
 //----------------------------------------------------------------------
-    public List<OrderItem> getOrderItems () { return Collections.unmodifiableList (orderItems); }
+    public Order ()
+    {   cost = BigDecimal.ZERO;
+    }
+//----------------------------------------------------------------------
+    public List<OrderItem> getOrderItems ()
+    {   return Collections.unmodifiableList (orderItems);
+    }
 //----------------------------------------------------------------------
     @Override public String toString()
     {   return String.format ("Order:[id:%d, user:%s, phone:%s, addr:%s]_with_[%s]",

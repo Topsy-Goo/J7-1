@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.gb.antonov.j71.beans.services.ProductService;
 import ru.gb.antonov.j71.entities.dtos.ProductDto;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class ControllerTest
     @Test public void testProductControllerPageRequest () throws Exception
     {
         List<ProductDto> pdtoList = new ArrayList<>();
-        ProductDto pdto = ProductDto.dummyProductDto (2L, "Товар2", 20.0, 20, "W");
+        ProductDto pdto = ProductDto.dummyProductDto (2L, "Товар2", BigDecimal.valueOf(20.0), 20, "W");
         pdtoList.add (pdto);
         Page<ProductDto> ppd = new PageImpl<>(pdtoList);
 

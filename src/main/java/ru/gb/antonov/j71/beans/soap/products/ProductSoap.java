@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import java.math.BigDecimal;
 
 @Data
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -15,21 +16,22 @@ public class ProductSoap
 {
     @XmlElement(required=true)    protected long id;
     @XmlElement(required=true)    protected String title;
-    @XmlElement(required=true)    protected double price;
+    @XmlElement(required=true)    protected BigDecimal price;
     @XmlElement(required=true)    protected int rest;
     @XmlElement(required=true)    protected String categoryName/* = new ProductsCategorySoap (p.getCategory())*/;
     @XmlElement(required=true)    protected long createdAt;
     @XmlElement(required=true)    protected long updatedAt;
 
     public ProductSoap (){}
-    public ProductSoap (long pId, String pTitle, double pPrice, int pRest,
+    public ProductSoap (long pId, String pTitle, BigDecimal pPrice, int pRest,
                         String pCategoryName, long pCreatedAt, long pUpdatedAt)
-    {   id        = pId;
-        title     = pTitle;
-        price     = pPrice;
-        rest      = pRest;
+    {
+        id           = pId;
+        title        = pTitle;
+        price        = pPrice;
+        rest         = pRest;
         categoryName = pCategoryName;
-        createdAt = pCreatedAt;
-        updatedAt = pUpdatedAt;
+        createdAt    = pCreatedAt;
+        updatedAt    = pUpdatedAt;
     }
 }

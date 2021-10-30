@@ -19,6 +19,7 @@ import ru.gb.antonov.j71.beans.services.ProductService;
 import ru.gb.antonov.j71.entities.Product;
 import ru.gb.antonov.j71.entities.ProductsCategory;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.UUID;
 
@@ -47,7 +48,7 @@ public class CartTest
         }
         else
         {
-            product = Product.dummyProduct (pid, "Товар2", 20.0, 20, null, null, null);
+            product = Product.dummyProduct (pid, "Товар2", BigDecimal.valueOf(20.0), 20, null, null, null);
         }
         String uuid = UUID.randomUUID().toString();
         //Assertions.assertEquals (1, cartService.getCartLoad (null, uuid));
@@ -79,14 +80,14 @@ public class CartTest
         if (!MOKED_PRODUCT_SERVICE)
         {
             //Код, который использует настоящий бин:
-            product = productService.createProduct ("Товар2", 20.0, 20, "D");
+            product = productService.createProduct ("Товар2", BigDecimal.valueOf(20.0), 20, "D");
             pid = product.getId();
             product = productService.updateProduct (pid, null, null, 20, null);//TODO:удалить этот вызов?
         }
         else //Код, который использует только поддельный бин
         {
             pid = 1L;
-            product = Product.dummyProduct (pid, "Товар2", 20.0, 20, null, null, null);
+            product = Product.dummyProduct (pid, "Товар2", BigDecimal.valueOf(20.0), 20, null, null, null);
             Mockito.doReturn (product).when (productService).findById (pid);
         }
         String uuid = UUID.randomUUID().toString();
@@ -126,7 +127,7 @@ public class CartTest
         if (!MOKED_PRODUCT_SERVICE)
         {
             //Код, который использует только настоящий бин:
-            product = productService.createProduct ("Продукт Ф", 99.99, 0, "D");
+            product = productService.createProduct ("Продукт Ф", BigDecimal.valueOf(99.99), 0, "D");
             pid = product.getId(); //< эффективли файнал, для лямбды
             product = productService.updateProduct (pid, null, null, 0, null);//TODO:удалить этот вызов?
         }
@@ -134,7 +135,7 @@ public class CartTest
         {
             pCat = ProductsCategory.dummyProductsCategory (100500L, "W", null, null, null);
             pid = 1L;
-            product = Product.dummyProduct (pid, "Продукт Ф", 99.99, 0, pCat, null, null);
+            product = Product.dummyProduct (pid, "Продукт Ф", BigDecimal.valueOf(99.99), 0, pCat, null, null);
 
             Mockito.doReturn (product).when (productService).findById (pid); //< ЗА ПРЕДЕЛАМИ этого класса такое объявление подменного метода работает в точности так, как было сказано на занятии.
         }
@@ -168,14 +169,14 @@ public class CartTest
         p = productService.updateProduct (pid, null, null, 1, null);
         cartService.changeProductQuantity (null, uuid, pid, 10);
         Assertions.assertEquals (cartService.getCartLoad (null, uuid), 1);
-        Assertions.assertEquals (cartService.getCartCost (null, uuid), 99.99);
+        Assertions.assertEquals (cartService.getCartCost (null, uuid), BigDecimal.valueOf(99.99));
 
         if (MOKED_PRODUCT_SERVICE)
-            Mockito.doReturn (product.update (null, 36.6, null, null))
-                   .when (productService).updateProduct (pid, null, 36.6, null, null); //< Устанавливает товару цену в значение 36.6.
-        p = productService.updateProduct (pid, null, 36.6, null, null);
+            Mockito.doReturn (product.update (null, BigDecimal.valueOf(36.6), null, null))
+                   .when (productService).updateProduct (pid, null, BigDecimal.valueOf(36.6), null, null); //< Устанавливает товару цену в значение 36.6.
+        p = productService.updateProduct (pid, null, BigDecimal.valueOf(36.6), null, null);
         Assertions.assertEquals (cartService.getCartLoad (null, uuid), 1);
-        Assertions.assertEquals (cartService.getCartCost (null, uuid), 36.6);
+        Assertions.assertEquals (cartService.getCartCost (null, uuid), BigDecimal.valueOf(36.6));
 
         if (MOKED_PRODUCT_SERVICE)
             p = productService.updateProduct (pid, null, null, 123, null); //< Возвращает product в неизменённом

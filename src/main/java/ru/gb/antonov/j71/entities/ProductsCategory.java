@@ -9,25 +9,20 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
-@Data
-@Table(name="categories")
+@Entity     @Data    @Table(name="categories")
 public class ProductsCategory
 {
-    @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @Id    @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column (name="id")
     private Long id;
 
     @Column(name="name", nullable=false)
     private String name;
 
-    @CreationTimestamp
-    @Column(name="created_at", nullable=false)
+    @CreationTimestamp    @Column(name="created_at")
     private LocalDateTime createdAt;
 
-    @CreationTimestamp
-    @Column(name="updated_at", nullable=false)
+    @CreationTimestamp    @Column(name="updated_at")
     private LocalDateTime updatedAt;
 //-------- неколонки
     @OneToMany(mappedBy="category")
@@ -43,12 +38,13 @@ public class ProductsCategory
 //(метод используется в тестах, где корректность аргументов зависит от целей тестирования)
     public static ProductsCategory dummyProductsCategory (Long id, String name, List<Product> products,
                                                           LocalDateTime createdAt, LocalDateTime updatedAt)
-    {   ProductsCategory pc = new ProductsCategory();
-        pc.id = id;
-        pc.name = name;
+    {
+        ProductsCategory pc = new ProductsCategory();
+        pc.id        = id;
+        pc.name      = name;
         pc.createdAt = createdAt;
         pc.updatedAt = updatedAt;
-        pc.products = products;
+        pc.products  = products;
         return pc;
     }
 //----------------------------------------------------------------------

@@ -3,7 +3,10 @@ package ru.gb.antonov.j71.beans.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.gb.antonov.j71.beans.errorhandlers.AccessDeniedException;
 import ru.gb.antonov.j71.beans.errorhandlers.BadCreationParameterException;
+import ru.gb.antonov.j71.beans.errorhandlers.UnableToPerformException;
+import ru.gb.antonov.j71.beans.errorhandlers.UnauthorizedAccessException;
 import ru.gb.antonov.j71.beans.repositos.OrderItemRepo;
 import ru.gb.antonov.j71.beans.repositos.OrdersRepo;
 import ru.gb.antonov.j71.entities.*;
@@ -12,6 +15,7 @@ import ru.gb.antonov.j71.entities.dtos.OrderDetalesDto;
 import ru.gb.antonov.j71.entities.dtos.OrderDto;
 import ru.gb.antonov.j71.entities.dtos.OrderItemDto;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,6 +40,10 @@ public class OrderService
     {
         OurUser ourUser = ourUserService.userByPrincipal (principal);
         CartDto dryCartDto = cartService.getUsersDryCartDto (ourUser.getLogin());
+
+        if (dryCartDto.getTitlesCount() <= 0)
+            throw new UnableToPerformException ("Заказ пуст.");
+
         OrderDetalesDto odt = new OrderDetalesDto();
         odt.setCartDto (dryCartDto);
         return odt;
@@ -55,6 +63,9 @@ public class OrderService
     public OrderDetalesDto applyOrderDetails (OrderDetalesDto detales, Principal principal)
     {
         CartDto cartDto = detales.getCartDto();
+        if (cartDto.getTitlesCount() <= 0)
+            throw new UnableToPerformException ("Заказ пуст.");
+
         OurUser ourUser = ourUserService.userByPrincipal (principal);
         OrderState oState = orderStatesService.getOrderStatePending();
 
@@ -75,7 +86,7 @@ public class OrderService
         detales.setOrderCreationTime (orderCreationTimeToString (o.getCreatedAt()));
         //detales.setDeliveryType ("Самовывоз");  TODO: сделать ниспадающий список на стр.оформления заказа.
         //detales.setDeliveryCost (0.0);        //TODO: поменять на чтение стоимости выбранной доставки.
-        detales.setOverallCost (o.getCost() + detales.getDeliveryCost());
+        detales.setOverallCost (o.getCost().add (detales.getDeliveryCost()));
 
         //(Оставляем dryCart в OrderDetalesDto, чтобы юзер мог на неё посмотреть перед уходом со
         // страницы заказа.)
@@ -140,7 +151,7 @@ public class OrderService
             throw new BadCreationParameterException ("Не удалось прочитать инф-цию об элементе заказа.");
 
         OrderItemDto oidto = new OrderItemDto();
-        double price = oi.getBuyingPrice();
+        BigDecimal price = oi.getBuyingPrice();
         int quantity = oi.getQuantity();
         Product product = oi.getProduct();
 
@@ -149,7 +160,7 @@ public class OrderService
         oidto.setTitle (product.getTitle());
         oidto.setPrice (price);
         oidto.setQuantity (quantity);
-        oidto.setCost (price * quantity);
+        oidto.setCost (price.multiply(BigDecimal.valueOf(quantity)));
         oitemLoad[0] += quantity;
         return oidto;
     }
@@ -157,5 +168,20 @@ public class OrderService
     public List<OrderItem> userOrderItemsByProductId (Long uid, Long pid, Integer stateId)
     {
         return orderItemRepo.userOrderItemsByProductId (uid, pid, stateId);
+    }
+
+    @Transactional
+    public void payOrder (OrderDetalesDto orderDetalesDto, Principal principal)
+    {
+        if (orderDetalesDto == null)    throw new BadCreationParameterException (null);
+        if (principal == null)  throw new UnauthorizedAccessException (null);
+
+        Order order = ordersRepo.getById (orderDetalesDto.getOrderNumber());
+        OurUser ourUser = ourUserService.userByPrincipal (principal);
+
+        if (ourUser.getId().equals (order.getOuruser().getId()))
+            order.setState (orderStatesService.getOrderStatePayed());
+        else
+            throw new AccessDeniedException (null);
     }
 }

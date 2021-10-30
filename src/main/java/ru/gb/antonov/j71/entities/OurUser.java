@@ -15,29 +15,26 @@ import static ru.gb.antonov.j71.Factory.*;
 
 @Entity
 @Table (name="ourusers")
-@NoArgsConstructor
 public class OurUser
 {
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)    @Getter
+    @GeneratedValue (strategy = GenerationType.IDENTITY) @Getter
     @Column (name="id")
     private Long id;
 
-    @Column(name="login", nullable=false, unique=true)    @Getter
+    @Column(name="login", nullable=false, unique=true)  @Getter
     private String login;
 
-    @Column(name="password", nullable=false)    @Getter
+    @Column(name="password", nullable=false)            @Getter
     private String password;
 
-    @Column(name="email", nullable=false, unique=true)    @Getter
+    @Column(name="email", nullable=false, unique=true)  @Getter
     private String email;
 
-    @CreationTimestamp
-    @Column(name="created_at", nullable=false)    @Getter @Setter
+    @CreationTimestamp    @Column(name="created_at")    @Getter @Setter
     private LocalDateTime createdAt;
 
-    @CreationTimestamp
-    @Column(name="updated_at", nullable=false)    @Getter @Setter
+    @CreationTimestamp    @Column(name="updated_at")    @Getter @Setter
     private LocalDateTime updatedAt;
 //--------------неколонки
     @ManyToMany
@@ -52,7 +49,7 @@ public class OurUser
                 inverseJoinColumns = @JoinColumn (name="ourpermission_id"))    @Getter @Setter
     private Collection<OurPermission> ourPermissions;
 //------------------------ Конструкторы -------------------------------------
-
+    public OurUser (){}
     public static OurUser dummyOurUser (String login, String password, String email)
     {
         OurUser u = new OurUser();
@@ -107,8 +104,7 @@ public class OurUser
     {   return (permission != null) && ourPermissions.add (permission);
     }
 //--------------------- Другие методы ---------------------------------------
-
-    @Override public String toString()
+    @Override  public String toString ()
     {   return String.format("OurUser:[id:%d, login:%s, email:%s].", id, login, email);
     }
 }

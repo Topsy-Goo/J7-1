@@ -7,6 +7,8 @@ import ru.gb.antonov.j71.entities.Product;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 
+import java.math.BigDecimal;
+
 import static ru.gb.antonov.j71.Factory.PROD_TITLELEN_MAX;
 import static ru.gb.antonov.j71.Factory.PROD_TITLELEN_MIN;
 
@@ -22,7 +24,7 @@ public class ProductDto
 
     //@Min (value=0, message="…")
     @PositiveOrZero (message="Цена товара должна быть НЕОТРИЦАТЕЛЬНЫМ числом!")
-    private double price;
+    private BigDecimal price;
 
     @PositiveOrZero (message="Остаток товара должен быть НЕОТРИЦАТЕЛЬНЫМ числом!")
     private int rest;
@@ -30,7 +32,9 @@ public class ProductDto
     @NotNull (message="Не указано название категории товара!")
     private String category;
 //--------------------------------------------------------------
-    public ProductDto (){}
+    public ProductDto ()
+    {   price = BigDecimal.ZERO;
+    }
     public ProductDto (Product product)
     {
         if (product != null)
@@ -41,14 +45,15 @@ public class ProductDto
             category  = product.getCategory ().getName ();
         }
     }
-    public static ProductDto dummyProductDto (Long pProductId, String pTitle, double pPrice, int pRest, String pCategory)
+    public static ProductDto dummyProductDto (Long pProductId, String pTitle, BigDecimal pPrice,
+                                              int pRest, String pCategory)
     {
         ProductDto pdt = new ProductDto();
-        pdt.productId = pProductId;
-        pdt.title     = pTitle;
-        pdt.price     = pPrice;
-        pdt.rest      = pRest;
-        pdt.category  = pCategory;
+        pdt.productId  = pProductId;
+        pdt.title      = pTitle;
+        pdt.price      = pPrice;
+        pdt.rest       = pRest;
+        pdt.category   = pCategory;
         return pdt;
     }
 }

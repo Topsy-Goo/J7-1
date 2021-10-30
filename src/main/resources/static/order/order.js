@@ -9,6 +9,7 @@ angular.module('market-front').controller('orderController',
 	$scope.orderNumber = 0;
 	$scope.showForm = true;
 	$scope.wellDone = false;
+	$scope.canPay = false;
 
 	$scope.loadOrderDetailes = function ()
 	{
@@ -16,13 +17,22 @@ angular.module('market-front').controller('orderController',
 		.then (
 		function successCallback (response)
 		{
-		//тут мы получаем данные о выбранных товарах. В списке отсутствуют «пустые» позиции.
-		//TODO:	Возможно, следует юзеру сообщить об их отсутствии.
-			$scope.contextPrompt = "Ваш заказ сформирован.";
 			$scope.orderDetails = response.data;
-			$scope.cart = $scope.orderDetails.cartDto;
-			console.log ('Детали заказа загружены:');
-			console.log (response.data);
+			if ($scope.orderDetails.cartDto.load <= 0)
+			{
+				message = 'Заказ пуст.';
+				alert (message);
+				console.log (message);
+				$location.path('/cart')
+			}
+			else
+			{	//тут мы получаем данные о выбранных товарах. В списке отсутствуют «пустые» позиции.
+				//TODO:	Возможно, следует юзеру сообщить об их отсутствии.
+				$scope.contextPrompt = "Ваш заказ сформирован.";
+				$scope.cart = $scope.orderDetails.cartDto;
+				console.log ('Детали заказа загружены:');
+				console.log (response.data);
+			}
 		},
 		function failureCallback (response)
 		{
@@ -33,6 +43,7 @@ angular.module('market-front').controller('orderController',
 
 	$scope.confirmOrder = function ()
 	{
+		if ($scope.orderDetails.cartDto.load > 0)
 		$http
 		({	url:	contextOrderPath + '/confirm',
 			method:	'POST',
@@ -42,13 +53,16 @@ angular.module('market-front').controller('orderController',
 		function successCallback (response)
 		{
 			$scope.showForm = false;
-			$scope.contextPrompt = 'Ваш заказ оформлен.';
+			$scope.wellDone = true;
+			$scope.canPay   = true;
+			$scope.contextPrompt = 'Ваш заказ оформлен!';
 			$scope.orderDetails = response.data;
 			alert ($scope.contextPrompt);	//< кажется, это тоже работает асинхронно
 		},
 		function failureCallback (response)
 		{
 			$scope.contextPrompt = "Произошла ошибка! ";
+			console.log (response.data);
 			console.log (response.data.messages);
 			alert ($scope.contextPrompt + response.data.messages);
 			/* если выводим сообщение от валидатора, то нужно укзаывать имя поля с сообщением,
@@ -60,6 +74,33 @@ angular.module('market-front').controller('orderController',
 	$scope.cancelOrdering = function () { $location.path('/cart'); }
 
 	$scope.ok = function () { $location.path('/store'); }
+
+	$scope.pay = function ()
+	{
+		$http
+		({	url:	contextOrderPath + '/pay',
+			method:	'POST',
+			data:	$scope.orderDetails
+		})
+		.then(
+		function successCallback (response)
+		{
+			$scope.showForm = false;
+			$scope.wellDone = true;
+			$scope.canPay   = false;
+			$scope.contextPrompt = 'Ваш заказ оплачен.';
+//			$scope.orderDetails = response.data;
+			alert ($scope.contextPrompt);	//< кажется, это тоже работает асинхронно
+		},
+		function failureCallback (response)
+		{
+			$scope.showForm = false;
+			$scope.wellDone = true;
+			$scope.canPay   = true;
+			$scope.contextPrompt = 'ОШИБКА!  Не удалось оплатить ваш заказ.\r\rВы можете ещё раз попробовать оплатить его, или отбсудите вопрос оплаты с нашим менеджером.';
+			alert ($scope.contextPrompt);	//< кажется, это тоже работает асинхронно
+		});
+	}
 //----------------------------------------------------------------------- действия
 	$scope.infoProduct = function (oitem)
 	{

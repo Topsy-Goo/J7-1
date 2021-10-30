@@ -5,36 +5,40 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import static ru.gb.antonov.j71.Factory.*;
 
 @Data
-@NoArgsConstructor
 public class OrderDetalesDto
 {
     @NotNull (message="\rПолучена пустая корзина.\rЗаказ не может быть оформлен.")
-    private CartDto cartDto;
+    private CartDto    cartDto;
 
     @NotNull (message="\rУкажите номер телефона.")
     @Length (min=DELIVERING_PHONE_LEN_MIN, max=DELIVERING_PHONE_LEN_MAX, message="\rНомер телефона должен содержать 10…16 цифр.\rПример: 8006004050.")//TODO: поправить длину номера.
-    private String phone;
+    private String     phone;
 
     @NotNull (message="\rУкажите адрес доставки.")
     @Length (max=DELIVERING_ADDRESS_LEN_MAX, message="\rМаксимальная длина адреса — 255 символов.")
-    private String address;
+    private String     address;
 
-    private Long   orderNumber;
+    private Long       orderNumber;
+    private String     orderCreationTime;
+    private BigDecimal deliveryCost;
+    private String     orderState;
+    private BigDecimal overallCost;
 //  private Long   orderCreatedAt;
-    private String orderCreationTime;
 //  private String deliveryType;
-    private double deliveryCost;
-    private String orderState;
-    private double overallCost;
 
 /*  @Length (max=255, message="Максимальная длина текста комментария — 255 символов.")
     private String comment;*/
 //-------------------------------------------------------------------------------------
+    public OrderDetalesDto ()
+    {   deliveryCost = BigDecimal.ZERO;
+        overallCost = BigDecimal.ZERO;
+    }
     public static OrderDetalesDto dummyOrderDetalesDto (String phone, String address)
     {
         OrderDetalesDto oddto = new OrderDetalesDto();
@@ -46,9 +50,9 @@ public class OrderDetalesDto
         //oddto.orderCreatedAt = ldt.getLong (ChronoField.MILLI_OF_SECOND;
         oddto.orderCreationTime = orderCreationTimeToString (ldt);
         //oddto.deliveryType = STR_EMPTY;
-        oddto.deliveryCost = 0.0;
+        oddto.deliveryCost = BigDecimal.ZERO;
         oddto.orderState = STR_EMPTY;
-        oddto.overallCost = 0.0;
+        oddto.overallCost = BigDecimal.ZERO;
         //oddto. = ;
         return oddto;
     }

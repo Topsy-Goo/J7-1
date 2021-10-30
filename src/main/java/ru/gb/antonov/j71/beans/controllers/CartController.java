@@ -77,8 +77,4 @@ public class CartController
         this.cartService.mergeCarts (principal, uuid);
     }
 }
-/*    @GetMapping ("/cost/{uuid}")
-    public Double getCartCost (Principal principal, @PathVariable String uuid)
-    {
-        return cartService.getCartCost (principal, uuid);
-    }*/
+

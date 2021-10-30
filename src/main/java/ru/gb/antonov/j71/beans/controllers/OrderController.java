@@ -60,4 +60,11 @@ public class OrderController
         if (principal == null)
             throw new UnauthorizedAccessException ("Заказ может оформить только авторизованый пользователь (It's only authorized user can make order.).");
     }
+
+    @PostMapping ("/pay")
+    @ResponseStatus (HttpStatus.OK)
+    public void payOrder (@RequestBody OrderDetalesDto orderDetalesDto, Principal principal)
+    {
+        orderService.payOrder(orderDetalesDto, principal);
+    }
 }

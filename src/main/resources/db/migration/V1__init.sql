@@ -72,9 +72,9 @@ INSERT INTO categories (name) VALUES	('A'),	('B'),	('C'),	('D');
 CREATE TABLE products					-- TODO: помни о SOAP.
 (	id			bigserial,
 	title		VARCHAR(255)	NOT NULL,
-	price		DECIMAL(10,2),
-	rest		INT,
-	category_id	INT				NOT NULL,
+	price		NUMERIC(10,2)	NOT NULL, -- DECIMAL(10,2),
+	rest		INT	NOT NULL,
+	category_id	INT	NOT NULL,
 	created_at	TIMESTAMP DEFAULT current_timestamp,
 	updated_at	TIMESTAMP DEFAULT current_timestamp,
 	PRIMARY KEY (id),
@@ -91,8 +91,8 @@ INSERT INTO products (title, price, rest, category_id) VALUES
 -- ----------------------------------------------------------------------
 CREATE TABLE orderstates
 (	id				serial,
-	short_name		VARCHAR(16)	NOT NULL,	-- фактически, короткое имя, которое удобно помнить
-	friendly_name	VARCHAR(64)	NOT NULL,	-- расшифровка короткого имени, для демонстрации пользователю
+	short_name		VARCHAR(16)	NOT NULL UNIQUE,	-- фактически, короткое имя, которое удобно помнить
+	friendly_name	VARCHAR(64)	NOT NULL UNIQUE,	-- расшифровка короткого имени, для демонстрации пользователю
 	created_at		TIMESTAMP DEFAULT current_timestamp,
 	updated_at		TIMESTAMP DEFAULT current_timestamp,
 	PRIMARY KEY (id)
@@ -104,8 +104,9 @@ INSERT INTO orderstates (short_name, friendly_name) VALUES
 CREATE TABLE delivery_types
 (
 	id				bigserial,
-	friendly_name	VARCHAR(64)	NOT NULL,
-	cost			DECIMAL(10,2),
+	friendly_name	VARCHAR(64)		NOT NULL UNIQUE,
+--	short_name		VARCHAR(16)		NOT NULL UNIQUE,
+	cost			DECIMAL(10,2)	NOT NULL,
 	created_at		TIMESTAMP DEFAULT current_timestamp,
 	updated_at		TIMESTAMP DEFAULT current_timestamp,
 	PRIMARY KEY (id)
@@ -119,7 +120,7 @@ CREATE TABLE orders
 	ouruser_id		bigint	NOT NULL,
 	phone			VARCHAR(16) NOT NULL,	-- +7(800)600-40-50
 	address			VARCHAR(255) NOT NULL,	-- 123456789_123456789_
-	cost			DECIMAL(10,2),
+	cost			NUMERIC(10,2) NOT NULL, -- DECIMAL(10,2),
 	orderstate_id	INT NOT NULL,
 --	comment			VARCHAR(512),
 	created_at		TIMESTAMP DEFAULT current_timestamp,
@@ -138,8 +139,8 @@ CREATE TABLE orderitems
 (	id				bigserial,
 	order_id    	bigint	NOT NULL,
 	product_id  	bigint	NOT NULL,
-	buying_price	DECIMAL(10,2),
-	quantity		INT,
+	buying_price	NUMERIC(10,2)	NOT NULL, -- DECIMAL(10,2),
+	quantity		INT	NOT NULL,
 	created_at		TIMESTAMP DEFAULT current_timestamp,
 	updated_at		TIMESTAMP DEFAULT current_timestamp,
 	PRIMARY KEY (id),

@@ -12,17 +12,17 @@ public class ProductReviewDto
     private String authorName;
     private String text;
     private String date;
-    private Long productId;
+    private Long   productId;
 //----------------------------------------------------------
-    protected ProductReviewDto(){}
+    protected ProductReviewDto (){}
     public ProductReviewDto (ProductReview review)
     {
         if (review != null)
         {
             authorName = review.getOurUser().getLogin();
-            text = review.getText();
-            date = review.getCreatedAt().toLocalDate().format (DateTimeFormatter.ofLocalizedDate (FormatStyle.SHORT));
-            productId = review.getProductId();
+            text       = review.getText();
+            date       = review.getCreatedAt().toLocalDate().format (DateTimeFormatter.ofLocalizedDate (FormatStyle.SHORT));
+            productId  = review.getProductId();
         }
     }
 }
