@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity     @Data    @Table(name="categories")
-public class ProductsCategory
-{
+public class ProductsCategory {
+
     @Id    @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column (name="id")
     private Long id;
@@ -29,16 +29,15 @@ public class ProductsCategory
     private List<Product> products;
 //----------------------------------------------------------------------
     public ProductsCategory (){}
-    public ProductsCategory (String name)
-    {
+    public ProductsCategory (String name) {
         this.name = validateName (name);
         if (this.name == null)
             throw new BadCreationParameterException ("Некорректное название категории: "+ name);
     }
+
 //(метод используется в тестах, где корректность аргументов зависит от целей тестирования)
     public static ProductsCategory dummyProductsCategory (Long id, String name, List<Product> products,
-                                                          LocalDateTime createdAt, LocalDateTime updatedAt)
-    {
+                                                          LocalDateTime createdAt, LocalDateTime updatedAt) {
         ProductsCategory pc = new ProductsCategory();
         pc.id        = id;
         pc.name      = name;
@@ -48,8 +47,7 @@ public class ProductsCategory
         return pc;
     }
 //----------------------------------------------------------------------
-    public static String validateName (String name)
-    {
+    public static String validateName (String name) {
         String result = null;
         if (name != null)
         {

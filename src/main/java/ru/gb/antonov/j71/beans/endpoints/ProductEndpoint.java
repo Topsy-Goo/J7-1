@@ -13,16 +13,16 @@ import ru.gb.antonov.j71.beans.soap.products.GetProductSoapRangeByIdResponse;
 
 @Endpoint
 @RequiredArgsConstructor
-public class ProductEndpoint
-{
+public class ProductEndpoint {
+
     private static final String NAMESPACE_URI = "http://j71.antonov.gb.ru/spring/ws/product";
     private final ProductService productService;
 
     @PayloadRoot (namespace = NAMESPACE_URI, localPart = "getProductSoapByIdRequest")
     @ResponsePayload
     public GetProductSoapByIdResponse getProductSoapById (
-                                        @RequestPayload GetProductSoapByIdRequest request)
-    {
+                                        @RequestPayload GetProductSoapByIdRequest request) {
+
         GetProductSoapByIdResponse response = new GetProductSoapByIdResponse();
         response.setProductSoap (productService.getProductSoapByProductId (request.getId()));
         return response;
@@ -31,8 +31,8 @@ public class ProductEndpoint
     @PayloadRoot (namespace = NAMESPACE_URI, localPart = "getProductSoapRangeByIdRequest")
     @ResponsePayload
     public GetProductSoapRangeByIdResponse getProductSoapRangeById (
-                                        @RequestPayload GetProductSoapRangeByIdRequest request)
-    {
+                                        @RequestPayload GetProductSoapRangeByIdRequest request) {
+
         GetProductSoapRangeByIdResponse response = new GetProductSoapRangeByIdResponse();
         response.setSoapProducts (productService.getProductSoapRangeByProductIdRange (
                                                         request.getFromId(), request.getToId()));

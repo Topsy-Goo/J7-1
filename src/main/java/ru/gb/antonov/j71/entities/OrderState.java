@@ -7,8 +7,8 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity    @Data    @Table (name="orderstates")
-public class OrderState
-{
+public class OrderState {
+
     @Id    @Column (name="id")
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -27,6 +27,7 @@ public class OrderState
 //---------------------------------------------------------------------
     public OrderState (){}
 //---------------------------------------------------------------------
-    @Override public String toString ()
-    { return String.format("%d, %s, %s", id, shortName, friendlyName); }
+    @Override public String toString () {
+        return String.format("%d, %s, %s", id, shortName, friendlyName);
+    }
 }

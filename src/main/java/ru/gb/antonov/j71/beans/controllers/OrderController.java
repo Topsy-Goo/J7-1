@@ -20,15 +20,15 @@ import java.util.stream.Collectors;
 @RequestMapping ("/api/v1/order")
 @RestController
 @RequiredArgsConstructor
-public class OrderController
-{
+public class OrderController {
+
     private final OrderService   orderService;
     private final OurUserService ourUserService;
 //-------------------------------------------------------------------------------------------
 
     @GetMapping ("/details")
-    public OrderDetalesDto getOrderDetales (Principal principal)
-    {
+    public OrderDetalesDto getOrderDetales (Principal principal)  {
+
         checkRightsToMakeOrder (principal);
         return orderService.getOrderDetales (principal);
     }
@@ -36,35 +36,32 @@ public class OrderController
     @PostMapping ("/confirm")
     @ResponseStatus (HttpStatus.CREATED)
     public OrderDetalesDto applyOrderDetails (@RequestBody @Validated OrderDetalesDto orderDetalesDto,
-                                              BindingResult br, Principal principal)
-    {   checkRightsToMakeOrder (principal);
+                                              BindingResult br, Principal principal)  {
+        checkRightsToMakeOrder (principal);
         if (br.hasErrors())
-        {   //преобразуем набор ошибок в список сообщений, и пакуем в одно общее исключение (в наше заранее для это приготовленное исключение).
+            //преобразуем набор ошибок в список сообщений, и пакуем в одно общее исключение (в наше заранее для это приготовленное исключение).
             throw new OurValidationException (br.getAllErrors().stream()
                                                 .map (ObjectError::getDefaultMessage)
                                                 .collect (Collectors.toList ()));
-        }
+
         return orderService.applyOrderDetails (orderDetalesDto, principal);
     }
 
     @GetMapping ("/orders")
-    public Collection<OrderDto> getOrders (Principal principal)
-    {
+    public Collection<OrderDto> getOrders (Principal principal)  {
         return orderService.getUserOrdersAsOrderDtos (principal);
     }
 
 /** Проверяем, зарегистрирован ли пользователь и бросаем исключение, если он не зарегистрирован.
     @throws UnauthorizedAccessException */
-    private void checkRightsToMakeOrder (Principal principal)
-    {
+    private void checkRightsToMakeOrder (Principal principal) {
         if (principal == null)
             throw new UnauthorizedAccessException ("Заказ может оформить только авторизованый пользователь (It's only authorized user can make order.).");
     }
 
     @PostMapping ("/pay")
     @ResponseStatus (HttpStatus.OK)
-    public void payOrder (@RequestBody OrderDetalesDto orderDetalesDto, Principal principal)
-    {
+    public void payOrder (@RequestBody OrderDetalesDto orderDetalesDto, Principal principal)   {
         orderService.payOrder(orderDetalesDto, principal);
     }
 }

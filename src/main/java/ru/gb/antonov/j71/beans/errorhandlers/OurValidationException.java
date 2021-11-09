@@ -5,12 +5,11 @@ import java.util.List;
 
 //Сласс создан для использования возможностей hibernate.validator'а.
 //Об использовании см. GlobalExceptionHandler, ErrorMessage, ProductController.createProduct() и Product.
-public class OurValidationException extends RuntimeException
-{
+public class OurValidationException extends RuntimeException {
+
     private final List<String> messages;
 
-    public OurValidationException (List<String> strings)
-    {
+    public OurValidationException (List<String> strings) {
         messages = strings;
     }
 

@@ -9,8 +9,9 @@ import java.util.Collection;
 import java.util.Optional;
 
 @Repository
-public interface ProductReviewsRepo extends CrudRepository<ProductReview, Long>
-{
+public interface ProductReviewsRepo extends CrudRepository<ProductReview, Long> {
+
     Collection<ProductReview> findAllByProductId (Long id);
+
     Optional<ProductReview> findByProductIdAndOurUser (Long pid, OurUser u);
 }

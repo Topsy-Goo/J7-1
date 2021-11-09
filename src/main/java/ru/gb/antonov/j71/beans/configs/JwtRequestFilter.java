@@ -29,34 +29,30 @@ import static ru.gb.antonov.j71.Factory.BEARER_;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class JwtRequestFilter extends OncePerRequestFilter
-{
+public class JwtRequestFilter extends OncePerRequestFilter {
+
     private final JwtokenUtil    jwtokenUtil;
     private final OurUserService ourUserService;
-
 
     @Override
     protected void doFilterInternal (HttpServletRequest request,
                                      @NotNull HttpServletResponse response,
-                                     @NotNull FilterChain filterChain) throws ServletException, IOException
-    {   String login = null;
+                                     @NotNull FilterChain filterChain) throws ServletException, IOException {
+        String login = null;
         String jwt   = null;
         //String prefixBearer = BEARER_;
         String authHeader = request.getHeader (AUTHORIZATION_HDR_TITLE);
 
-        if (authHeader != null && authHeader.startsWith (BEARER_))
-        {
+        if (authHeader != null && authHeader.startsWith (BEARER_)) {
+
             jwt = authHeader.substring (BEARER_.length());
-            try
-            {   login = jwtokenUtil.getLoginFromToken (jwt);
-            }
-            catch (ExpiredJwtException e)
-            {
-                log.debug ("The token is expired");
-            }
+            try {
+                login = jwtokenUtil.getLoginFromToken (jwt);
+                }
+            catch (ExpiredJwtException e) { log.debug ("The token is expired"); }
         }
-        if (login != null && SecurityContextHolder.getContext().getAuthentication() == null)
-        {
+        if (login != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
             //UsernamePasswordAuthenticationToken token = trustYourUser (login, jwt);
             UsernamePasswordAuthenticationToken token = trustDatabaseOnly (login, jwt, request);
             SecurityContextHolder.getContext().setAuthentication (token);
@@ -65,8 +61,8 @@ public class JwtRequestFilter extends OncePerRequestFilter
     }
 
     private UsernamePasswordAuthenticationToken trustDatabaseOnly (
-                                        String login, String jwt, HttpServletRequest request)
-    {
+                                        String login, String jwt, HttpServletRequest request) {
+
         UserDetails userDetails = ourUserService.loadUserByUsername (login);
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken (
                     userDetails,
@@ -77,16 +73,16 @@ public class JwtRequestFilter extends OncePerRequestFilter
         return token;
     }
 
-    private UsernamePasswordAuthenticationToken trustYourUser (String login, String jwt)
-    {
+    private UsernamePasswordAuthenticationToken trustYourUser (String login, String jwt) {
+
         Collection<GrantedAuthority> gaCollection = jwtokenUtil //
                        .getRoles (jwt)
                        .stream()
                        .map (SimpleGrantedAuthority::new)
                        .collect (Collectors.toList ());
 
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken (
-                                                            login, null, gaCollection);
+        UsernamePasswordAuthenticationToken token =
+            new UsernamePasswordAuthenticationToken (login, null, gaCollection);
         return token;
     }
 }

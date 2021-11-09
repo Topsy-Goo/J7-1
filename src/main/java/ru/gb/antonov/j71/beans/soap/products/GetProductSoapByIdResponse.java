@@ -9,10 +9,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @Data
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name="", propOrder={"productSoap"})
-@XmlRootElement(name="getProductSoapByIdResponse")
+@XmlAccessorType (XmlAccessType.FIELD)
+@XmlType         (name="", propOrder={"productSoap"})
+@XmlRootElement  (name="getProductSoapByIdResponse")
 public class GetProductSoapByIdResponse {
 
-    @XmlElement (required=true)    protected ProductSoap productSoap;
+    @XmlElement (required=true)
+    protected ProductSoap productSoap;
 }

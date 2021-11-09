@@ -10,14 +10,15 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 @EnableRedisRepositories
-public class RedisConfig
-{
+public class RedisConfig {
+
 /*  Как-бы описание способа обращения к кэшу : ключами будут строки, а значениями — JSON-ны.
 */  @Bean
-    public RedisTemplate<String, Object> redisTemplate ()
-    {
+    public RedisTemplate<String, Object> redisTemplate () {
+
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setKeySerializer (new StringRedisSerializer());    //< стандартн. Redis-сериализатор для строк.
+
         template.setValueSerializer (new GenericJackson2JsonRedisSerializer()); //< Стандартн.сериализатор для JSON-нов.
         template.setConnectionFactory (jedisConnectionFactory());
         return template;
@@ -25,8 +26,7 @@ public class RedisConfig
 
 /*  Здесь ничего не настраиваем, если используем только Memurai//Redis, без Докеров и др.
 */  @Bean
-    public JedisConnectionFactory jedisConnectionFactory ()
-    {
+    public JedisConnectionFactory jedisConnectionFactory () {
         return new JedisConnectionFactory();
     }
 }

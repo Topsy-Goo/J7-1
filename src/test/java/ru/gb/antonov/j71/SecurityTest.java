@@ -11,10 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import ru.gb.antonov.j71.beans.services.ProductService;
-import ru.gb.antonov.j71.entities.dtos.AuthRequest;
-import ru.gb.antonov.j71.entities.dtos.AuthResponse;
-import ru.gb.antonov.j71.entities.dtos.OrderDetalesDto;
-import ru.gb.antonov.j71.entities.dtos.ProductDto;
+import ru.gb.antonov.j71.entities.dtos.*;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -98,7 +95,7 @@ public class SecurityTest
                .andExpect (status().isOk()); //200
 
         //Выполняем минимальную инициализацию OrderDetalesDto, т.к. для получения ответа Ok нужно пройти проверку на корректность переданных данных.
-        OrderDetalesDto oddto = OrderDetalesDto.dummyOrderDetalesDto ("+78009006004050", "На деревню дедушке. Константину Макарычу");
+        OrderDetalesDto oddto = OrderDetalesDto.dummyOrderDetalesDto (ShippingInfoDto.dummyShippingInfoDto());
         String strJson = oMapper.writeValueAsString (oddto);
 
         mockMvc.perform (post ("/api/v1/order/confirm")
@@ -142,7 +139,7 @@ public class SecurityTest
                .andExpect (status().isOk()); //200
 
         //Выполняем минимальную инициализацию OrderDetalesDto, т.к. для получения ответа Ok нужно пройти проверку на корректность переданных данных.
-        OrderDetalesDto oddto = OrderDetalesDto.dummyOrderDetalesDto ("+78009006004050", "На деревню дедушке. Константину Макарычу");
+        OrderDetalesDto oddto = OrderDetalesDto.dummyOrderDetalesDto (ShippingInfoDto.dummyShippingInfoDto());
         String strJson = oMapper.writeValueAsString (oddto);
 
         mockMvc.perform (post ("/api/v1/order/confirm")

@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ProductReviewService
-{
+public class ProductReviewService {
+
     private final ProductReviewsRepo productReviewsRepo;
     private final ProductService     productService;
     private final OurUserService     ourUserService;
@@ -28,8 +28,8 @@ public class ProductReviewService
     private final OrderStatesService orderStatesService;
 
     @Transactional
-    public List<ProductReviewDto> getReviewListById (long pid)
-    {
+    public List<ProductReviewDto> getReviewListById (long pid) {
+
         Product product = productService.findById (pid);
         return productReviewsRepo.findAllByProductId (pid)
                                  .stream()
@@ -38,8 +38,8 @@ public class ProductReviewService
     }
 
     @Transactional
-    public void newProductReview (Long pid, String text, Principal principal)
-    {
+    public void newProductReview (Long pid, String text, Principal principal) {
+
         if (pid == null || principal == null || text == null || text.isBlank())
             throw new BadCreationParameterException ("Не могу выполнить запрошенное действие.");
 
@@ -54,16 +54,16 @@ public class ProductReviewService
 
 /** Юзер может оставить один отзыв к товару, если он этот товар купил хотя бы один раз. */
     @Transactional
-    public Boolean canReview (Principal principal, Long pid)
-    {
+    public Boolean canReview (Principal principal, Long pid) {
+
         boolean ok = false;
-        if (principal != null && pid != null)
-        {
+        if (principal != null && pid != null) {
+
             OurUser ourUser = ourUserService.userByPrincipal (principal);
             Long uid = ourUser.getId();
+
         //проверяем отсутствие отзывов юзера на товар:
-            if (productReviewsRepo.findByProductIdAndOurUser (pid, ourUser).isEmpty())
-            {
+            if (productReviewsRepo.findByProductIdAndOurUser (pid, ourUser).isEmpty()) {
         //товар должен числиться в оплаченном заказе:
                 Integer stateId = orderStatesService.getOrderStatePayed().getId(); //PAYED
                 ok = !orderService.userOrderItemsByProductId (uid, pid, stateId).isEmpty();

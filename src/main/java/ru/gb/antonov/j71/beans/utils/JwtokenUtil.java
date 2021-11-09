@@ -16,16 +16,16 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
-public class JwtokenUtil
-{
+public class JwtokenUtil {
+
     @Value("${jwt.secret}") //< синтаксис ссылается на проперти-файл
     private String secret;      //< обычно выносится в к-л конфиг (см. yaml)
 
     @Value("${jwt.lifetime}")
     private Integer lifetime;   //< обычно выносится в к-л конфиг (см. yaml)
 
-    public String generateJWToken (UserDetails userDetails)
-    {
+    public String generateJWToken (UserDetails userDetails) {
+
         Map<String, Object> claims = new HashMap<>();
         List<String> roles = userDetails
                                 .getAuthorities()
@@ -46,19 +46,16 @@ public class JwtokenUtil
         return s;
     }
 
-    public String getLoginFromToken (String token)
-    {
+    public String getLoginFromToken (String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
-    private <T> T getClaimFromToken (String token, Function<Claims, T> claimsResolver)
-    {
+    private <T> T getClaimFromToken (String token, Function<Claims, T> claimsResolver) {
         Claims claims = getAllClaimsFromToken (token);
         return claimsResolver.apply (claims);
     }
 
-    private Claims getAllClaimsFromToken(String token)
-    {
+    private Claims getAllClaimsFromToken(String token) {
 
         Claims c = Jwts.parser()
                    .setSigningKey (secret)  //< нужет для проверки подлинности и актуальности токена
@@ -67,8 +64,7 @@ public class JwtokenUtil
         return c;
     }
 
-    public List<String> getRoles(String token)
-    {
+    public List<String> getRoles(String token) {
     /*    return getClaimFromToken (
                 token,
                 (Function<Claims, List<String>>) claims -> claims.get("roles", List.class));*/

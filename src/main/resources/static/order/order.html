@@ -62,12 +62,10 @@
 
 	<p>&nbsp;</p>
 	<div ng-show="showForm">
-		<p>
-			Для завершения заказа пожалуйста заполните расположенную ниже форму и нажмите кнопку <b>«Подтвердить»</b>.
-			Обратите внимание, что поля ввода <b>«Телефон»</b> и <b>«Адрес доставки»</b> нужно обязательно заполнить.
+		<p>	Для завершения заказа пожалуйста заполните расположенную ниже форму и нажмите кнопку <b>«Подтвердить»</b>.
+			Обратите внимание, что поле ввода <b>«Телефон»</b> нужно обязательно заполнить.
 		</p>
-		<p>
-			Чтобы отменить заказ сейчас, нажмите кнопку <b>«Отмена»</b>. В случае отмены заказа, Вы будете перемещены
+		<p>	Чтобы отменить заказ сейчас, нажмите кнопку <b>«Отмена»</b>. В случае отмены заказа, Вы будете перемещены
 			на страницу вашей Корзины.
 		</p>
 	</div>
@@ -91,23 +89,13 @@
 				<dd class="col-sm-9">{{orderDetails.orderState}}.</dd>
 
 				<dt class="col-sm-3">Номер телефона:</dt>
-				<dd class="col-sm-9">{{orderDetails.phone}}.</dd>
+				<dd class="col-sm-9">{{orderDetails.shippingInfoDto.phone}}.</dd>
 
 				<dt class="col-sm-3">Адрес доставки:</dt>
-				<dd class="col-sm-9">{{orderDetails.address}}.</dd>
+				<dd class="col-sm-9">{{orderDetails.shippingInfoDto.countryCode}}, {{orderDetails.shippingInfoDto.postalCode}}, {{orderDetails.shippingInfoDto.region}}, {{orderDetails.shippingInfoDto.townVillage}}, {{orderDetails.shippingInfoDto.streetHouse}}, {{orderDetails.shippingInfoDto.apartment}}.</dd>
 
-				<dt class="col-sm-3">Стоимость доставки:</dt>
-				<dd class="col-sm-9">{{orderDetails.deliveryCost}}.</dd>
-
-				<dt class="col-sm-3">Сумма к оплате с учётом стоимости доставки:</dt>
-				<dd class="col-sm-9"><b>{{orderDetails.overallCost}}</b>.</dd>
-<!--
-				<dt class="col-sm-3"></dt>
-				<dd class="col-sm-9"></dd>
-			Дата и Время доставки:	{{orderDetails.deliveryDateTime}}.<br>
-			Тип доставки:			{{orderDetails.deliveryType}}.<br>
-			Тип оплаты:			{{orderDetails.paymentType}}.<br>
--->
+				<dt class="col-sm-3">Сумма к оплате:</dt>
+				<dd class="col-sm-9"><b>{{orderDetails.cartDto.cost}}</b>.</dd>
 			</dl>
 		</p>
 	</div>
@@ -123,41 +111,97 @@
 				<div class="col-2">
 					<label for="phone" class="col-form-lable">Телефон:&nbsp;</label>
 				</div>
-				<div class="col-10">
+				<div class="col-5">
 					<input	id="phone"
 							class="form-control"
 							type="text"
 							placeholder="—"
 							required="required"
-							ng-model="orderDetails.phone">
+							ng-model="orderDetails.shippingInfoDto.phone">
 				</div>
 			</div>
 			<p></p>
 			<div class="row g-2">
 				<div class="col-2">
-					<label for="address" class="col-form-lable">Дрес доставки:&nbsp;</label>
+					<label for="country_code" class="col-form-lable">Код страны:&nbsp;</label>
+				</div>
+				<div class="col-2">
+					<input	id="country_code"
+							class="form-control"
+							type="text"
+							value="{{orderDetails.shippingInfoDto.countryCode}}"
+							required="required"
+							readonly
+							maxlength="2" minlength="2"
+							ng-model="orderDetails.shippingInfoDto.countryCode">
+				</div>
+			</div>
+			<p></p>
+			<div class="row g-2">
+				<div class="col-2">
+					<label for="postal_code" class="col-form-lable">Почтовый индекс (обязательно заполните это поле):</label>
+				</div>
+				<div class="col-3">
+					<input	id="postal_code"
+							class="form-control"
+							type="number"
+							placeholder="6 цифр"
+							maxlength="6" minlength="6"
+							ng-model="orderDetails.shippingInfoDto.postalCode">
+				</div>
+			</div>
+			<p></p>
+			<div class="row g-2">
+				<div class="col-2">
+					<label for="region" class="col-form-lable">Регион (<a href="https://ru.wikipedia.org/wiki/ISO_3166-2:RU" target="_blank">субъекты РФ</a>):</label>
 				</div>
 				<div class="col-10">
-					<input	id="address"
+					<input	id="region"
+							class="form-control"
+							type="text"
+							placeholder="(субъект федерации)"
+							ng-model="orderDetails.shippingInfoDto.region">
+				</div>
+			</div>
+			<p></p>
+			<div class="row g-2">
+				<div class="col-2">
+					<label for="town_village" class="col-form-lable">Населённый пункт:</label>
+				</div>
+				<div class="col-10">
+					<input	id="town_village"
 							class="form-control"
 							type="text"
 							placeholder="—"
-							required="required"
-							ng-model="orderDetails.address">
+							ng-model="orderDetails.shippingInfoDto.townVillage">
 				</div>
 			</div>
-<!--			<p></p>-->
-<!--			<div class="row g-2">-->
-<!--				<div class="col-2">-->
-<!--					<label for="comment" class="col-form-lable">Комментарий к заказу:</label>-->
-<!--				</div>-->
-<!--				<div class="col-10">-->
-<!--					<input	id="comment"-->
-<!--							class="form-control"-->
-<!--							type="text"-->
-<!--							ng-model="orderDetails.comment">-->
-<!--				</div>-->
-<!--			</div>-->
+			<p></p>
+			<div class="row g-2">
+				<div class="col-2">
+					<label for="street_house" class="col-form-lable">Улица и номер дома:</label>
+				</div>
+				<div class="col-10">
+					<input	id="street_house"
+							class="form-control"
+							type="text"
+							placeholder="—"
+							ng-model="orderDetails.shippingInfoDto.streetHouse">
+				</div>
+			</div>
+			<p></p>
+			<div class="row g-2">
+				<div class="col-2">
+					<label for="apartment" class="col-form-lable">Номер квартиры:</label>
+				</div>
+				<div class="col-2">
+					<input	id="apartment"
+							class="form-control"
+							type="text"
+							placeholder="—"
+							ng-model="orderDetails.shippingInfoDto.apartment">
+				</div>
+			</div>
 		</div>
 		<p></p>
 		<button type="submit" class="btn btn-primary" ng-show="canShowConfirmationButton()">Подтвердить</button>
@@ -169,7 +213,6 @@
  	<button class="btn btn-primary" ng-click="ok()" ng-show="wellDone" title="Обратно в магазин.">
 		Готово
 	</button>
-<!--	&nbsp;-->
  	<button class="btn btn-success" ng-click="pay()" ng-show="canPay" title="Перейти к оплате заказа.">
 		Оплатить сейчас
 	</button>

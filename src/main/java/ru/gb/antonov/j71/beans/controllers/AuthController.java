@@ -27,17 +27,16 @@ import java.util.stream.Collectors;
 @RequestMapping ("/api/v1/auth")
 @RestController
 @RequiredArgsConstructor
-public class AuthController
-{
+public class AuthController {
+
     private final OurUserService        ourUserService;
     private final JwtokenUtil           jwtokenUtil;
     private final AuthenticationManager authenticationManager;
 
-
     //http://localhost:12440/market/api/v1/auth/login
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser (@RequestBody AuthRequest authRequest)
-    {
+    public ResponseEntity<?> authenticateUser (@RequestBody AuthRequest authRequest) {
+
         String login = authRequest.getLogin();
         String password = authRequest.getPassword();
         return inlineAuthentificateAndResponseWithJwt (login, password);
@@ -46,14 +45,13 @@ public class AuthController
     //http://localhost:12440/market/api/v1/auth/register
     @PostMapping ("/register")
     public ResponseEntity<?> registerNewUser (@RequestBody @Validated RegisterRequest registerRequest,
-                                              BindingResult br)
-    {   if (br.hasErrors())
-        {
+                                              BindingResult br) {
+        if (br.hasErrors())
             throw new OurValidationException (br.getAllErrors()
                                                 .stream()
                                                 .map (ObjectError::getDefaultMessage)
                                                 .collect (Collectors.toList ()));
-        }
+
         String login    = registerRequest.getLogin ();
         String password = registerRequest.getPassword ();
         String email = String.format ("%s@%s.%s",
@@ -71,22 +69,20 @@ public class AuthController
     }
 
     @GetMapping("/can_edit_product")
-    public Boolean checkPermissionEditProducts (Principal principal)
-    {
+    public Boolean checkPermissionEditProducts (Principal principal) {
         return ourUserService.canEditProduct (principal);
     }
 
-    private ResponseEntity<?> inlineAuthentificateAndResponseWithJwt (String login, String password)
-    {
-        try
-        {   authenticationManager.authenticate (new UsernamePasswordAuthenticationToken (login, password));
+    private ResponseEntity<?> inlineAuthentificateAndResponseWithJwt (String login, String password) {
+
+        try {
+            authenticationManager.authenticate (new UsernamePasswordAuthenticationToken (login, password));
         }
-        catch (BadCredentialsException e)
-        {
+        catch (BadCredentialsException e) {
             String errMsg = String.format ("Некорректные логин (%s) и/или пароль (%s).", login, password);
             return new ResponseEntity<> (new ErrorMessage (errMsg), HttpStatus.UNAUTHORIZED);
         }
-        catch (Exception e){e.printStackTrace();}
+        catch (Exception e) { e.printStackTrace(); }
 
         UserDetails userDetails = ourUserService.loadUserByUsername (login);
         String token = jwtokenUtil.generateJWToken (userDetails);

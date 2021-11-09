@@ -8,10 +8,9 @@ import javax.validation.constraints.NotNull;
 
 import static ru.gb.antonov.j71.Factory.*;
 
-@Data
-@NoArgsConstructor
-public class RegisterRequest
-{
+@Data   @NoArgsConstructor
+public class RegisterRequest {
+
     @NotNull (message="\rЗадайте логин (3…32 латинских сиволов и/или цифр).")
     @Length (min= LOGIN_LEN_MIN, max=LOGIN_LEN_MAX, message="\rДлина логина — 3…36 латинских символов и/или цифр.")
     private String login;

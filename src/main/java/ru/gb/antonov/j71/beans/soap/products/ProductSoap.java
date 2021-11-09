@@ -12,8 +12,8 @@ import java.math.BigDecimal;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ProductSoap",
          propOrder = {"id", "title", "price", "rest", "categoryName", "createdAt", "updatedAt"})
-public class ProductSoap
-{
+public class ProductSoap {
+
     @XmlElement(required=true)    protected long id;
     @XmlElement(required=true)    protected String title;
     @XmlElement(required=true)    protected BigDecimal price;
@@ -24,8 +24,8 @@ public class ProductSoap
 
     public ProductSoap (){}
     public ProductSoap (long pId, String pTitle, BigDecimal pPrice, int pRest,
-                        String pCategoryName, long pCreatedAt, long pUpdatedAt)
-    {
+                        String pCategoryName, long pCreatedAt, long pUpdatedAt) {
+
         id           = pId;
         title        = pTitle;
         price        = pPrice;

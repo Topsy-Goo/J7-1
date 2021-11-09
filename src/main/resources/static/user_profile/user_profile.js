@@ -87,7 +87,7 @@ angular.module('market-front').controller('user_profileController', function ($r
 		else
 		if (s == 'Ожидает подтверждения')	return 'green';
 		else
-		if (s == 'Выполняется')	return 'red';
+		if (s == 'Выполняется')	return 'orange';
 		else
 		if (s == 'Отменён')	return 'grey';
 /*		else

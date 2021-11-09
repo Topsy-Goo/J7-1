@@ -3,8 +3,8 @@ package ru.gb.antonov.j71.entities.dtos;
 import lombok.Data;
 
 @Data
-public class StringResponse
-{
+public class StringResponse {
+
     private String value;
 
     public StringResponse() {}

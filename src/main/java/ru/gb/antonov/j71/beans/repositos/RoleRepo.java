@@ -7,7 +7,7 @@ import ru.gb.antonov.j71.entities.Role;
 import java.util.Optional;
 
 @Repository
-public interface RoleRepo extends CrudRepository<Role, Integer>
-{
+public interface RoleRepo extends CrudRepository<Role, Integer> {
+
     Optional<Role> findByName (String name);
 }

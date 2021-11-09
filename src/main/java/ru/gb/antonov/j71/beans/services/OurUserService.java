@@ -26,8 +26,8 @@ import static ru.gb.antonov.j71.Factory.STR_EMPTY;
 
 @Service
 @RequiredArgsConstructor
-public class OurUserService implements UserDetailsService
-{
+public class OurUserService implements UserDetailsService {
+
     private final OurUserRepo          ourUserRepo;
     private final RoleService          roleService;
     private final OurPermissionService ourPermissionService;
@@ -37,43 +37,42 @@ public class OurUserService implements UserDetailsService
 //TODO: если юзера можно будет удалять из БД, то нужно не забыть удалить и его корзину из Memurai.
 
 /** @throws UserNotFoundException */
-    public OurUser userByPrincipal (Principal principal)
-    {
+    public OurUser userByPrincipal (Principal principal) {
+
         String login = (principal != null) ? principal.getName() : STR_EMPTY;
         return findByLogin(login).orElseThrow (()->new UserNotFoundException (NO_SUCH_LOGIN_+ login));
     }
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername (String login)
-    {
-        OurUser ourUser = findByLogin (login).orElseThrow(()->new UsernameNotFoundException (NO_SUCH_LOGIN_+ login));
+    public UserDetails loadUserByUsername (String login) {
+
+        OurUser ourUser = findByLogin (login)
+                            .orElseThrow(()->new UsernameNotFoundException (NO_SUCH_LOGIN_+ login));
 
         return new User (ourUser.getLogin(),
                          ourUser.getPassword(),
                          mapRolesToAuthorities (ourUser.getRoles(), ourUser.getOurPermissions()));
     }
 
-    private Collection<? extends GrantedAuthority> mapRolesToAuthorities ( Collection<Role> roles, Collection<OurPermission> permissions)
-    {
-        List<String> list = roles.stream()
-                                 .map (Role::getName)
+    private Collection<? extends GrantedAuthority> mapRolesToAuthorities (
+                                    Collection<Role> roles, Collection<OurPermission> permissions) {
+
+        List<String> list = roles.stream().map (Role::getName)
                                  .collect (Collectors.toList());
 
-        list.addAll (permissions.stream()
-                                .map (OurPermission::getName)
+        list.addAll (permissions.stream().map (OurPermission::getName)
                                 .collect (Collectors.toList()));
 
-        return list.stream()
-                   .map (SimpleGrantedAuthority::new)
+        return list.stream().map (SimpleGrantedAuthority::new)
                    .collect (Collectors.toList());
     }
 
     @Transactional
-    public Optional<OurUser> createNewOurUser (String login, String password, String email)
-    {
+    public Optional<OurUser> createNewOurUser (String login, String password, String email) {
+
         OurUser dummyUser = OurUser.dummyOurUser (login, password, email);
-        Role role = roleService.getRoleUser();
+        Role role         = roleService.getRoleUser();
         OurPermission ourPermission = ourPermissionService.getPermissionDefault();
 
         OurUser saved = ourUserRepo.save (dummyUser);
@@ -82,13 +81,12 @@ public class OurUserService implements UserDetailsService
         return Optional.of (saved);
     }
 
-    public Optional<OurUser> findByLogin (String login)
-    {   return ourUserRepo.findByLogin (login);
+    public Optional<OurUser> findByLogin (String login) {
+        return ourUserRepo.findByLogin (login);
     }
 
     @Transactional
-    public UserInfoDto getUserInfoDto (Principal principal)
-    {
+    public UserInfoDto getUserInfoDto (Principal principal) {
         OurUser u = userByPrincipal (principal);
         return new UserInfoDto (u.getLogin(), u.getEmail());
     }
@@ -96,8 +94,8 @@ public class OurUserService implements UserDetailsService
 /** Редактировать информацию о товарах могут только те пользователи, у которых есть
 разрешение {@code PERMISSION_EDIT_PRODUCT}. */
     @Transactional
-    public Boolean canEditProduct (Principal principal)
-    {
+    public Boolean canEditProduct (Principal principal) {
+
         OurUser ourUser = userByPrincipal (principal);
         Collection<OurPermission> permissions = ourUser.getOurPermissions();
         return permissions.contains (ourPermissionService.getPermissionEditProducts());

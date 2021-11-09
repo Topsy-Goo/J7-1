@@ -12,14 +12,12 @@ import java.security.Principal;
 @RequestMapping ("/api/v1/user_profile")
 @RestController
 @RequiredArgsConstructor
-public class UserProfileController
-{
+public class UserProfileController {
+
     private final OurUserService ourUserService;
-//--------------------------------------------------------------------------
 
     @GetMapping ("/userinfo")
-    public UserInfoDto getUserInfo (Principal principal)
-    {
+    public UserInfoDto getUserInfo (Principal principal) {
         return ourUserService.getUserInfoDto (principal);
     }
 }

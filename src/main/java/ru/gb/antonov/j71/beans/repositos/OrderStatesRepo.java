@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 import ru.gb.antonov.j71.entities.OrderState;
 
 @Repository
-public interface OrderStatesRepo extends CrudRepository<OrderState, Integer>
-{
+public interface OrderStatesRepo extends CrudRepository<OrderState, Integer> {
+
     OrderState findByShortName (String shortName);
 }

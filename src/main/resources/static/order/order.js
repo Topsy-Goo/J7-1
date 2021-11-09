@@ -18,6 +18,7 @@ angular.module('market-front').controller('orderController',
 		function successCallback (response)
 		{
 			$scope.orderDetails = response.data;
+			console.log ($scope.orderDetails);
 			if ($scope.orderDetails.cartDto.load <= 0)
 			{
 				message = 'Заказ пуст.';
@@ -26,9 +27,7 @@ angular.module('market-front').controller('orderController',
 				$location.path('/cart')
 			}
 			else
-			{	//тут мы получаем данные о выбранных товарах. В списке отсутствуют «пустые» позиции.
-				//TODO:	Возможно, следует юзеру сообщить об их отсутствии.
-				$scope.contextPrompt = "Ваш заказ сформирован.";
+			{	$scope.contextPrompt = "Ваш заказ сформирован.";
 				$scope.cart = $scope.orderDetails.cartDto;
 				console.log ('Детали заказа загружены:');
 				console.log (response.data);
@@ -88,6 +87,7 @@ angular.module('market-front').controller('orderController',
 			$scope.showForm = false;
 			$scope.wellDone = true;
 			$scope.canPay   = false;
+			$scope.orderDetails.orderState = 'Оплачен';
 			$scope.contextPrompt = 'Ваш заказ оплачен.';
 //			$scope.orderDetails = response.data;
 			alert ($scope.contextPrompt);	//< кажется, это тоже работает асинхронно

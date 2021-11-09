@@ -8,29 +8,25 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-/*   Сообщение, которое отправлем клиенту (в виде JSON'а), если его запрос некорректен.   */
+/**   Сообщение, которое отправлем клиенту (в виде JSON'а), если его запрос некорректен.   */
 @Data
 @NoArgsConstructor
-public class ErrorMessage
-{
+public class ErrorMessage {
+
     private List<String> messages;
     private Date         date;
-
 //---------------- конструкторы -----------------------------------
 
-    public ErrorMessage (List<String> strings)
-    {
+    public ErrorMessage (List<String> strings) {
         messages = strings;
         date = new Date();
     }
 
-    public ErrorMessage (String text)
-    {
+    public ErrorMessage (String text) {
         this (List.of(text));
     }
 
-    public ErrorMessage (String ... messages)
-    {
+    public ErrorMessage (String ... messages) {
         this (Arrays.asList(messages));
     }
 //---------------- геттеры и сесстеры -----------------------------

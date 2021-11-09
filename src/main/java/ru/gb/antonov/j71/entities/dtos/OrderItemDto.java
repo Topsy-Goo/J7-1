@@ -7,23 +7,19 @@ import ru.gb.antonov.j71.entities.Product;
 import java.math.BigDecimal;
 
 @Data
-public class OrderItemDto
-{
+public class OrderItemDto {
+
     private Long       productId;
     private String     category;
     private String     title;
-    private BigDecimal price;
+    private BigDecimal price = BigDecimal.ZERO;
     private int        rest;
     private int        quantity;
-    private BigDecimal cost;
+    private BigDecimal cost = BigDecimal.ZERO;
 //------------------------------------------------------------------
-    public OrderItemDto ()
-    {   price = BigDecimal.ZERO;
-        cost = BigDecimal.ZERO;
-    }
+    public OrderItemDto () {}
+    public OrderItemDto (Product p) {  //< создаём «пустой» объект : без количества и общей стоимости.
 
-    public OrderItemDto (Product p)  //< создаём «пустой» объект : без количества и общей стоимости.
-    {
         if (p == null)
             throw new BadCreationParameterException ("A new OrderItemDto() have got null as parameter.");
         productId = p.getId();
@@ -32,8 +28,8 @@ public class OrderItemDto
 //--------- Геттеры и сеттеры (JSON работает с публичными полями!) --------------
 
 /** Возвращает true, если количество было изменено. */
-    public boolean setQuantity (int newQuantity)
-    {
+    public boolean setQuantity (int newQuantity) {
+
         boolean ok = newQuantity >= 0 && quantity != newQuantity;
         if (ok)
             quantity = newQuantity;
@@ -48,10 +44,9 @@ public class OrderItemDto
 
     //private void calcCost () {   setCost (price * quantity);   }
 
-    public boolean updateFromProduct (Product p)
-    {
-        if (productId.equals (p.getId())) //< TODO: выглядит немного избыточно!
-        {
+    public boolean updateFromProduct (Product p) {
+        if (productId.equals (p.getId())) { //< TODO: выглядит немного избыточно!
+
             title     = p.getTitle();
             category  = p.getCategory().getName();
             price     = p.getPrice();

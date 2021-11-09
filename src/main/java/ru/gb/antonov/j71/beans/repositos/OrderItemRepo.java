@@ -9,8 +9,8 @@ import ru.gb.antonov.j71.entities.OrderItem;
 import java.util.List;
 
 @Repository
-public interface OrderItemRepo extends CrudRepository<OrderItem, Long>
-{
+public interface OrderItemRepo extends CrudRepository<OrderItem, Long> {
+
     @Query (value = "SELECT * FROM orderitems WHERE product_id = :pid AND order_id in " +
                     "(SELECT id FROM orders WHERE ouruser_id = :uid AND orderstate_id = :order_state);",
             nativeQuery = true)

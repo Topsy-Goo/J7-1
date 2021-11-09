@@ -20,16 +20,14 @@ import static ru.gb.antonov.j71.Factory.PERMISSION_EDIT_PRODUCT;
 @EnableWebSecurity  //< «включатель» правил безопасности, описанных в нижеописанном классе
 @RequiredArgsConstructor
 @Slf4j
-public class SecurityConfig extends WebSecurityConfigurerAdapter
-{
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
     private final OurUserService   ourUserService;
     private final JwtRequestFilter jwtRequestFilter;
 
-
     @Override
     @Bean
-    public AuthenticationManager authenticationManagerBean () throws Exception
-    {
+    public AuthenticationManager authenticationManagerBean () throws Exception {
         return super.authenticationManagerBean();
     }
 
@@ -37,8 +35,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
     public BCryptPasswordEncoder passwordEncoder()  {   return new BCryptPasswordEncoder();   }
 
     @Override
-    protected void configure (HttpSecurity httpSec) throws Exception
-    {
+    protected void configure (HttpSecurity httpSec) throws Exception {
+
         httpSec.csrf().disable()
                .authorizeRequests()
                .antMatchers ("/api/v1/order/**").authenticated()

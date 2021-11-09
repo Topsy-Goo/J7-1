@@ -8,7 +8,7 @@ import ru.gb.antonov.j71.entities.OurUser;
 import java.util.List;
 
 @Repository
-public interface OrdersRepo extends JpaRepository<Order, Long>
-{
+public interface OrdersRepo extends JpaRepository<Order, Long> {
+
     List<Order> findAllByOuruser (OurUser ouruser);
 }

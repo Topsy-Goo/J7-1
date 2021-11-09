@@ -9,8 +9,8 @@ import static ru.gb.antonov.j71.Factory.*;
 
 @Service
 @RequiredArgsConstructor
-public class OrderStatesService
-{
+public class OrderStatesService {
+
     private final OrderStatesRepo orderStatesRepo;
 
     public OrderState getOrderStateNone ()     { return orderStatesRepo.findByShortName (ORDERSTATE_NONE); }

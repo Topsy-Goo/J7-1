@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity    @Data    @Table (name="ourpermissions")
-public class OurPermission
-{
+public class OurPermission {
+
     @Id    @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column (name="id")
     private Long id;
@@ -25,8 +25,8 @@ public class OurPermission
 //------------------------------------------------------------
     public OurPermission (){}
 //------------------------------------------------------------
-    @Override public boolean equals (Object o)
-    {
+    @Override public boolean equals (Object o) {
+
         if (this == o)   return true;
         if (o == null || getClass () != o.getClass ())   return false;
         OurPermission ourPermission = (OurPermission) o;

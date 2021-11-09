@@ -7,7 +7,7 @@ import ru.gb.antonov.j71.entities.OurPermission;
 import java.util.Optional;
 
 @Repository
-public interface OurPermissionRepo extends CrudRepository<OurPermission, Integer>
-{
+public interface OurPermissionRepo extends CrudRepository<OurPermission, Integer> {
+
     Optional<OurPermission> findByName (String name);
 }

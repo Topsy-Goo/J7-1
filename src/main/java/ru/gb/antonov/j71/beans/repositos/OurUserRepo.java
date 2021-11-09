@@ -7,7 +7,7 @@ import ru.gb.antonov.j71.entities.OurUser;
 import java.util.Optional;
 
 @Repository
-public interface OurUserRepo extends CrudRepository <OurUser, Long>
-{
+public interface OurUserRepo extends CrudRepository <OurUser, Long> {
+
     Optional<OurUser> findByLogin (String login);
 }

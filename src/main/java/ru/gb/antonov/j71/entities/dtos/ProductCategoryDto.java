@@ -10,10 +10,9 @@ import javax.validation.constraints.NotNull;
 import static ru.gb.antonov.j71.Factory.PRODCAT_NAMELEN_MAX;
 import static ru.gb.antonov.j71.Factory.PRODCAT_NAMELEN_MIN;
 
-@Data
-@NoArgsConstructor
-public class ProductCategoryDto
-{
+@Data   @NoArgsConstructor
+public class ProductCategoryDto {
+
     private Long   id;
 
     @NotNull (message="Не указано название категории товара!")
@@ -22,8 +21,7 @@ public class ProductCategoryDto
              message="Длина названия категории товара: 1…255 символов!")
     private String name;
 //-----------------------------------------------------------------------
-    public ProductCategoryDto (ProductsCategory category)
-    {
+    public ProductCategoryDto (ProductsCategory category) {
         this.id = category.getId();
         this.name = category.getName();
     }

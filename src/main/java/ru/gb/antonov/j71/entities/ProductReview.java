@@ -7,8 +7,8 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Data   @Entity    @Table (name="productreviews")
-public class ProductReview
-{
+public class ProductReview {
+
     @Id    @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column (name="id")
     private Long id;
@@ -30,8 +30,8 @@ public class ProductReview
 //-----------------------------------------------------------
     public ProductReview (){}
 //-----------------------------------------------------------
-    @Override public String toString()
-    {   return String.format ("review:[%d, u:%s, p:%s, «%s»]",
+    @Override public String toString() {
+        return String.format ("review:[%d, u:%s, p:%s, «%s»]",
                               id, (ourUser == null) ? null : ourUser.getLogin(),
                               productId, text);
     }

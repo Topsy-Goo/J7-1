@@ -8,14 +8,14 @@ import org.springframework.core.env.Environment;
 import javax.annotation.PostConstruct;
 
 @SpringBootApplication (scanBasePackages = "ru.gb.antonov.j71.beans")
-public class InternetShopApplication
-{
+public class InternetShopApplication {
+
     @Autowired private Environment env;
 
     @PostConstruct private void init() { Factory.init (env); }
 
-    public static void main (String[] args)
-    {
+    public static void main (String[] args) {
+
         SpringApplication.run (InternetShopApplication.class, args);
         //TODO: У приложения до сих пор нет возможности завершиться самостоятельно.
     }

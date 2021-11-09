@@ -8,59 +8,54 @@ ObjectFactory позволяет программно создавать нов�
 
 <p><b>Оригинал самого понятного (по обе стороны Атлантики) описания:</b><i>
  * This object contains factory methods for each
- * Java content interface and Java element interface 
- * generated in the ru.gb.antonov.j71.beans.soap package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * Java content interface and Java element interface
+ * generated in the ru.gb.antonov.j71.beans.soap package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.</i>
- * 
+ *
  <p><b>Чёрная неблагодарность:</b>
  Методы, написанные руками, прекрасно работают без участия этой «фабрики». */
 @XmlRegistry
-public class ObjectFactory
-{
+public class ObjectFactory {
+
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: ru.gb.antonov.j71.beans.soap
-     * 
+     *
      */
     public ObjectFactory () {}
 
     /**
      Create an instance of {@link GetProductSoapByIdRequest }
      */
-    public GetProductSoapByIdRequest createGetProductSoapByIdRequest ()
-    {
+    public GetProductSoapByIdRequest createGetProductSoapByIdRequest () {
         return new GetProductSoapByIdRequest ();
     }
 
     /**
      Create an instance of {@link GetProductSoapByIdResponse }
      */
-    public GetProductSoapByIdResponse createGetProductSoapByIdResponse ()
-    {
+    public GetProductSoapByIdResponse createGetProductSoapByIdResponse () {
         return new GetProductSoapByIdResponse ();
     }
 
-    public GetProductSoapRangeByIdRequest createGetProductSoapRangeByIdRequest ()
-    {
+    public GetProductSoapRangeByIdRequest createGetProductSoapRangeByIdRequest () {
         return new GetProductSoapRangeByIdRequest ();
     }
 
-    public GetProductSoapRangeByIdResponse createGetProductSoapRangeByIdResponse ()
-    {
+    public GetProductSoapRangeByIdResponse createGetProductSoapRangeByIdResponse () {
         return new GetProductSoapRangeByIdResponse ();
     }
 
     /**
      Create an instance of {@link ProductSoap }
      */
-    public ProductSoap createProductSoap ()
-    {
+    public ProductSoap createProductSoap () {
         return new ProductSoap ();
     }
 }

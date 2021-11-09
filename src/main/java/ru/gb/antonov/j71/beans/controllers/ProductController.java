@@ -22,8 +22,8 @@ import static ru.gb.antonov.j71.Factory.PROD_PAGESIZE_DEF;
 @RestController
 @RequestMapping ("/api/v1/products")
 @RequiredArgsConstructor
-public class ProductController
-{
+public class ProductController {
+
     private final ProductService productService;
 
     //@Value ("${views.shop.items-per-page-def}")
@@ -34,16 +34,16 @@ public class ProductController
     @GetMapping ("/page")
     public Page<ProductDto> getProductsPage (
             @RequestParam (defaultValue="0", name="p", required=false) Integer pageIndex,
-            @RequestParam MultiValueMap<String, String> filters)
-    {
+            @RequestParam MultiValueMap<String, String> filters) {
+
         return productService.getPageOfProducts (pageIndex, pageSize, filters);
     }
 //------------------- Страница описания товара -------------------------
 
     //http://localhost:12440/market/api/v1/products/11
     @GetMapping ("/{id}")
-    public ProductDto findById (@PathVariable Long id)
-    {
+    public ProductDto findById (@PathVariable Long id) {
+
         if (id == null)
             throw new UnableToPerformException ("Не могу выполнить поиск для товара id: "+ id);
         return ProductService.dtoFromProduct (productService.findById (id));
@@ -53,14 +53,14 @@ public class ProductController
    //http://localhost:12440/market/api/v1/products   POST
     @PostMapping
     public Optional<ProductDto> createProduct (@RequestBody @Validated ProductDto pdto, BindingResult br,
-                                               Principal principal)
+                                               Principal principal) {
     //  Нельзя изменять последовательность следующих параметров: @Validated ProductDto pdto, BindingResult br
-    {   if (br.hasErrors())
-        {   //преобразуем набор ошибок в список сообщений, и пакуем в одно общее исключение (в наше заранее для это приготовленное исключение).
+        if (br.hasErrors())
+            //преобразуем набор ошибок в список сообщений, и пакуем в одно общее исключение (в наше заранее для это приготовленное исключение).
             throw new OurValidationException (br.getAllErrors().stream()
                                                 .map (ObjectError::getDefaultMessage)
                                                 .collect (Collectors.toList()));
-        }
+
         Product p = productService.createProduct (pdto.getTitle(), pdto.getPrice(), pdto.getRest(),
                                                   pdto.getCategory());
         return toOptionalProductDto (p);
@@ -68,8 +68,8 @@ public class ProductController
 
    //http://localhost:12440/market/api/v1/products   PUT
     @PutMapping
-    public Optional<ProductDto> updateProduct (@RequestBody ProductDto pdto, Principal principal)
-    {
+    public Optional<ProductDto> updateProduct (@RequestBody ProductDto pdto, Principal principal) {
+
         Product p = productService.updateProduct (pdto.getProductId(), pdto.getTitle(), pdto.getPrice(),
                                                   pdto.getRest(), pdto.getCategory());
         return toOptionalProductDto (p);
@@ -77,15 +77,15 @@ public class ProductController
 
     //http://localhost:12440/market/api/v1/products/delete/11
     @GetMapping ("/delete/{id}")
-    public void deleteProductById (@PathVariable Long id, Principal principal)
-    {
+    public void deleteProductById (@PathVariable Long id, Principal principal) {
+
         if (id == null)
             throw new UnableToPerformException ("Не могу удалить товар (Unable to delete product) id: "+ id);
         productService.deleteById (id);
     }
 //----------------------------------------------------------------------
-    private static Optional<ProductDto> toOptionalProductDto (Product p)
-    {
+    private static Optional<ProductDto> toOptionalProductDto (Product p) {
+
         return p != null ? Optional.of (ProductService.dtoFromProduct(p))
                          : Optional.empty();
     }
