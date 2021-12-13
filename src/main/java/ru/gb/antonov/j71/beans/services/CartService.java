@@ -55,7 +55,7 @@ import static ru.gb.antonov.j71.Factory.*;
         private long pid;
         private int  quantity;
 
-        public CartItem () {}
+        private CartItem () {}
 
         private CartItem (long p, int q)  {
             pid = p;
@@ -68,14 +68,12 @@ import static ru.gb.antonov.j71.Factory.*;
         public void setQuantity (int value) { quantity = Math.max(value, 0); }
         public int getQuantity ()           { return quantity; }
 
-        public String toString () {
-            return String.format ("CartItem:[pid:%d, qty:%d]", pid, quantity);
-        }
+        public String toString () {  return String.format ("CartItem:[pid:%d, qty:%d]", pid, quantity);  }
     }
 
     public static class InMemoryCart {
 
-        List<CartItem> citems;
+        private List<CartItem> citems;
 
         private InMemoryCart () { citems = new LinkedList<>(); }
 
@@ -103,12 +101,12 @@ import static ru.gb.antonov.j71.Factory.*;
                     ci.quantity += q;
                     return q > 0;
                 }
-                return citems.add(new CartItem(p, q));
+                return citems.add (new CartItem (p, q));
             }
             return false;
         }
 
-        public int calcLoad () {
+        private int calcLoad () {
             int load = 0;
             for (CartItem ci : citems)
                 load += ci.quantity;
@@ -121,17 +119,36 @@ import static ru.gb.antonov.j71.Factory.*;
             return null;
         }
 
+        /** Метод должен вызываться в рамках к.-л. транзакции. */
+        private BigDecimal calcCost (CartService cs) {
+
+            BigDecimal result = BigDecimal.ZERO;
+            for (CartItem ci : citems) {
+                int quantity = ci.quantity;
+                if (quantity > 0) {
+                    BigDecimal price = cs.inlineGetProductPrice (ci.pid);
+                    result = result.add (price.multiply (BigDecimal.valueOf (quantity)));
+                }
+            }
+            return result;
+        }
+
         private boolean removeNonEmptyItems ()           { return citems.removeIf(ci->ci.quantity > 0); }
 
         private boolean removeItemByProductId (long pid) { return citems.removeIf(ci->ci.pid == pid); }
 
         public String toString ()                        { return citems.toString(); }
     }
+//------------------------------------------------------------------------
+
+    private BigDecimal inlineGetProductPrice (Long pid) {
+        return productService.getProductPrice(pid);
+    }
 
     @Transactional @NotNull public CartDto getUsersCartDto (Principal principal, String uuid) {
 
-        CartsEntry ce = getUsersCartEntry(principal, uuid);
-        return inMemoryCartToDto(ce.imcart, !DRYCART);
+        CartsEntry ce = getUsersCartEntry (principal, uuid);
+        return inMemoryCartToDto (ce.imcart, !DRYCART);
     }
 
     @NotNull private CartsEntry getUsersCartEntry (Principal principal, String uuid) {
@@ -140,10 +157,10 @@ import static ru.gb.antonov.j71.Factory.*;
         Duration cartLife = CART_LIFE;
 
         if (principal != null) {
-            postfix = ourUserService.userByPrincipal(principal).getLogin();
+            postfix = ourUserService.userByPrincipal (principal).getLogin();
             cartLife = DONOT_SET_CART_LIFE;
         }
-        return getUsersCartEntry(postfix, cartLife);
+        return getUsersCartEntry (postfix, cartLife);
     }
 
     @NotNull private CartsEntry getUsersCartEntry (String postfix, Duration cartLife) {
@@ -154,8 +171,8 @@ import static ru.gb.antonov.j71.Factory.*;
         String key = cartKeyByLogin(postfix);
         if (!redisTemplate.hasKey(key)) {
 
-            redisTemplate.opsForValue().set(key, new InMemoryCart());
-            if (cartLife != DONOT_SET_CART_LIFE) redisTemplate.expire(key, cartLife);
+            redisTemplate.opsForValue().set (key, new InMemoryCart());
+            if (cartLife != DONOT_SET_CART_LIFE) redisTemplate.expire (key, cartLife);
         }
         InMemoryCart imcart = (InMemoryCart) redisTemplate.opsForValue().get(key);
         if (imcart == null)
@@ -167,26 +184,15 @@ import static ru.gb.antonov.j71.Factory.*;
 //------------------------------------------------------------------------
 
     private void updateCart (CartsEntry cartsEntry) {
-        redisTemplate.opsForValue().set(cartsEntry.key, cartsEntry.imcart);
+        redisTemplate.opsForValue().set (cartsEntry.key, cartsEntry.imcart);
     }
 
     @Transactional public int getCartLoad (Principal principal, String uuid) {
-        return getUsersCartEntry(principal, uuid).imcart.calcLoad();
+        return getUsersCartEntry (principal, uuid).imcart.calcLoad();
     }
 
     @Transactional public BigDecimal getCartCost (Principal principal, String uuid) {
-        return calcCost(getUsersCartEntry(principal, uuid).imcart.citems);
-    }
-
-/** Метод должен вызываться в рамках к.-л. транзакции. */
-    public BigDecimal calcCost (List<CartItem> citems) { //TODO: перенести обратно в InMemoryCart.
-
-        BigDecimal cartcost = BigDecimal.ZERO;
-        for (CartItem ci : citems) {
-            int quantity = ci.quantity;
-            if (quantity > 0) cartcost = cartcost.add(productService.findById(ci.pid).getPrice().multiply(BigDecimal.valueOf(quantity)));
-        }
-        return cartcost;
+        return getUsersCartEntry (principal, uuid).imcart.calcCost (this);
     }
 
     @Transactional
@@ -195,10 +201,10 @@ import static ru.gb.antonov.j71.Factory.*;
     Товар не резервируем, при добавлении его в корзину. */
         if (delta == 0) return;
         boolean ok      = false;
-        Product product = productService.findById(productId);
+        Product product = productService.findById (productId);
 
-        CartsEntry ce = getUsersCartEntry(principal, uuid);
-        CartItem   ci = ce.imcart.getItemByPid(productId);
+        CartsEntry ce = getUsersCartEntry (principal, uuid);
+        CartItem   ci = ce.imcart.getItemByPid (productId);
 
         if (delta < 0) {
             if (ci != null) {
@@ -210,7 +216,7 @@ import static ru.gb.antonov.j71.Factory.*;
         else { //delta > 0
             int rest = product.getRest();
             if (rest > 0) {
-                if (ci == null) ce.imcart.citems.add(ci = new CartItem(productId, 0));
+                if (ci == null) ce.imcart.citems.add (ci = new CartItem(productId, 0));
 
                 int initialQuantity = ci.quantity;
                 ci.quantity += delta;
@@ -221,8 +227,10 @@ import static ru.gb.antonov.j71.Factory.*;
         }
         if (ok) updateCart(ce);
         else {
-            String err = String.format("не удалось изменить количество товара в корзине:\rтовар: %s\rостаток на складе: %d\rколичество этого товара в вашей корзине: %s", product.getTitle(), product.getRest(), (ci != null) ? ci.quantity : "?");
-            throw new ResourceNotFoundException(err);
+            String err = String.format ("не удалось изменить количество товара в корзине:\rтовар: %s"
+                            + "\rостаток на складе: %d\rколичество этого товара в вашей корзине: %s",
+                            product.getTitle(), product.getRest(), (ci != null) ? ci.quantity : "?");
+            throw new ResourceNotFoundException (err);
         }
     }
 
@@ -257,7 +265,7 @@ import static ru.gb.antonov.j71.Factory.*;
                 int     rest = p.getRest();
                 if (rest > 0) {   //< если остаток товара <= 0, то считаем, что товара нет
                     quantity = Math.min(rest, quantity);
-                    cdto.addItem(new OrderItemDto(p), quantity);
+                    cdto.addItem (new OrderItemDto(p), quantity);
                 }
             }
         }
@@ -275,7 +283,7 @@ import static ru.gb.antonov.j71.Factory.*;
             postfixPr = validateString(principal.getName(), LOGIN_LEN_MIN, LOGIN_LEN_MAX);
 
         if (postfixPr == null)
-            throw new UnableToPerformException("merge carts: вызов для НЕавторизованного пользователя.");
+            throw new UnableToPerformException ("merge carts: вызов для НЕавторизованного пользователя.");
 
         if (redisTemplate.hasKey(Factory.cartKeyByLogin(postfixUu))) {
 
@@ -302,19 +310,19 @@ import static ru.gb.antonov.j71.Factory.*;
     }
 
     public void removeNonEmptyItems (String login) {
-        CartsEntry ce = getUsersCartEntry(login, DONOT_SET_CART_LIFE);
+        CartsEntry ce = getUsersCartEntry (login, DONOT_SET_CART_LIFE);
         if (ce.imcart.removeNonEmptyItems()) updateCart(ce);
     }
 
     @SuppressWarnings ("all") public boolean deleteCart (String postfix) {
-        String key = cartKeyByLogin(postfix);
-        if (!redisTemplate.hasKey(key))
-            return redisTemplate.delete(getUsersCartEntry(postfix, DONOT_SET_CART_LIFE).key);
+        String key = cartKeyByLogin (postfix);
+        if (!redisTemplate.hasKey (key))
+            return redisTemplate.delete(getUsersCartEntry (postfix, DONOT_SET_CART_LIFE).key);
         return false;
     }
 
     public int getCartItemsCount (Principal principal, String uuid) {
-        CartsEntry ce = getUsersCartEntry(principal, uuid);
+        CartsEntry ce = getUsersCartEntry (principal, uuid);
         return ce.imcart.citems.size();
     }
 }

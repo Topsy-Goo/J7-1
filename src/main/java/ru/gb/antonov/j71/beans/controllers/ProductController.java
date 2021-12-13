@@ -15,6 +15,7 @@ import ru.gb.antonov.j71.entities.dtos.ProductDto;
 
 import java.security.Principal;
 import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static ru.gb.antonov.j71.Factory.PROD_PAGESIZE_DEF;
@@ -27,7 +28,8 @@ public class ProductController {
     private final ProductService productService;
 
     //@Value ("${views.shop.items-per-page-def}")
-    private final int pageSize = PROD_PAGESIZE_DEF;
+    private final        int    pageSize = PROD_PAGESIZE_DEF;
+    private final static Logger LOGGER   = Logger.getLogger ("ru.gb.antonov.j71.beans.controllers.ProductController");
 //--------------------------------------------------------------------
 
     //http://localhost:12440/market/api/v1/products/page?p=0
@@ -36,6 +38,7 @@ public class ProductController {
             @RequestParam (defaultValue="0", name="p", required=false) Integer pageIndex,
             @RequestParam MultiValueMap<String, String> filters) {
 
+        LOGGER.info ("Получен GET-запрос: /api/v1/products/page?p="+pageIndex);
         return productService.getPageOfProducts (pageIndex, pageSize, filters);
     }
 //------------------- Страница описания товара -------------------------
@@ -44,6 +47,7 @@ public class ProductController {
     @GetMapping ("/{id}")
     public ProductDto findById (@PathVariable Long id) {
 
+        LOGGER.info ("Получен GET-запрос: /api/v1/products/"+id);
         if (id == null)
             throw new UnableToPerformException ("Не могу выполнить поиск для товара id: "+ id);
         return ProductService.dtoFromProduct (productService.findById (id));
@@ -55,6 +59,7 @@ public class ProductController {
     public Optional<ProductDto> createProduct (@RequestBody @Validated ProductDto pdto, BindingResult br,
                                                Principal principal) {
     //  Нельзя изменять последовательность следующих параметров: @Validated ProductDto pdto, BindingResult br
+        LOGGER.info ("Получен POST-запрос: /api/v1/products + "+ pdto);
         if (br.hasErrors())
             //преобразуем набор ошибок в список сообщений, и пакуем в одно общее исключение (в наше заранее для это приготовленное исключение).
             throw new OurValidationException (br.getAllErrors().stream()
@@ -70,6 +75,7 @@ public class ProductController {
     @PutMapping
     public Optional<ProductDto> updateProduct (@RequestBody ProductDto pdto, Principal principal) {
 
+        LOGGER.info ("Получен PUT-запрос: /api/v1/products + "+ pdto);
         Product p = productService.updateProduct (pdto.getProductId(), pdto.getTitle(), pdto.getPrice(),
                                                   pdto.getRest(), pdto.getCategory());
         return toOptionalProductDto (p);
@@ -79,6 +85,7 @@ public class ProductController {
     @GetMapping ("/delete/{id}")
     public void deleteProductById (@PathVariable Long id, Principal principal) {
 
+        LOGGER.info ("Получен GET-запрос: /api/v1/products/delete/"+ id);
         if (id == null)
             throw new UnableToPerformException ("Не могу удалить товар (Unable to delete product) id: "+ id);
         productService.deleteById (id);

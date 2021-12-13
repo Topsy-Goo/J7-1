@@ -13,6 +13,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.gb.antonov.j71.beans.errorhandlers.ErrorMessage;
 import ru.gb.antonov.j71.beans.errorhandlers.OurValidationException;
+import ru.gb.antonov.j71.beans.errorhandlers.UserCreationException;
+import ru.gb.antonov.j71.beans.errorhandlers.UserNotFoundException;
 import ru.gb.antonov.j71.beans.services.OurUserService;
 import ru.gb.antonov.j71.beans.utils.JwtokenUtil;
 import ru.gb.antonov.j71.entities.OurUser;
@@ -64,8 +66,9 @@ public class AuthController {
         if (optionalOurUser.isPresent())
             return inlineAuthentificateAndResponseWithJwt (login, password);
 
-        return new ResponseEntity<> (new ErrorMessage ("Новый пользователь создан некорректно."),
-                                     HttpStatus.INTERNAL_SERVER_ERROR);
+        String errMsg = "Новый пользователь создан некорректно.";
+        throw new UserCreationException (errMsg);
+        //return new ResponseEntity<> (new ErrorMessage (errMsg), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping("/can_edit_product")
@@ -79,10 +82,11 @@ public class AuthController {
             authenticationManager.authenticate (new UsernamePasswordAuthenticationToken (login, password));
         }
         catch (BadCredentialsException e) {
-            String errMsg = String.format ("Некорректные логин (%s) и/или пароль (%s).", login, password);
-            return new ResponseEntity<> (new ErrorMessage (errMsg), HttpStatus.UNAUTHORIZED);
+            String errMsg = String.format ("\nНекорректные логин (%s) и/или пароль (%s).", login, password);
+            throw new UserNotFoundException (errMsg, e);
+            //return new ResponseEntity<> (new ErrorMessage (errMsg), HttpStatus.UNAUTHORIZED);
         }
-        catch (Exception e) { e.printStackTrace(); }
+        //catch (Exception e) { e.printStackTrace(); }
 
         UserDetails userDetails = ourUserService.loadUserByUsername (login);
         String token = jwtokenUtil.generateJWToken (userDetails);

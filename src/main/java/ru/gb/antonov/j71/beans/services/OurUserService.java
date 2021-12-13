@@ -71,13 +71,17 @@ public class OurUserService implements UserDetailsService {
     @Transactional
     public Optional<OurUser> createNewOurUser (String login, String password, String email) {
 
-        OurUser dummyUser = OurUser.dummyOurUser (login, password, email);
-        Role role         = roleService.getRoleUser();
-        OurPermission ourPermission = ourPermissionService.getPermissionDefault();
+        OurUser newOurUser = OurUser.create()
+                                   .withLogin (login)
+                                   .withPassword (password)
+                                   .withEmail (email)
+                                   .build();
+        Role roleUser = roleService.getRoleUser();
+        OurPermission ourDefaultPermission = ourPermissionService.getPermissionDefault();
 
-        OurUser saved = ourUserRepo.save (dummyUser);
-        saved.addRole (role);
-        saved.addPermission (ourPermission);
+        OurUser saved = ourUserRepo.save (newOurUser);
+        saved.addRole (roleUser);
+        saved.addPermission (ourDefaultPermission);
         return Optional.of (saved);
     }
 

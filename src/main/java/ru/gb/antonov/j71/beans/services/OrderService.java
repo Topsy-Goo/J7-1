@@ -42,7 +42,7 @@ public class OrderService {
         CartDto dryCartDto = cartService.getUsersDryCartDto (ourUser.getLogin());
 
         if (dryCartDto.getTitlesCount() <= 0)
-            throw new UnableToPerformException(ORDER_IS_EMPTY);
+            throw new BadCreationParameterException (ORDER_IS_EMPTY);
 
         OrderDetalesDto odt = new OrderDetalesDto();
         odt.setCartDto (dryCartDto);
@@ -65,7 +65,7 @@ public class OrderService {
 
         CartDto cartDto = detales.getCartDto();
         if (cartDto.getTitlesCount() <= 0)
-            throw new UnableToPerformException(ORDER_IS_EMPTY);
+            throw new BadCreationParameterException (ORDER_IS_EMPTY);
 
         OurUser      ourUser      = ourUserService.userByPrincipal (principal);
         OrderState   oState       = orderStatesService.getOrderStatePending();

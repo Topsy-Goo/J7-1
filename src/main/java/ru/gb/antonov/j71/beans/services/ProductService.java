@@ -24,8 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.gb.antonov.j71.Factory.MIN_PRICE;
-import static ru.gb.antonov.j71.Factory.NO_FILTERS;
+import static ru.gb.antonov.j71.Factory.*;
 
 @Service
 @RequiredArgsConstructor
@@ -63,7 +62,12 @@ public class ProductService {
         pageIndex = validatePageIndex (pageIndex, pageSize, productRepo.count());
         return (filters == NO_FILTERS)
                     ? productRepo.findAll (PageRequest.of (pageIndex, pageSize))
-                    : productRepo.findAll (constructSpecification (filters), PageRequest.of (pageIndex, pageSize));
+                    : productRepo.findAll (constructSpecification (filters),
+                                           PageRequest.of (pageIndex, pageSize));
+    }
+
+    public BigDecimal getProductPrice (Long pid) {
+        return productRepo.getProductPrice (pid);
     }
 
     private int validatePageIndex (int pageIndex, int pageSize, long productsCount) {
@@ -89,21 +93,26 @@ public class ProductService {
     @Transactional
     public Product createProduct (String title, BigDecimal price, int rest, String productCategoryName) {
 
-        Product p = new Product();
         ProductsCategory category = productCategoryService.findByName (productCategoryName); //< бросает ResourceNotFoundException
-        p.update (title, price, rest, category);     //< бросает UnableToPerformException
+        Product p = Product.create()
+                           .withTitle (title)
+                           .withPrice (price)
+                           .withRest (rest)
+                           .withProductsCategory (category)
+                           .build();     //< бросает BadCreationParameterException
         return productRepo.save (p);
     }
+
 
 /** @param id {@code ID} продукта, свойства которого нужно изменить. Этот параметр не может быть {@code null}.
 Любой другой параметр может быть {@code null}. Равенство параметра {@code null} расценивается как
 нежелание изменять соответствующее ему свойство товара. */
     @Transactional
     public Product updateProduct (@NotNull Long id, String title, BigDecimal price, Integer rest,
-                                  String productCategoryName) {
-
-        if (price != null && price.compareTo (MIN_PRICE) > 0)
-            throw new UnableToPerformException ("Указаная цена меньше минимальной: " + price);
+                                  String productCategoryName)
+    {
+        if (price != null && price.compareTo (MIN_PRICE) < 0)
+            throw new UnableToPerformException (String.format (ERR_MINPRICE_OUTOF_RANGE, price, MIN_PRICE));
 
         Product p = findById (id);
         ProductsCategory category = null;
@@ -199,7 +208,9 @@ public class ProductService {
             if ((s = params.getFirst (FILTER_TITLE)) != null && !s.isBlank()) {
                 spec = spec.and (ProductSpecification.titleLike (s));
             }
-/*  Если, например, понадобится добавить фильтр, состоящий из ряда необязательных элементов, то для него нужно создать отдельную спецификацию, заполнить её при пом. Specification.or(…), а потом добавить в основную спецификайию при пом. Specification.add(…). */
+/*  Если, например, понадобится добавить фильтр, состоящий из ряда необязательных элементов, то
+ для него нужно создать отдельную спецификацию, заполнить её при пом. Specification.or(…), а потом
+ добавить в основную спецификайию при пом. Specification.add(…). */
         }
         return spec;
     }

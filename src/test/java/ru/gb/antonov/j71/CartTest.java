@@ -25,8 +25,8 @@ import java.util.UUID;
 
 @SpringBootTest /* < используется, когда нужны Спринг-контекст и вёб-окружение. Использование @SpringBootTest приводит к подъёму всего web-контекста. Если нам все бины в контексте не нужны, то эту аннотацию нужно использовать с параметром classes=SomeOnly.class (можно указать массив классов). Ни тот, ни иной вариант использования этой аннотации не отменяет инекцию указанных в тест-классе бинов.  */
 @ActiveProfiles ("test") //< используем тестовый профиль настроек приложения (будет загружена тестовая БД)
-public class CartTest
-{
+public class CartTest {
+
     private static final boolean MOKED_PRODUCT_SERVICE = true; //< При смене значения на false нужно закомментировать объявление бина mockedProductService.
 // тестируемый бин:
     @Autowired private CartService cartService;
@@ -38,18 +38,14 @@ public class CartTest
 
 
 /** Тестируем многократное добавление одного и того же товара, чтобы убедиться, что количество товарных позиций в корзине от этого не меняется.  */
-    @Test public void cartsSameProductAddingTest ()
-    {
+    @Test public void cartsSameProductAddingTest () {
+
         long pid = 1L;
         Product product;
         if (!MOKED_PRODUCT_SERVICE)
-        {
             product = productService.findById (pid);
-        }
         else
-        {
             product = Product.dummyProduct (pid, "Товар2", BigDecimal.valueOf(20.0), 20, null, null, null);
-        }
         String uuid = UUID.randomUUID().toString();
         //Assertions.assertEquals (1, cartService.getCartLoad (null, uuid));
 
@@ -72,20 +68,18 @@ public class CartTest
     }
 
 /** Добавление товара в корзину из непустой товарной позиции. */
-    @Test public void cartLoadTest ()
-    {
+    @Test public void cartLoadTest () {
+
 //TODO:после изменений в ProductDto некоторые методы выглядят лишними?
         Product product;
         long pid;
-        if (!MOKED_PRODUCT_SERVICE)
-        {
+        if (!MOKED_PRODUCT_SERVICE) {
             //Код, который использует настоящий бин:
             product = productService.createProduct ("Товар2", BigDecimal.valueOf(20.0), 20, "D");
             pid = product.getId();
             product = productService.updateProduct (pid, null, null, 20, null);//TODO:удалить этот вызов?
         }
-        else //Код, который использует только поддельный бин
-        {
+        else { //Код, который использует только поддельный бин
             pid = 1L;
             product = Product.dummyProduct (pid, "Товар2", BigDecimal.valueOf(20.0), 20, null, null, null);
             Mockito.doReturn (product).when (productService).findById (pid);
@@ -117,22 +111,19 @@ public class CartTest
 /** Несколько дополнительных тестов:<br>
 • добавление в корзину товара из пустой товарной позиции;<br>
 • тест того, как изменения в свойствах товара отражаются на содержимом корзины. */
-    @Test public void cartMoreTests ()
-    {
+    @Test public void cartMoreTests () {
 //TODO:после изменений в ProductDto некоторые методы выглядят лишними?
 
         Product product, p;
         long pid;
         ProductsCategory pCat;
-        if (!MOKED_PRODUCT_SERVICE)
-        {
+        if (!MOKED_PRODUCT_SERVICE) {
             //Код, который использует только настоящий бин:
             product = productService.createProduct ("Продукт Ф", BigDecimal.valueOf(99.99), 0, "D");
             pid = product.getId(); //< эффективли файнал, для лямбды
             product = productService.updateProduct (pid, null, null, 0, null);//TODO:удалить этот вызов?
         }
-        else   //Код, который использует только поддельный бин.
-        {
+        else {   //Код, который использует только поддельный бин.
             pCat = ProductsCategory.dummyProductsCategory (100500L, "W", null, null, null);
             pid = 1L;
             product = Product.dummyProduct (pid, "Продукт Ф", BigDecimal.valueOf(99.99), 0, pCat, null, null);
@@ -146,8 +137,7 @@ public class CartTest
                                  ()->cartService.changeProductQuantity (null, uuid, pid, 1));
         Assertions.assertEquals (cartService.getCartLoad (null, uuid), 0);
 
-        if (MOKED_PRODUCT_SERVICE)
-        {
+        if (MOKED_PRODUCT_SERVICE) {
 /*  Совершенно случайно оказалось, что ВНУТРИ этого класса такое объявление метода:
         Mockito.doReturn (product.update (,,,123)).when (productService).updateProduct (pid,,,,123);
  является не просто объявлением, но ещё и является ВЫЗОВОМ МЕТОДА от имени подменённого бина. При этом последующий вызов
@@ -156,7 +146,7 @@ public class CartTest
 */
             p = productService.updateProduct (pid, null, null, 4444, null); //< Возвращает null
             p = productService.updateProduct (pid, null, null, 123, null); //< Возвращает null
-            Mockito.doReturn (product.update (null, null, 123, null))
+            Mockito.doReturn (product.strictUpdate().withRest (123))
                    .when (productService).updateProduct (pid, null, null, 123, null); //< Устанавливает товару остаток в значение 123.
             p = productService.updateProduct (pid, null, null, 4444, null); //< Возвращает null
             p = productService.updateProduct (pid, null, null, 123, null); //< Возвращает product в неизменённом виде.
@@ -164,7 +154,7 @@ public class CartTest
 //Тестируем то, как изменение товара отражается на товаре в корзине.
 
         if (MOKED_PRODUCT_SERVICE)
-            Mockito.doReturn (product.update (null, null, 1, null))
+            Mockito.doReturn (product.strictUpdate().withRest (1))
                    .when (productService).updateProduct (pid, null, null, 1, null); //< Устанавливает товару остаток в значение 1.
         p = productService.updateProduct (pid, null, null, 1, null);
         cartService.changeProductQuantity (null, uuid, pid, 10);
@@ -172,7 +162,7 @@ public class CartTest
         Assertions.assertEquals (cartService.getCartCost (null, uuid), BigDecimal.valueOf(99.99));
 
         if (MOKED_PRODUCT_SERVICE)
-            Mockito.doReturn (product.update (null, BigDecimal.valueOf(36.6), null, null))
+            Mockito.doReturn (product.strictUpdate().withPrice (BigDecimal.valueOf(36.6)))
                    .when (productService).updateProduct (pid, null, BigDecimal.valueOf(36.6), null, null); //< Устанавливает товару цену в значение 36.6.
         p = productService.updateProduct (pid, null, BigDecimal.valueOf(36.6), null, null);
         Assertions.assertEquals (cartService.getCartLoad (null, uuid), 1);
@@ -184,8 +174,8 @@ public class CartTest
     }
 
 /** (Этот метод не доделан: всё работает, но непонятно, как это применить к хоть сколько-нибудь интересному тестированию. Но зато в нём удалось попрактиковаться в работе с JSON.) */
-    @Test public void cartsMergeTest () throws JsonProcessingException //< для readValue
-    {
+    @Test public void cartsMergeTest () throws JsonProcessingException { //< для readValue
+
 //создаём корзины admin и guest и наполняем их корзины товарнвми позициями (пустыми и непустыми)
         String jsonImcTest1 = "{\"citems\":[{\"pid\":1,\"quantity\":0},{\"pid\":2,\"quantity\":1},{\"pid\":3,\"quantity\":2},{\"pid\":4,\"quantity\":1}]}";
         String jsonImcTest2 = "{\"citems\":[{\"pid\":3,\"quantity\":0},{\"pid\":4,\"quantity\":1},{\"pid\":5,\"quantity\":2},{\"pid\":6,\"quantity\":1}]}";

@@ -18,7 +18,7 @@ import static ru.gb.antonov.j71.Factory.MIN_PRICE;
 
 @Entity
 @Table (name="products")
-public class Product {
+public class Product implements Buildable<Product> {
 
     @Id  @Getter
     @GeneratedValue (strategy = GenerationType.IDENTITY)
@@ -28,11 +28,14 @@ public class Product {
     @Column(name="title", nullable=false)            @Getter
     private String title;
 
+    public static String getTitleFieldName ()  {   return "title";   }
+    public static String getPriceFieldName ()  {   return "price";   }
+
     @Column(name="price", nullable=false)            @Getter
     private BigDecimal price = BigDecimal.ZERO;
 
     @Column(name="rest", nullable=false)             @Getter
-    private int rest;
+    private Integer rest;
 
     @ManyToOne
     @JoinColumn(name="category_id", nullable=false)  @Getter
@@ -43,36 +46,70 @@ public class Product {
 
     @CreationTimestamp    @Column(name="updated_at") @Getter @Setter
     private LocalDateTime updatedAt;
+
 //----------------------------------------------------------------------
-    public Product () {}
+    private Product () {}
 
-/** Любой из параметров может быть {@code null}. Равенство параметра {@code null} расценивается как
-нежелание изменять соответствующее ему свойство товара..
-@throws  BadCreationParameterException*/
-    public Product update (String ttl, BigDecimal prc, Integer rst, ProductsCategory cat) {
+//---------------- создание и обновление объектов ----------------------
+/** Создаёт пустой объект Product и начинает цепочку методов, каждый из которых проверяет валидность
+изменяемого параметра.
+@return ссылка на объект Product */
+    public static Product create () {
+        return new Product();
+    }
 
-        String newTitle     = (ttl == null) ? title : ttl;
-        BigDecimal newPrice = (prc == null) ? price : prc;
-        Integer newRest     = (rst == null) ? rest : rst;
-        ProductsCategory newCat = (cat == null) ? category : cat;
-
-        if (!setTitle (newTitle) || !setPrice (newPrice) || !setRest (newRest) || !setCategory (newCat)) {
-
-            String newCategoryName = (newCat != null) ? newCat.getName() : "null";
-            String sb = "Недопустимый набор значений:\r" +
-                        "• название продукта = " + newTitle + ",\r" +
-                        "• цена = " + newPrice + ",\r" +
-                        "• остаток = " + newRest + ",\r" +
-                        "• категория = " + newCategoryName + '.';
-            throw new BadCreationParameterException (sb);
-        }
+ /** Начинает цепочку методов, каждый из которых проверяет валидность изменяемого параметра. Цепочка не
+обязана начинаться с этого метода, но его использование улучшает читаемость кода.
+@return this
+@throws BadCreationParameterException */
+    public Product strictUpdate () {
         return this;
     }
-//(метод используется в тестах, где корректность аргументов зависит от целей тестирования)
-    public static Product dummyProduct (Long id, String title, BigDecimal price, int rest,
+/**
+@return this
+@throws BadCreationParameterException */
+   public Product withTitle (String newTitle) {
+        if (!setTitle (newTitle))
+            throw new BadCreationParameterException ("\rнекорректное название продукта : " + newTitle);
+        return this;
+    }
+/**
+@return this
+@throws BadCreationParameterException */
+    public Product withPrice (BigDecimal newPrice) {
+        if (!setPrice (newPrice))
+            throw new BadCreationParameterException ("\rнекорректная цена продукта : " + newPrice);
+        return this;
+    }
+/**
+@return this
+@throws BadCreationParameterException */
+    public Product withRest (Integer newRest) {
+        if (!setRest (newRest))
+            throw new BadCreationParameterException ("\rнекорректный остаток продукта : " + newRest);
+        return this;
+    }
+/**
+@return this
+@throws BadCreationParameterException */
+    public Product withProductsCategory (ProductsCategory newProductCategory) {
+        if (!setCategory (newProductCategory))
+            throw new BadCreationParameterException ("\rнекорректная категория продукта : " + newProductCategory);
+        return this;
+    }
+/**
+@return this */
+    @Override public Product build () {
+        if (title == null || category == null || price == null || rest == null)
+            throw new BadCreationParameterException ("\rнедостаточная инициализация");
+        return this;
+    }
+
+/** Метод используется в тестах, где корректность аргументов зависит от целей тестирования.    */
+    public static Product dummyProduct (Long id, String title, BigDecimal price, Integer rest,
                                         ProductsCategory category,
-                                        LocalDateTime createdAt, LocalDateTime updatedAt) {
-        Product p = new Product();
+                                        LocalDateTime createdAt, LocalDateTime updatedAt)
+    {   Product p = new Product();
         p.id        = id;
         p.title     = title;
         p.price     = price;
@@ -81,6 +118,26 @@ public class Product {
         p.createdAt = createdAt;
         p.updatedAt = updatedAt;
         return p;
+    }
+
+/** Любой из параметров может быть {@code null}. Равенство параметра {@code null} расценивается как
+нежелание изменять соответствующее ему свойство товара.
+@return void
+@throws BadCreationParameterException если ненулевой параметр оказался некооректным. */
+    public void update (String newTitle, BigDecimal newPrice, Integer newRest,
+                        ProductsCategory newProductCategory)
+    {
+        if (newTitle != null && !setTitle (newTitle))
+            throw new BadCreationParameterException ("\rнекорректное название продукта : " + newTitle);
+
+        if (newPrice != null && !setPrice (newPrice))
+            throw new BadCreationParameterException ("\rнекорректная цена продукта : " + newPrice);
+
+        if (newRest != null && !setRest (newRest))
+            throw new BadCreationParameterException ("\rнекорректный остаток продукта : " + newRest);
+
+        if (newProductCategory != null && !setCategory (newProductCategory))
+            throw new BadCreationParameterException ("\rнекорректная категория продукта : " + newProductCategory);
     }
 //----------------- Геттеры и сеттеры -----------------------------------
 
@@ -113,9 +170,6 @@ public class Product {
             rest = newvalue;
         return ok;
     }
-
-    public static String getPriceFieldName ()  {   return "price";   }
-    public static String getTitleFieldName ()  {   return "title";   }
 //-----------------------------------------------------------------------
 
     public static boolean isTitleValid (String title) {

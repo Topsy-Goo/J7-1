@@ -4,16 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.gb.antonov.j71.beans.errorhandlers.BadCreationParameterException;
-import ru.gb.antonov.j71.beans.repositos.OrderItemRepo;
 import ru.gb.antonov.j71.beans.repositos.ProductReviewsRepo;
-import ru.gb.antonov.j71.entities.OrderItem;
 import ru.gb.antonov.j71.entities.OurUser;
 import ru.gb.antonov.j71.entities.Product;
 import ru.gb.antonov.j71.entities.ProductReview;
 import ru.gb.antonov.j71.entities.dtos.ProductReviewDto;
 
 import java.security.Principal;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 

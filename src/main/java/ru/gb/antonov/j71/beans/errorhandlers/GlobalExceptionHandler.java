@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> catchUserCreatingException (UserCreatingException e) {
+    public ResponseEntity<?> catchUserCreatingException (UserCreationException e) {
         return new ResponseEntity<>(new ErrorMessage (e.getMessage()), HttpStatus.BAD_REQUEST); //400
     }
 

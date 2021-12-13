@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import ru.gb.antonov.j71.beans.errorhandlers.UserCreatingException;
+import ru.gb.antonov.j71.beans.errorhandlers.UserCreationException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -15,7 +15,7 @@ import static ru.gb.antonov.j71.Factory.*;
 
 @Entity
 @Table (name="ourusers")
-public class OurUser {
+public class OurUser implements Buildable<OurUser> {
 
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY) @Getter
@@ -48,24 +48,54 @@ public class OurUser {
                 joinColumns        = @JoinColumn (name="ouruser_id"),
                 inverseJoinColumns = @JoinColumn (name="ourpermission_id"))    @Getter @Setter
     private Collection<OurPermission> ourPermissions;
+
 //------------------------ Конструкторы -------------------------------------
-    public OurUser (){}
-    public static OurUser dummyOurUser (String login, String password, String email) {
+    private OurUser () {
+        roles          = new HashSet<>();
+        ourPermissions = new HashSet<>();
+    }
 
-        OurUser u = new OurUser();
-        if (!u.setLogin (login) || !u.setPass (password) || !u.setEmail (email)) {
-
-            throw new UserCreatingException (String.format (
-                "\rНедопустимый набор значений:\r    логин = %s,\r    пароль = %s,\r    почта = %s",
-                login, password, email));
-        }
-        u.roles          = new HashSet<>();
-        u.ourPermissions = new HashSet<>();
-        return u;
+/** Создаёт пустой объект OurUser и начинает цепочку методов, каждый из которых проверяет валидность
+изменяемого параметра.
+@return ссылка на объект OurUser   */
+    public static OurUser create () {
+        return new OurUser();
+    }
+/**
+@return this
+@throws UserCreationException */
+    public OurUser withLogin (String newLogin) {
+        if (!setLogin (newLogin))
+            throw new UserCreationException ("\rнекорректный логин : "+ newLogin);
+        return this;
+    }
+/**
+@return this
+@throws UserCreationException */
+    public OurUser withPassword (String newPassword) {
+        if (!setPass (newPassword))
+            throw new UserCreationException ("\rнекорректный пароль : "+ newPassword);
+        return this;
+    }
+/**
+@return this
+@throws UserCreationException */
+    public OurUser withEmail (String newEmail) {
+        if (!setEmail (newEmail))
+            throw new UserCreationException ("\rнекорректный адрес электронной почты : "+ newEmail);
+        return this;
+    }
+/** Завершает инициализацию объекта OurUser.
+@return this    */
+    @Override public OurUser build () {
+        if (login == null || password == null || email == null)
+            throw new UserCreationException (USE_DEFAULT_STRING);
+        return this;
     }
 //----------------------- Геттеры и сеттеры ---------------------------------
 
     private void setId (Long id) {   this.id = id;   }
+
     private void setPassword (String password) {   this.password = password;   }
 
     private boolean setLogin (String login) {
@@ -104,6 +134,7 @@ public class OurUser {
         return (permission != null) && ourPermissions.add (permission);
     }
 //--------------------- Другие методы ---------------------------------------
+
     @Override  public String toString () {
         return String.format("OurUser:[id:%d, login:%s, email:%s].", id, login, email);
     }

@@ -24,7 +24,7 @@ public class ProductDto {
     private BigDecimal price = BigDecimal.ZERO;
 
     @PositiveOrZero (message="Остаток товара должен быть НЕОТРИЦАТЕЛЬНЫМ числом!")
-    private int rest;
+    private Integer rest;
 
     @NotNull (message="Не указано название категории товара!")
     private String category;
@@ -40,14 +40,21 @@ public class ProductDto {
             category  = product.getCategory ().getName ();
         }
     }
+
+/** Используется для тестов. Корректность значений определяется потребностями тестов.   */
     public static ProductDto dummyProductDto (Long pProductId, String pTitle, BigDecimal pPrice,
-                                              int pRest, String pCategory) {
-        ProductDto pdt = new ProductDto();
+                                              Integer pRest, String pCategory)
+    {   ProductDto pdt = new ProductDto();
         pdt.productId  = pProductId;
         pdt.title      = pTitle;
         pdt.price      = pPrice;
         pdt.rest       = pRest;
         pdt.category   = pCategory;
         return pdt;
+    }
+
+    @Override public String toString() {
+        return String.format ("ProductDto:{pid:%d, title:%s, price:%f, rest:%d, categ:%s}",
+                                         productId, title,   price,    rest,    category);
     }
 }

@@ -42,6 +42,7 @@ public class Factory {
     public static final int DELIVERING_STREET_HOUSE_LEN_MAX = 100;
     public static final int DELIVERING_APARTMENT_LEN_MAX    = 100;
 
+    public static final String USE_DEFAULT_STRING = null;
     public static final String BRAND_NAME_ENG = "Marketplace";
     public static final String STR_EMPTY      = "";
     public static final String BEARER_        = "Bearer ";
@@ -60,6 +61,7 @@ public class Factory {
     public static final String PERMISSION_SHOPPING     = "SIMLE_SHOPPING";
     public static final String AUTHORIZATION_HDR_TITLE = "Authorization";
     public static final String ORDER_IS_EMPTY = " Заказ пуст. ";
+    public static final String ERR_MINPRICE_OUTOF_RANGE = "Указаная цена (%f)\rменьше минимальной (%f).";
 
     public static String   CART_PREFIX_        = STR_EMPTY;
     public static Duration CART_LIFE           = Duration.ofDays(30L);
