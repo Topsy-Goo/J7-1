@@ -10,6 +10,7 @@
 			<xs:element name="title" type="xs:string"/>
 			<xs:element name="price" type="xs:double"/>
 			<xs:element name="rest" type="xs:int"/>
+			<xs:element name="measure" type="xs:string"/>
 			<xs:element name="categoryName" type="xs:string"/>
 			<xs:element name="createdAt" type="xs:long"/><!-- unsignedLong -->
 			<xs:element name="updatedAt" type="xs:long"/><!-- unsignedLong -->

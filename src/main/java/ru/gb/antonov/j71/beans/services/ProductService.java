@@ -14,6 +14,7 @@ import ru.gb.antonov.j71.beans.errorhandlers.UnableToPerformException;
 import ru.gb.antonov.j71.beans.repositos.ProductRepo;
 import ru.gb.antonov.j71.beans.repositos.specifications.ProductSpecification;
 import ru.gb.antonov.j71.beans.soap.products.ProductSoap;
+import ru.gb.antonov.j71.entities.Measure;
 import ru.gb.antonov.j71.entities.Product;
 import ru.gb.antonov.j71.entities.ProductsCategory;
 import ru.gb.antonov.j71.entities.dtos.ProductDto;
@@ -32,6 +33,7 @@ public class ProductService {
 
     private final ProductRepo            productRepo;
     private final ProductCategoryService productCategoryService;
+    private final MeasureService         productMeasureService;
 
 //названия фильтров, использующиеся на фронте:
     private static final String FILTER_MIN_PRICE = "min_price";
@@ -91,13 +93,15 @@ public class ProductService {
 //-------------- Редактирование товаров ---------------------------------
 
     @Transactional
-    public Product createProduct (String title, BigDecimal price, int rest, String productCategoryName) {
+    public Product createProduct (String title, BigDecimal price, int rest, String productMeasure, String productCategoryName) {
 
         ProductsCategory category = productCategoryService.findByName (productCategoryName); //< бросает ResourceNotFoundException
+        Measure measure = productMeasureService.findByName (productMeasure);
         Product p = Product.create()
                            .withTitle (title)
                            .withPrice (price)
                            .withRest (rest)
+                           .withMeasure (measure)
                            .withProductsCategory (category)
                            .build();     //< бросает BadCreationParameterException
         return productRepo.save (p);
@@ -109,18 +113,22 @@ public class ProductService {
 нежелание изменять соответствующее ему свойство товара. */
     @Transactional
     public Product updateProduct (@NotNull Long id, String title, BigDecimal price, Integer rest,
-                                  String productCategoryName)
+                                  String productMeasure, String productCategoryName)
     {
         if (price != null && price.compareTo (MIN_PRICE) < 0)
             throw new UnableToPerformException (String.format (ERR_MINPRICE_OUTOF_RANGE, price, MIN_PRICE));
 
         Product p = findById (id);
         ProductsCategory category = null;
+        Measure measure = null;
 
         if (productCategoryName != null)
             category = productCategoryService.findByName (productCategoryName);
 
-        p.update (title, price, rest, category);
+        if (productMeasure != null)
+            measure = productMeasureService.findByName (productMeasure);
+
+        p.update (title, price, rest, measure, category);
         return productRepo.save (p);
     }
 

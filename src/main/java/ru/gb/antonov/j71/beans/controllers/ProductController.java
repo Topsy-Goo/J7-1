@@ -66,8 +66,8 @@ public class ProductController {
                                                 .map (ObjectError::getDefaultMessage)
                                                 .collect (Collectors.toList()));
 
-        Product p = productService.createProduct (pdto.getTitle(), pdto.getPrice(), pdto.getRest(),
-                                                  pdto.getCategory());
+        Product p = productService.createProduct (pdto.getTitle(), pdto.getPrice(),
+                                                  pdto.getRest(), pdto.getMeasure(), pdto.getCategory());
         return toOptionalProductDto (p);
     }
 
@@ -77,7 +77,7 @@ public class ProductController {
 
         LOGGER.info ("Получен PUT-запрос: /api/v1/products + "+ pdto);
         Product p = productService.updateProduct (pdto.getProductId(), pdto.getTitle(), pdto.getPrice(),
-                                                  pdto.getRest(), pdto.getCategory());
+                                                  pdto.getRest(), pdto.getMeasure(), pdto.getCategory());
         return toOptionalProductDto (p);
     }
 

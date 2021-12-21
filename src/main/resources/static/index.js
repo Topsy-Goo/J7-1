@@ -203,13 +203,6 @@ angular.module('market-front').controller('indexController',
 //----------------------------------------------------------------------- разрешения
 	$rootScope.isUserLoggedIn = function ()
 	{
-		if ($localStorage.webMarketUser)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		if ($localStorage.webMarketUser)	{	return true;	}	else	{	return false;	}
 	}
 });

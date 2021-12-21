@@ -77,13 +77,14 @@ angular.module('market-front').controller('cartController',
 
 	$scope.infoProduct = function (oitem)
 	{
-		alert('id:              '+ oitem.productId +
-		   ',\rкатегория:       '+ oitem.category +
-		   ',\rназвание:        '+ oitem.title +
-		   ',\rцена:            '+ oitem.price +
-		   ',\rколичество:      '+ oitem.quantity +
-		   ',\rостаток:         '+ oitem.rest +
-		   ',\rобщая стоимость: '+ oitem.cost);
+		alert('id:                '+ oitem.productId +
+		   ',\rкатегория:         '+ oitem.category +
+		   ',\rназвание:          '+ oitem.title +
+		   ',\rцена:              '+ oitem.price +
+		   ',\rколичество:        '+ oitem.quantity +
+		   ',\rеденица измерения: '+ oitem.measure +
+		   ',\rостаток:           '+ oitem.rest +
+		   ',\rобщая стоимость:   '+ oitem.cost);
 	}
 
 	$scope.removeFromCart = function (pid)

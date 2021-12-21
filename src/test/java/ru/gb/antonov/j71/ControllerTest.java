@@ -37,7 +37,7 @@ public class ControllerTest
     @Test public void testProductControllerPageRequest () throws Exception
     {
         List<ProductDto> pdtoList = new ArrayList<>();
-        ProductDto pdto = ProductDto.dummyProductDto (2L, "Товар2", BigDecimal.valueOf(20.0), 20, "W");
+        ProductDto pdto = ProductDto.dummyProductDto (2L, "Товар2", BigDecimal.valueOf(20.0), 20, "кг", "W");
         pdtoList.add (pdto);
         Page<ProductDto> ppd = new PageImpl<>(pdtoList);
 

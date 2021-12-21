@@ -38,6 +38,10 @@ public class Product implements Buildable<Product> {
     private Integer rest;
 
     @ManyToOne
+    @JoinColumn(name="measure_id", nullable=false)   @Getter
+    private Measure measure;
+
+    @ManyToOne
     @JoinColumn(name="category_id", nullable=false)  @Getter
     private ProductsCategory category;
 
@@ -70,7 +74,7 @@ public class Product implements Buildable<Product> {
 @throws BadCreationParameterException */
    public Product withTitle (String newTitle) {
         if (!setTitle (newTitle))
-            throw new BadCreationParameterException ("\rнекорректное название продукта : " + newTitle);
+            throw new BadCreationParameterException ("\rнекорректное название продукта : "+ newTitle);
         return this;
     }
 /**
@@ -78,7 +82,7 @@ public class Product implements Buildable<Product> {
 @throws BadCreationParameterException */
     public Product withPrice (BigDecimal newPrice) {
         if (!setPrice (newPrice))
-            throw new BadCreationParameterException ("\rнекорректная цена продукта : " + newPrice);
+            throw new BadCreationParameterException ("\rнекорректная цена продукта : "+ newPrice);
         return this;
     }
 /**
@@ -86,7 +90,15 @@ public class Product implements Buildable<Product> {
 @throws BadCreationParameterException */
     public Product withRest (Integer newRest) {
         if (!setRest (newRest))
-            throw new BadCreationParameterException ("\rнекорректный остаток продукта : " + newRest);
+            throw new BadCreationParameterException ("\rнекорректный остаток продукта : "+ newRest);
+        return this;
+    }
+    /**
+@return this
+@throws BadCreationParameterException */
+    public Product withMeasure (Measure newMeasure) {
+        if (!setMeasure(newMeasure))
+            throw new BadCreationParameterException ("\rнекорректная еденица измерения : "+ newMeasure);
         return this;
     }
 /**
@@ -94,26 +106,27 @@ public class Product implements Buildable<Product> {
 @throws BadCreationParameterException */
     public Product withProductsCategory (ProductsCategory newProductCategory) {
         if (!setCategory (newProductCategory))
-            throw new BadCreationParameterException ("\rнекорректная категория продукта : " + newProductCategory);
+            throw new BadCreationParameterException ("\rнекорректная категория продукта : "+ newProductCategory);
         return this;
     }
 /**
 @return this */
     @Override public Product build () {
-        if (title == null || category == null || price == null || rest == null)
+        if (title == null || category == null || price == null || measure == null || rest == null)
             throw new BadCreationParameterException ("\rнедостаточная инициализация");
         return this;
     }
 
 /** Метод используется в тестах, где корректность аргументов зависит от целей тестирования.    */
     public static Product dummyProduct (Long id, String title, BigDecimal price, Integer rest,
-                                        ProductsCategory category,
+                                        Measure measure, ProductsCategory category,
                                         LocalDateTime createdAt, LocalDateTime updatedAt)
     {   Product p = new Product();
         p.id        = id;
         p.title     = title;
         p.price     = price;
         p.rest      = rest;
+        p.measure   = measure;
         p.category  = category;
         p.createdAt = createdAt;
         p.updatedAt = updatedAt;
@@ -124,20 +137,23 @@ public class Product implements Buildable<Product> {
 нежелание изменять соответствующее ему свойство товара.
 @return void
 @throws BadCreationParameterException если ненулевой параметр оказался некооректным. */
-    public void update (String newTitle, BigDecimal newPrice, Integer newRest,
+    public void update (String newTitle, BigDecimal newPrice, Integer newRest, Measure newMeasure,
                         ProductsCategory newProductCategory)
     {
         if (newTitle != null && !setTitle (newTitle))
-            throw new BadCreationParameterException ("\rнекорректное название продукта : " + newTitle);
+            throw new BadCreationParameterException ("\rнекорректное название продукта : "+ newTitle);
 
         if (newPrice != null && !setPrice (newPrice))
-            throw new BadCreationParameterException ("\rнекорректная цена продукта : " + newPrice);
+            throw new BadCreationParameterException ("\rнекорректная цена продукта : "+ newPrice);
 
         if (newRest != null && !setRest (newRest))
-            throw new BadCreationParameterException ("\rнекорректный остаток продукта : " + newRest);
+            throw new BadCreationParameterException ("\rнекорректный остаток продукта : "+ newRest);
+
+        if (newMeasure != null && !setMeasure (newMeasure))
+            throw new BadCreationParameterException ("\rнекорректная еденица измерения продукта : "+ newMeasure);
 
         if (newProductCategory != null && !setCategory (newProductCategory))
-            throw new BadCreationParameterException ("\rнекорректная категория продукта : " + newProductCategory);
+            throw new BadCreationParameterException ("\rнекорректная категория продукта : "+ newProductCategory);
     }
 //----------------- Геттеры и сеттеры -----------------------------------
 
@@ -157,17 +173,24 @@ public class Product implements Buildable<Product> {
         return ok;
     }
 
-    private boolean setCategory (ProductsCategory newcategory) {
-        boolean ok = newcategory != null;
-        if (ok)
-            category = newcategory;
-        return ok;
-    }
-
     public boolean setRest (Integer newvalue) {
         boolean ok = newvalue != null && newvalue >= 0;
         if (ok)
             rest = newvalue;
+        return ok;
+    }
+
+    private boolean setMeasure (Measure value) {
+        boolean ok = Measure.isMeasureValid (value);
+        if (ok)
+            measure = value;
+        return ok;
+    }
+
+    private boolean setCategory (ProductsCategory newcategory) {
+        boolean ok = newcategory != null;
+        if (ok)
+            category = newcategory;
         return ok;
     }
 //-----------------------------------------------------------------------
@@ -184,13 +207,14 @@ public class Product implements Buildable<Product> {
         if (o == this)  return true;
         if (o == null || getClass() != o.getClass())  return false;
         Product p = (Product) o;
-        return this.id.equals(p.getId());
+        return this.id.equals (p.getId());
     }
 
     @Override public int hashCode()    {   return Objects.hash (id);   }
 
     @Override public String toString() {
-        return String.format ("[id:%d, «%s», %.2f, rt:%d]", id, title, price, rest);
+        return String.format ("prod:[id:%d, «%s», %.2f, rt:%d, msr:%s, cat:%s]",
+                              id, title, price, rest, measure, category);
     }
 
     @NotNull public static ProductSoap toProductSoap (Product p) {
@@ -200,7 +224,8 @@ public class Product implements Buildable<Product> {
                                 p.title,
                                 p.price,
                                 p.rest,
-                                p.getCategory().getName(),
+                                p.measure.getName(),
+                                p.category.getName(),
                                 p.createdAt.getLong (ChronoField.MILLI_OF_SECOND),
                                 p.updatedAt.getLong (ChronoField.MILLI_OF_SECOND));
         return new ProductSoap();

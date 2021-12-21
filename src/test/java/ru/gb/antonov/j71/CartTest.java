@@ -45,7 +45,7 @@ public class CartTest {
         if (!MOKED_PRODUCT_SERVICE)
             product = productService.findById (pid);
         else
-            product = Product.dummyProduct (pid, "Товар2", BigDecimal.valueOf(20.0), 20, null, null, null);
+            product = Product.dummyProduct (pid, "Товар2", BigDecimal.valueOf(20.0), 20, null, null, null, null);
         String uuid = UUID.randomUUID().toString();
         //Assertions.assertEquals (1, cartService.getCartLoad (null, uuid));
 
@@ -77,11 +77,11 @@ public class CartTest {
             //Код, который использует настоящий бин:
             product = productService.createProduct ("Товар2", BigDecimal.valueOf(20.0), 20, "D");
             pid = product.getId();
-            product = productService.updateProduct (pid, null, null, 20, null);//TODO:удалить этот вызов?
+            product = productService.updateProduct (pid, null, null, 20, null, null);//TODO:удалить этот вызов?
         }
         else { //Код, который использует только поддельный бин
             pid = 1L;
-            product = Product.dummyProduct (pid, "Товар2", BigDecimal.valueOf(20.0), 20, null, null, null);
+            product = Product.dummyProduct (pid, "Товар2", BigDecimal.valueOf(20.0), 20, null, null, null, null);
             Mockito.doReturn (product).when (productService).findById (pid);
         }
         String uuid = UUID.randomUUID().toString();
@@ -121,12 +121,12 @@ public class CartTest {
             //Код, который использует только настоящий бин:
             product = productService.createProduct ("Продукт Ф", BigDecimal.valueOf(99.99), 0, "D");
             pid = product.getId(); //< эффективли файнал, для лямбды
-            product = productService.updateProduct (pid, null, null, 0, null);//TODO:удалить этот вызов?
+            product = productService.updateProduct (pid, null, null, 0, null, null);//TODO:удалить этот вызов?
         }
         else {   //Код, который использует только поддельный бин.
             pCat = ProductsCategory.dummyProductsCategory (100500L, "W", null, null, null);
             pid = 1L;
-            product = Product.dummyProduct (pid, "Продукт Ф", BigDecimal.valueOf(99.99), 0, pCat, null, null);
+            product = Product.dummyProduct (pid, "Продукт Ф", BigDecimal.valueOf(99.99), 0, null, pCat, null, null);
 
             Mockito.doReturn (product).when (productService).findById (pid); //< ЗА ПРЕДЕЛАМИ этого класса такое объявление подменного метода работает в точности так, как было сказано на занятии.
         }
@@ -144,32 +144,32 @@ public class CartTest {
         ProductService.updateProduct(,,,,123)
 ничего не делает, исключения не бросают и просто возвращает неизменённый объект типа Product. НО если этому методу не сделать мок-версию, то он будет возвращать null.
 */
-            p = productService.updateProduct (pid, null, null, 4444, null); //< Возвращает null
-            p = productService.updateProduct (pid, null, null, 123, null); //< Возвращает null
+            p = productService.updateProduct (pid, null, null, 4444, null, null); //< Возвращает null
+            p = productService.updateProduct (pid, null, null, 123, null, null); //< Возвращает null
             Mockito.doReturn (product.strictUpdate().withRest (123))
-                   .when (productService).updateProduct (pid, null, null, 123, null); //< Устанавливает товару остаток в значение 123.
-            p = productService.updateProduct (pid, null, null, 4444, null); //< Возвращает null
-            p = productService.updateProduct (pid, null, null, 123, null); //< Возвращает product в неизменённом виде.
+                   .when (productService).updateProduct (pid, null, null, 123, null, null); //< Устанавливает товару остаток в значение 123.
+            p = productService.updateProduct (pid, null, null, 4444, null, null); //< Возвращает null
+            p = productService.updateProduct (pid, null, null, 123, null, null); //< Возвращает product в неизменённом виде.
         }
 //Тестируем то, как изменение товара отражается на товаре в корзине.
 
         if (MOKED_PRODUCT_SERVICE)
             Mockito.doReturn (product.strictUpdate().withRest (1))
-                   .when (productService).updateProduct (pid, null, null, 1, null); //< Устанавливает товару остаток в значение 1.
-        p = productService.updateProduct (pid, null, null, 1, null);
+                   .when (productService).updateProduct (pid, null, null, 1, null, null); //< Устанавливает товару остаток в значение 1.
+        p = productService.updateProduct (pid, null, null, 1, null, null);
         cartService.changeProductQuantity (null, uuid, pid, 10);
         Assertions.assertEquals (cartService.getCartLoad (null, uuid), 1);
         Assertions.assertEquals (cartService.getCartCost (null, uuid), BigDecimal.valueOf(99.99));
 
         if (MOKED_PRODUCT_SERVICE)
             Mockito.doReturn (product.strictUpdate().withPrice (BigDecimal.valueOf(36.6)))
-                   .when (productService).updateProduct (pid, null, BigDecimal.valueOf(36.6), null, null); //< Устанавливает товару цену в значение 36.6.
-        p = productService.updateProduct (pid, null, BigDecimal.valueOf(36.6), null, null);
+                   .when (productService).updateProduct (pid, null, BigDecimal.valueOf(36.6), null, null, null); //< Устанавливает товару цену в значение 36.6.
+        p = productService.updateProduct (pid, null, BigDecimal.valueOf(36.6), null, null, null);
         Assertions.assertEquals (cartService.getCartLoad (null, uuid), 1);
         Assertions.assertEquals (cartService.getCartCost (null, uuid), BigDecimal.valueOf(36.6));
 
         if (MOKED_PRODUCT_SERVICE)
-            p = productService.updateProduct (pid, null, null, 123, null); //< Возвращает product в неизменённом
+            p = productService.updateProduct (pid, null, null, 123, null, null); //< Возвращает product в неизменённом
         cartService.deleteCart (uuid);
     }
 

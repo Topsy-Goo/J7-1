@@ -10,11 +10,12 @@ import java.math.BigDecimal;
 public class OrderItemDto {
 
     private Long       productId;
-    private String     category;
     private String     title;
     private BigDecimal price = BigDecimal.ZERO;
-    private int        rest;
     private int        quantity;
+    private String     measure;     //< единицы измерения есть OrderItemDto, но отсутствуют в OrderItem
+    private int        rest;
+    private String     category;
     private BigDecimal cost = BigDecimal.ZERO;
 //------------------------------------------------------------------
     public OrderItemDto () {}
@@ -48,10 +49,11 @@ public class OrderItemDto {
         if (productId.equals (p.getId())) { //< TODO: выглядит немного избыточно!
 
             title     = p.getTitle();
-            category  = p.getCategory().getName();
             price     = p.getPrice();
             rest      = p.getRest();
-    //Следующие поля не нужно заполнять при создании объекта, а при обновлении их заполнять ещё и не рекомендуется!
+            measure   = p.getMeasure().getName();
+            category  = p.getCategory().getName();
+            //Следующие поля не нужно заполнять при создании объекта, а при обновлении их заполнять ещё и не рекомендуется!
             //quantity = ?;
             //cost = ?;
             return true;

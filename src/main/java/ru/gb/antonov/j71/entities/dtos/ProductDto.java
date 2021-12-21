@@ -6,7 +6,6 @@ import ru.gb.antonov.j71.entities.Product;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
-
 import java.math.BigDecimal;
 
 import static ru.gb.antonov.j71.Factory.PROD_TITLELEN_MAX;
@@ -17,16 +16,19 @@ public class ProductDto {
 
     private Long productId;
 
-    @NotNull (message="Не задано название товара!")
+    @NotNull (message="\rНе задано название товара!")
     @Length (min= PROD_TITLELEN_MIN, max= PROD_TITLELEN_MAX, message="Длина названия товара: 3…255 символов!")
     private String title;
 
     private BigDecimal price = BigDecimal.ZERO;
 
-    @PositiveOrZero (message="Остаток товара должен быть НЕОТРИЦАТЕЛЬНЫМ числом!")
+    @PositiveOrZero (message="\rОстаток товара должен быть НЕОТРИЦАТЕЛЬНЫМ числом!")
     private Integer rest;
 
-    @NotNull (message="Не указано название категории товара!")
+    @NotNull (message="\rНе указана еденица измерения!")
+    private String measure;
+
+    @NotNull (message="\rНе указано название категории товара!")
     private String category;
 //--------------------------------------------------------------
     public ProductDto () {}
@@ -37,24 +39,26 @@ public class ProductDto {
             title     = product.getTitle();
             price     = product.getPrice();
             rest      = product.getRest();
-            category  = product.getCategory ().getName ();
+            measure   = product.getMeasure().getName();
+            category  = product.getCategory().getName();
         }
     }
 
 /** Используется для тестов. Корректность значений определяется потребностями тестов.   */
     public static ProductDto dummyProductDto (Long pProductId, String pTitle, BigDecimal pPrice,
-                                              Integer pRest, String pCategory)
+                                              Integer pRest, String measure, String pCategory)
     {   ProductDto pdt = new ProductDto();
         pdt.productId  = pProductId;
         pdt.title      = pTitle;
         pdt.price      = pPrice;
         pdt.rest       = pRest;
+        pdt.measure    = measure;
         pdt.category   = pCategory;
         return pdt;
     }
 
     @Override public String toString() {
-        return String.format ("ProductDto:{pid:%d, title:%s, price:%f, rest:%d, categ:%s}",
-                                         productId, title,   price,    rest,    category);
+        return String.format ("prodDto:[pid:%d, title:%s, price:%f, rest:%d, msr:%s, categ:%s]",
+                                      productId, title,   price,    rest,    measure, category);
     }
 }

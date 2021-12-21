@@ -104,12 +104,14 @@ angular.module('market-front').controller('orderController',
 //----------------------------------------------------------------------- действия
 	$scope.infoProduct = function (oitem)
 	{
-		alert('id:              '+ oitem.productId +
-		   ',\rкатегория:       '+ oitem.category +
-		   ',\rназвание:        '+ oitem.title +
-		   ',\rцена:            '+ oitem.price +
-		   ',\rколичество:      '+ oitem.quantity +
-		   ',\rобщая стоимость: '+ oitem.cost);
+		alert('id:                '+ oitem.productId +
+		   ',\rкатегория:         '+ oitem.category +
+		   ',\rназвание:          '+ oitem.title +
+		   ',\rцена:              '+ oitem.price +
+		   ',\rколичество:        '+ oitem.quantity +
+		   ',\rеденица измерения: '+ oitem.measure +
+		   ',\rостаток:           '+ oitem.rest +
+		   ',\rобщая стоимость:   '+ oitem.cost);
 	}
 //----------------------------------------------------------------------- условия
 	$scope.canShowConfirmationButton = function ()	{ return $rootScope.isUserLoggedIn(); }

@@ -20,7 +20,8 @@ import java.util.List;
 
 import static ru.gb.antonov.j71.Factory.*;
 
-@Service @RequiredArgsConstructor public class CartService {
+@Service @RequiredArgsConstructor
+public class CartService {
 /**
  <b>Как устроена корзина</b><p>
  При запуске приложения на фронте, клиент ищет строковую переменную {@code gbj7MarketGuestCartId} (UUID) в харнилище браузера и, если не находит, запрашивает для неё значение на бэке. Во все «корзинные» запросы клиент вставляет этот UUID, независимо от того, авторзован юзер или нет.<p>
@@ -265,7 +266,7 @@ import static ru.gb.antonov.j71.Factory.*;
                 int     rest = p.getRest();
                 if (rest > 0) {   //< если остаток товара <= 0, то считаем, что товара нет
                     quantity = Math.min(rest, quantity);
-                    cdto.addItem (new OrderItemDto(p), quantity);
+                    cdto.addItem (new OrderItemDto (p), quantity);
                 }
             }
         }

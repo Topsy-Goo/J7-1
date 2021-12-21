@@ -113,11 +113,13 @@ angular.module('market-front').controller('storeController',
 	$scope.productInfo = function (p)
 	{
 //		$scope.gotoProductPage (p.productId);
-		alert('id: '      + p.productId +
-		   ',\rCategory: '+ p.category +
-		   ',\rTitle: '   + p.title +
-		   ',\rPrice: '   + p.price +
-		   ',\rRest: '    + p.rest);
+//		$scope.gotoProductPage (p);
+		alert('id:                '+ p.productId +
+		   ',\rкатегория:         '+ p.category +
+		   ',\rназвание:          '+ p.title +
+		   ',\rцена:              '+ p.price +
+		   ',\rеденица измерения: '+ p.measure +
+		   ',\rостаток:           '+ p.rest);
 	}
 
 //	$scope.gotoProductPage = function (pid)	 {	$location.path ('/product_page/'+ pid);	}

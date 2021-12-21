@@ -33,6 +33,7 @@ public class OrderService {
     private final OurUserService     ourUserService;
     private final CartService        cartService;
     private final OrderStatesService orderStatesService;
+    //private final MeasureService     measureService;
 
 //---------------------------------------------------------------------------------------
     @Transactional
@@ -101,9 +102,9 @@ public class OrderService {
 
         OrderItem oi = new OrderItem();
         oi.setOrder(o);
-        oi.setProduct(productService.findById(dto.getProductId()));
-        oi.setBuyingPrice(dto.getPrice());
-        oi.setQuantity(dto.getQuantity());
+        oi.setProduct (productService.findById (dto.getProductId()));
+        oi.setBuyingPrice (dto.getPrice());
+        oi.setQuantity (dto.getQuantity());
         return oi;
     }
 

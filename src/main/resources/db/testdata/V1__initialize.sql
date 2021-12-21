@@ -74,20 +74,35 @@ CREATE TABLE products					-- TODO: помни о SOAP.
 	title		VARCHAR(255)	NOT NULL,
 	price		DECIMAL(10,2),
 	rest		INT,
+	measure_id	INT				NOT NULL,
 	category_id	INT				NOT NULL,
 	created_at	TIMESTAMP DEFAULT current_timestamp,
 	updated_at	TIMESTAMP DEFAULT current_timestamp,
 	PRIMARY KEY (id),
+	FOREIGN KEY (measure_id) REFERENCES measures (id),
 	FOREIGN KEY (category_id) REFERENCES categories (id)
 );
-INSERT INTO products (title, price, rest, category_id) VALUES
-	('Товар№01',  10.0, 20, 1),	('Товар№02',  20.0, 20, 2),	('Товар№03',  30.0, 20, 1),
-	('Товар№04',  40.0, 20, 2),	('Товар№05',  50.0, 20, 1),	('Товар№06',  60.0, 20, 2),
-	('Товар№07',  70.0, 20, 1),	('Товар№08',  80.0, 20, 2),	('Товар№09',  90.0, 20, 1),
-	('Товар№10', 100.0, 20, 2),	('Товар№11', 110.0, 20, 3),	('Товар№12', 120.0, 20, 4),
-	('Товар№13', 130.0, 20, 3),	('Товар№14', 140.0, 20, 4),	('Товар№15', 150.0, 20, 3),
-	('Товар№16', 160.0, 20, 4),	('Товар№17', 170.0, 20, 3),	('Товар№18', 180.0, 20, 4),
-	('Товар№19', 190.0, 20, 3),	('Товар№20', 200.0, 20, 4);
+INSERT INTO products (title, 		price, 		rest, 	measure_id, category_id) VALUES
+					('Товар№01',	 10.0,		20,		1,			1),
+					('Товар№02',	 20.0,		20,		3,			2),
+					('Товар№03',	 30.0,		20,		2,			1),
+					('Товар№04',	 40.0,		20,		3,			2),
+					('Товар№05',	 50.0,		20,		2,			1),
+					('Товар№06',	 60.0,		20,		4,			2),
+					('Товар№07',	 70.0,		20,		1,			1),
+					('Товар№08',	 80.0,		20,		4,			2),
+					('Товар№09',	 90.0,		20,		1,			1),
+					('Товар№10',	100.0,		20,		3,			2),
+					('Товар№11',	110.0,		20,		6,			3),
+					('Товар№12',	120.0,		20,		7,			4),
+					('Товар№13',	130.0,		20,		6,			3),
+					('Товар№14',	140.0,		20,		8,			4),
+					('Товар№15',	150.0,		20,		5,			3),
+					('Товар№16',	160.0,		20,		9,			4),
+					('Товар№17',	170.0,		20,		6,			3),
+					('Товар№18',	180.0,		20,		8,			4),
+					('Товар№19',	190.0,		20,		5,			3),
+					('Товар№20',	200.0,		20,		7,			4));
 -- ----------------------------------------------------------------------
 CREATE TABLE orderstates
 (	id				serial,
@@ -134,19 +149,33 @@ INSERT INTO orders (ouruser_id, phone, address, cost, orderstate_id) VALUES
 -- ----------------------------------------------------------------------
 CREATE TABLE orderitems
 (	id				bigserial,
-	order_id    	bigint	NOT NULL,
-	product_id  	bigint	NOT NULL,
-	buying_price	DECIMAL(10,2),
-	quantity		INT,
+	order_id    	bigint			NOT NULL,
+	product_id  	bigint			NOT NULL,
+	buying_price	DECIMAL(10,2)	NOT NULL,
+	quantity		INT				NOT NULL,
 	created_at		TIMESTAMP DEFAULT current_timestamp,
 	updated_at		TIMESTAMP DEFAULT current_timestamp,
 	PRIMARY KEY (id),
 	FOREIGN KEY (order_id) REFERENCES orders (id),
 	FOREIGN KEY (product_id) REFERENCES products (id)
 );
-INSERT INTO orderitems (order_id, product_id, buying_price, quantity) VALUES
-	(1,  1,  10.0, 1),	(1,  2,  20.0, 2),	(1,  3,  30.0, 3),
-	(2, 18, 180.0, 1),	(2, 12, 120.0, 1);
+INSERT INTO orderitems (order_id,	product_id,	buying_price,	quantity) VALUES
+						(1,			 1,			 10.0,			1),
+						(1,			 2,			 20.0,			2),
+						(1,			 3,			 30.0,			3),
+						(2,			18,			180.0,			1),
+						(2,			12,			120.0,			1);
+-- ----------------------------------------------------------------------
+CREATE TABLE measures
+(	id		serial,
+	name	VARCHAR(128)	NOT NULL,
+	PRIMARY KEY (id)
+);
+INSERT INTO measures (name) VALUES
+	('штука'), ('комплект'),
+	('килограмм'), ('грамм'),
+	('упаковка'), ('пакет'),
+	('банка'), ('бутылка'), ('литр');
 -- ----------------------------------------------------------------------
 -- Оказывается, какой-то гений придумал «camelCase» в названиях таблиц и столбцов заменять на camel_case при составлении запросов…
 -- ----------------------------------------------------------------------

@@ -35,7 +35,7 @@ public class OrderItem {
     public OrderItem () {}
 //-----------------------------------------------------------------
     @Override public String toString() {
-        return String.format ("OrderItem:[id:%d, oid:%d, pid:%s, bp:%.2f, qt:%d].",
+        return String.format ("Oitem:[id:%d, oid:%d, pid:%s, bp:%.2f, qt:%d].",
                               id, order.getId(), product.getTitle(), buyingPrice, quantity);
     }
 }

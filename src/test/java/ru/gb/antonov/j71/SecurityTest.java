@@ -153,7 +153,7 @@ public class SecurityTest
                .andDo (print())
                .andExpect (status().isOk()); //200
 
-        ProductDto pdto = ProductDto.dummyProductDto (null, "Товар0", BigDecimal.valueOf(99.9), 20, "D");
+        ProductDto pdto = ProductDto.dummyProductDto (null, "Товар0", BigDecimal.valueOf(99.9), 20, "банка", "D");
         strJson = oMapper.writeValueAsString (pdto);
 
         strJson = mockMvc.perform (post ("/api/v1/products")

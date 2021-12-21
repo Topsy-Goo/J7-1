@@ -46,13 +46,16 @@ angular.module('market-front').controller('user_profileController', function ($r
 //----------------------------------------------------------------------- действия
 	$scope.infoProduct = function (oitem)	//+
 	{
-		alert('id:              '+ oitem.productId +
-		   ',\rкатегория:       '+ oitem.category +
-		   ',\rназвание:        '+ oitem.title +
-		   ',\rцена:            '+ oitem.price +
-		   ',\rколичество:      '+ oitem.quantity +
-		   ',\rобщая стоимость: '+ oitem.cost);
+		alert('id:                '+ oitem.productId +
+		   ',\rназвание:          '+ oitem.title +
+		   ',\rцена:              '+ oitem.price +
+		   ',\rколичество:        '+ oitem.quantity +
+		   ',\rостаток:           '+ oitem.rest +
+		   ',\rединица измерения: '+ oitem.measure +
+		   ',\rкатегория:         '+ oitem.category +
+		   ',\rобщая стоимость:   '+ oitem.cost);
 	}
+
 	$scope.gotoStore = function () { $location.path('/store'); }
 //----------------------------------------------------------------------- условия
 	$scope.canShow = function ()	{	return $rootScope.isUserLoggedIn();	}

@@ -35,13 +35,27 @@
 			<p></p>
 			<div class="row g-2">
 				<div class="col-2">
+					<label for="msr" class="col-form-lable">measure:&nbsp;</label>
+				</div>
+				<div class="col-10">
+					<input	id="msr"
+							class="form-control"
+							type="text"
+							placeholder="еденица измерения"
+							required="required"
+							ng-model="new_product.measure">
+				</div>
+			</div>
+			<p></p>
+			<div class="row g-2">
+				<div class="col-2">
 					<label for="pnm" class="col-form-lable">title:&nbsp;</label>
 				</div>
 				<div class="col-10">
 					<input	id="pnm"
 							class="form-control"
 							type="text"
-							placeholder="—"
+							placeholder="название продукта"
 							required="required"
 							ng-model="new_product.title">
 				</div>
@@ -55,9 +69,23 @@
 					<input	id="pct"
 							class="form-control"
 							type="number"
-							placeholder="—"
+							placeholder="цена : 00 , 00"
 							required="required"
 							ng-model="new_product.price">
+				</div>
+			</div>
+			<p></p>
+			<div class="row g-2">
+				<div class="col-2">
+					<label for="rest" class="col-form-lable">rest:</label>
+				</div>
+				<div class="col-10">
+					<input	id="rest"
+							class="form-control"
+							type="number"
+							placeholder="остаток на складе"
+							required="required"
+							ng-model="new_product.rest">
 				</div>
 			</div>
 		</div>

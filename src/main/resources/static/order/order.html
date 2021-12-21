@@ -10,6 +10,7 @@
 					<th>category</th>		<!-- 1 -->
 					<th>title</th>			<!-- 2 -->
 					<th>price</th>			<!-- 3 -->
+					<th>measure</th>		<!-- 7 -->
 					<th>quantity cost</th>	<!-- 5 -->
 					<th>quantity</th>		<!-- 4 -->
 					<th>more actions</th>	<!-- 6 -->
@@ -20,6 +21,7 @@
 				<td>{{oitem.category}}</td>					<!-- 1 -->
 				<th scope="row">{{oitem.title}}</td>		<!-- 2 -->
 				<td>{{oitem.price}}</td>					<!-- 3 -->
+				<td>{{oitem.measure}}</td>					<!-- 7 -->
 				<td>{{oitem.cost}}</td>						<!-- 5 -->
 				<td>{{oitem.quantity}}</td>					<!-- 4 -->
 				<td><button class="btn btn-info" ng-click="infoProduct(oitem)" title="Посмотреть информацию о товаре."
@@ -30,6 +32,7 @@
 				<td></td>			 					<!-- 1 -->
 				<td></td>								<!-- 2 -->
 				<td></td>								<!-- 3 -->
+				<td></td>								<!-- 7 -->
 				<td>Общая стоимость: {{cart.cost}}</td>	<!-- 5 -->
 				<td>Всего товаров: {{cart.load}}</td>	<!-- 4 -->
 				<td></td>								<!-- 6 -->
