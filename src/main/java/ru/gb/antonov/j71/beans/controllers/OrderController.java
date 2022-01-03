@@ -26,6 +26,10 @@ public class OrderController {
     private final OurUserService ourUserService;
 //-------------------------------------------------------------------------------------------
 
+/** Фронт запрашивает информацию по заказу, который пользователь собирается сделать.
+На данный момент у нас есть только пользователь и его корзина. Нам предстоит определить,
+как должен выглядеть заказ, и показать результат наших «исследований» пользователю для
+подтверждения. */
     @GetMapping ("/details")
     public OrderDetalesDto getOrderDetales (Principal principal)  {
 
@@ -33,10 +37,12 @@ public class OrderController {
         return orderService.getOrderDetales (principal);
     }
 
+/** Пользователь оценил наше вИдение его заказа и нажал кнопку «Оформить заказ». */
     @PostMapping ("/confirm")
     @ResponseStatus (HttpStatus.CREATED)
     public OrderDetalesDto applyOrderDetails (@RequestBody @Validated OrderDetalesDto orderDetalesDto,
-                                              BindingResult br, Principal principal)  {
+                                              BindingResult br, Principal principal)
+    {
         checkRightsToMakeOrder (principal);
         if (br.hasErrors())
             //преобразуем набор ошибок в список сообщений, и пакуем в одно общее исключение (в наше заранее для это приготовленное исключение).
@@ -47,6 +53,7 @@ public class OrderController {
         return orderService.applyOrderDetails (orderDetalesDto, principal);
     }
 
+/** Фронт запрашивает список заказов пользователя. */
     @GetMapping ("/orders")
     public Collection<OrderDto> getOrders (Principal principal)  {
         return orderService.getUserOrdersAsOrderDtos (principal);
@@ -56,7 +63,9 @@ public class OrderController {
     @throws UnauthorizedAccessException */
     private void checkRightsToMakeOrder (Principal principal) {
         if (principal == null)
-            throw new UnauthorizedAccessException ("Заказ может оформить только авторизованый пользователь (It's only authorized user can make order.).");
+            throw new UnauthorizedAccessException (
+                "Заказ может оформить только авторизованый пользователь "
+                + "(It's only authorized user can make order.).");
     }
 
     @PostMapping ("/pay")

@@ -6,6 +6,8 @@ import ru.gb.antonov.j71.beans.errorhandlers.ResourceNotFoundException;
 import ru.gb.antonov.j71.beans.repositos.MeasureRepo;
 import ru.gb.antonov.j71.entities.Measure;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class MeasureService {
@@ -16,5 +18,9 @@ public class MeasureService {
         String errMsg = "Еденица измерения товара не найдена: " + measureName;
         return measureRepo.findByName (measureName)
                           .orElseThrow (()->new ResourceNotFoundException(errMsg));
+    }
+
+    public List<String> getMeasuresList () {
+        return measureRepo.findAllNames();
     }
 }

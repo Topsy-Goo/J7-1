@@ -18,7 +18,8 @@ spring: # < конфигурируем спринг-окружение
     console:
       enabled: true # < ?кажется, поддержка консольного ввода для работы с БД?
       settings:
-        web-allow-others: false # < закрыть доступ к этой консоли из других WEB-приложений (только из браузера можно)
+        web-allow-others: false # < закрыть доступ к этой консоли из других WEB-приложений
+        #(только из браузера можно)
 jwt:
   secret: $2a$12$c4HYjryn7vo1bYQfSzkUDe8jPhYIpInbUKZmv5lGnmcyrQPLIWnVu
   lifetime: 36000000 #10ч

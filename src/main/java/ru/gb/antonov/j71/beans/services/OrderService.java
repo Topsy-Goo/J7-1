@@ -33,7 +33,6 @@ public class OrderService {
     private final OurUserService     ourUserService;
     private final CartService        cartService;
     private final OrderStatesService orderStatesService;
-    //private final MeasureService     measureService;
 
 //---------------------------------------------------------------------------------------
     @Transactional
@@ -117,7 +116,7 @@ public class OrderService {
 
         if (orders != null)
         for (Order o : orders)
-            list.add(orderToDto(o));
+            list.add (orderToDto (o));
         return list;
     }
 
@@ -140,7 +139,7 @@ public class OrderService {
         odto.setOitems  (o.getOrderItems()
                           .stream()
                           .map((oi)->orderItemToDto(oi, oitemLoad))
-                          .collect(Collectors.toList()));
+                          .collect (Collectors.toList()));
         odto.setLoad (oitemLoad[0]);
         return odto;
     }
@@ -161,6 +160,7 @@ public class OrderService {
         oidto.setPrice (price);
         oidto.setQuantity (quantity);
         oidto.setCost (price.multiply (BigDecimal.valueOf (quantity)));
+        oidto.setMeasure (product.getMeasure().getName());
         oitemLoad[0] += quantity;
         return oidto;
     }

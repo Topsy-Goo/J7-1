@@ -42,6 +42,10 @@ public class Order {
 //----------------------------------------------------------------------
     public Order () {}
 //----------------------------------------------------------------------
+    private void setId (Long value) { id = value; }
+    private void setUpdatedAt (LocalDateTime value) { updatedAt = value; }
+    private void setCreatedAt (LocalDateTime value) { createdAt = value; }
+//----------------------------------------------------------------------
     public List<OrderItem> getOrderItems () {  return Collections.unmodifiableList (orderItems);  }
 
     @Override public String toString() {

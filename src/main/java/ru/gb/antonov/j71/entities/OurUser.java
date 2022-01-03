@@ -115,6 +115,9 @@ public class OurUser implements Buildable<OurUser> {
             this.email = s;
         return ok;
     }
+
+    private void setUpdatedAt (LocalDateTime value) { updatedAt = value; }
+    private void setCreatedAt (LocalDateTime value) { createdAt = value; }
 //----------------------- Аутентификация ------------------------------------
 /**  Отдельный метод для установки пароля вручную, чтобы иметь возможность сообщать юзеру о некорректно
 заданном пароле и при этом выводить в сообщении пароль, а не хэш пароля.

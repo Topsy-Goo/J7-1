@@ -33,7 +33,7 @@ public class ProductService {
 
     private final ProductRepo            productRepo;
     private final ProductCategoryService productCategoryService;
-    private final MeasureService         productMeasureService;
+    private final MeasureService         measureService;
 
 //названия фильтров, использующиеся на фронте:
     private static final String FILTER_MIN_PRICE = "min_price";
@@ -93,10 +93,11 @@ public class ProductService {
 //-------------- Редактирование товаров ---------------------------------
 
     @Transactional
-    public Product createProduct (String title, BigDecimal price, int rest, String productMeasure, String productCategoryName) {
-
+    public Product createProduct (String title, BigDecimal price, int rest, String productMeasure,
+                                  String productCategoryName)
+    {
         ProductsCategory category = productCategoryService.findByName (productCategoryName); //< бросает ResourceNotFoundException
-        Measure measure = productMeasureService.findByName (productMeasure);
+        Measure measure = measureService.findByName (productMeasure);
         Product p = Product.create()
                            .withTitle (title)
                            .withPrice (price)
@@ -126,7 +127,7 @@ public class ProductService {
             category = productCategoryService.findByName (productCategoryName);
 
         if (productMeasure != null)
-            measure = productMeasureService.findByName (productMeasure);
+            measure = measureService.findByName (productMeasure);
 
         p.update (title, price, rest, measure, category);
         return productRepo.save (p);
@@ -143,6 +144,18 @@ public class ProductService {
         Product p = findById (id);  //< бросает ResourceNotFoundException
         p.setRest (0);
         //productRepo.delete(p);
+    }
+
+    @Transactional
+    public List<String> getCategoriesList () {
+        List<String> result = productCategoryService.getCategoriesList();
+        return result != null ? result : new ArrayList<>();
+    }
+
+    @Transactional
+    public List<String> getMeasuresList () {
+        List<String> result = measureService.getMeasuresList();
+        return result != null ? result : new ArrayList<>();
     }
 //--------- Методы для преобразований Product в ProductDto --------------
 

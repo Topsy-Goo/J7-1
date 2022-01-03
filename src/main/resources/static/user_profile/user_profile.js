@@ -1,5 +1,6 @@
 
-angular.module('market-front').controller('user_profileController', function ($rootScope, $scope, $http, $location)
+angular.module('market-front')
+	   .controller('user_profileController', function ($rootScope, $scope, $http, $location)
 {
 	const contextUserProfilePath = 'http://localhost:12440/market/api/v1/user_profile';
 	const contextAuthoPath		 = 'http://localhost:12440/market/api/v1/auth';
@@ -47,12 +48,12 @@ angular.module('market-front').controller('user_profileController', function ($r
 	$scope.infoProduct = function (oitem)	//+
 	{
 		alert('id:                '+ oitem.productId +
+		   ',\rкатегория:         '+ oitem.category +
 		   ',\rназвание:          '+ oitem.title +
 		   ',\rцена:              '+ oitem.price +
 		   ',\rколичество:        '+ oitem.quantity +
 		   ',\rостаток:           '+ oitem.rest +
 		   ',\rединица измерения: '+ oitem.measure +
-		   ',\rкатегория:         '+ oitem.category +
 		   ',\rобщая стоимость:   '+ oitem.cost);
 	}
 

@@ -62,16 +62,19 @@ INSERT INTO ourusers_ourpermissions (ouruser_id, ourpermission_id) VALUES
 -- ----------------------------------------------------------------------
 CREATE TABLE categories
 (	id			serial,
-	name		VARCHAR(64) NOT NULL UNIQUE,
+	name		VARCHAR(128) NOT NULL UNIQUE,
 	created_at	TIMESTAMP DEFAULT current_timestamp,
 	updated_at	TIMESTAMP DEFAULT current_timestamp,
 	PRIMARY KEY (id)
 );
-INSERT INTO categories (name) VALUES	('A'),	('B'),	('C'),	('D'),	('E');
+INSERT INTO categories (name) VALUES
+	('A'),	('B'),	('C'),	('D'),	('E');
 -- ----------------------------------------------------------------------
 CREATE TABLE measures
-(	id		serial,
-	name	VARCHAR(128)	NOT NULL,
+(	id			serial,
+	name		VARCHAR(128) NOT NULL UNIQUE,
+	created_at	TIMESTAMP DEFAULT current_timestamp,
+	updated_at	TIMESTAMP DEFAULT current_timestamp,
 	PRIMARY KEY (id)
 );
 INSERT INTO measures (name) VALUES

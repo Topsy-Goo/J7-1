@@ -7,7 +7,7 @@
 /*
 	anguler.module - создание (основного или дополнительного) модуля приложения.
 
-	('market-front', […]) - название приложения и список модулей-зависимостей (разделённых запятыми;
+	('market-front', […]) - название приложения и список модулей-зависимостей, разделённых запятыми;
 
 	наличие []-скобок означает создание основного модуля, а в скобках можно указать список подключаемых модулей (возможно подключение сторонних модулей);
 
@@ -108,8 +108,7 @@
 	}
 })();
 
-angular.module('market-front').controller('indexController',
-	function ($rootScope, $scope, $http, $localStorage, $location)
+angular.module('market-front').controller('indexController', function ($rootScope, $scope, $http, $localStorage, $location)
 {
 /*	function ($scope, $http) - инжектим модули, которые входят в стандартную поставку ангуляра:
 

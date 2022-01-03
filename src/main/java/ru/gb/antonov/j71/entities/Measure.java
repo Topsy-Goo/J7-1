@@ -1,9 +1,13 @@
 package ru.gb.antonov.j71.entities;
 
+import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Entity     @Table (name="measures")
+@Entity     @Data   @Table (name="measures")
 public class Measure {
 
     @Id    @GeneratedValue (strategy = GenerationType.IDENTITY)
@@ -12,14 +16,18 @@ public class Measure {
 
     @Column (name="name", nullable=false, unique=true)
     private String name;
+
+    @CreationTimestamp    @Column(name="created_at")
+    private LocalDateTime createdAt;
+
+    @CreationTimestamp    @Column(name="updated_at")
+    private LocalDateTime updatedAt;
 //------------------------------------------------------------ конструкторы
     private Measure () {}
 //------------------------------------------------------------ геттеры и сеттеры
     private void setId (Long value) { id = value; }
-    public Long getId () { return id; }
-
-    private void   setName (String value) { name = value; }
-    public String getName ()             { return name; }
+    private void setUpdatedAt (LocalDateTime value) { updatedAt = value; }
+    private void setCreatedAt (LocalDateTime value) { createdAt = value; }
 //------------------------------------------------------------ @Overrides
     @Override
     public boolean equals (Object o) {

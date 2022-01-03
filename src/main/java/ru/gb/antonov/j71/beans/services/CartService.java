@@ -155,7 +155,7 @@ public class CartService {
     @NotNull private CartsEntry getUsersCartEntry (Principal principal, String uuid) {
 
         String   postfix  = uuid;
-        Duration cartLife = CART_LIFE;
+        Duration cartLife = CART_LIFE_GUEST;
 
         if (principal != null) {
             postfix = ourUserService.userByPrincipal (principal).getLogin();
@@ -171,9 +171,9 @@ public class CartService {
 
         String key = cartKeyByLogin(postfix);
         if (!redisTemplate.hasKey(key)) {
-
             redisTemplate.opsForValue().set (key, new InMemoryCart());
-            if (cartLife != DONOT_SET_CART_LIFE) redisTemplate.expire (key, cartLife);
+            if (cartLife != DONOT_SET_CART_LIFE)
+                redisTemplate.expire (key, cartLife);
         }
         InMemoryCart imcart = (InMemoryCart) redisTemplate.opsForValue().get(key);
         if (imcart == null)
@@ -295,7 +295,8 @@ public class CartService {
                 updateCart(cePr);
                 /*ceUu.imcart.clear();
                 updateCart (ceUu);*/
-                redisTemplate.delete(ceUu.key); //TODO: это не удаляет корзину из кэша!!!!
+                //redisTemplate.delete (ceUu.key); //< это не удаляет корзину из кэша! Кажется, дело в том, что удаление происходит во время транзакции (см.описание к RedisKeyCommands.del()), но это не точно.
+                redisTemplate.expire (ceUu.key, CART_LIFE_DELETED); //< вместо удаления установим короткий (положительный) срок жизни (https://redis.io/commands/expire)
             }
         }
     }

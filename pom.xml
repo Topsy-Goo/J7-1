@@ -99,7 +99,7 @@
 		</dependency>
 
 	<!-- Для использования следующих двух зависимостей требуется установка Redis'а (Linux only)
-		 или Memorai (аналог Redis'а для Windows). -->
+		 или Memurai (аналог Redis'а для Windows). -->
 		<dependency>	<!-- Аналог Spring data под кэшь Radis'а. -->
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-redis</artifactId>

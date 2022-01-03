@@ -193,6 +193,9 @@ public class Product implements Buildable<Product> {
             category = newcategory;
         return ok;
     }
+
+    private void setUpdatedAt (LocalDateTime value) { updatedAt = value; }
+    private void setCreatedAt (LocalDateTime value) { createdAt = value; }
 //-----------------------------------------------------------------------
 
     public static boolean isTitleValid (String title) {

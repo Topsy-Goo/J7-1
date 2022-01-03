@@ -23,7 +23,11 @@ public class OurPermission {
     @CreationTimestamp    @Column(name="updated_at")
     private LocalDateTime updatedAt;
 //------------------------------------------------------------
-    public OurPermission (){}
+    private OurPermission (){}
+//------------------------------------------------------------
+    private void setId (Long value) { id = value; }
+    private void setUpdatedAt (LocalDateTime value) { updatedAt = value; }
+    private void setCreatedAt (LocalDateTime value) { createdAt = value; }
 //------------------------------------------------------------
     @Override public boolean equals (Object o) {
 

@@ -2,6 +2,9 @@
 	<h5>{{contextPrompt}}</h5>
 	<p>&nbsp;</p>
 
+<!--	<tt>categories_list = {{categories_list}}</tt>-->
+<!--	<tt>measures_list = {{measures_list}}</tt>-->
+
 	<form novalidate ng-submit="createOrUpdateProduct()"><!--  ng-reset="resetProductForm()" -->
 
 		<div class="container" style="font-size: 14pt; font-weight:500;">
@@ -24,12 +27,15 @@
 					<label for="cnm" class="col-form-lable">category:&nbsp;</label>
 				</div>
 				<div class="col-10">
-					<input	id="cnm"
-							class="form-control"
-							type="text"
-							placeholder="—"
+					<!--<input	id="cnm" class="form-control" type="text" placeholder="—" required="required" ng-model="new_product.category">-->
+					<!-- https://docs.angularjs.org/api/ng/directive/select -->
+					<select	id="cnm" name="cnm"
+							class="col-12 form-select form-select-lg mb-3"
 							required="required"
 							ng-model="new_product.category">
+						<option selected></option>
+						<option ng-repeat="item in categories_list" value="{{item}}">{{item}}</option>
+					</select>
 				</div>
 			</div>
 			<p></p>
@@ -38,12 +44,14 @@
 					<label for="msr" class="col-form-lable">measure:&nbsp;</label>
 				</div>
 				<div class="col-10">
-					<input	id="msr"
-							class="form-control"
-							type="text"
-							placeholder="еденица измерения"
+					<!--<input	id="msr" class="form-control" type="text" placeholder="еденица измерения" required="required" ng-model="new_product.measure">-->
+					<select	id="msr" name="msr"
+							class="col-12"
 							required="required"
 							ng-model="new_product.measure">
+						<option selected></option>
+						<option ng-repeat="item in measures_list" value="{{item}}">{{item}}</option>
+					</select>
 				</div>
 			</div>
 			<p></p>

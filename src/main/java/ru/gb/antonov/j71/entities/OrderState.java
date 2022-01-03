@@ -27,6 +27,10 @@ public class OrderState {
 //---------------------------------------------------------------------
     public OrderState (){}
 //---------------------------------------------------------------------
+    private void setId (Integer value) { id = value; }
+    private void setUpdatedAt (LocalDateTime value) { updatedAt = value; }
+    private void setCreatedAt (LocalDateTime value) { createdAt = value; }
+//---------------------------------------------------------------------
     @Override public String toString () {
         return String.format("%d, %s, %s", id, shortName, friendlyName);
     }

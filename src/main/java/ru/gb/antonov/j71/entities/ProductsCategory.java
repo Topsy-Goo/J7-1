@@ -27,26 +27,18 @@ public class ProductsCategory {
 //-------- неколонки
     @OneToMany(mappedBy="category")
     private List<Product> products;
-//----------------------------------------------------------------------
+//------------------------------------------------------------ конструкторы
     public ProductsCategory (){}
     public ProductsCategory (String name) {
         this.name = validateName (name);
         if (this.name == null)
             throw new BadCreationParameterException ("Некорректное название категории: "+ name);
     }
-
-//(метод используется в тестах, где корректность аргументов зависит от целей тестирования)
-    public static ProductsCategory dummyProductsCategory (Long id, String name, List<Product> products,
-                                                          LocalDateTime createdAt, LocalDateTime updatedAt) {
-        ProductsCategory pc = new ProductsCategory();
-        pc.id        = id;
-        pc.name      = name;
-        pc.createdAt = createdAt;
-        pc.updatedAt = updatedAt;
-        pc.products  = products;
-        return pc;
-    }
-//----------------------------------------------------------------------
+//------------------------------------------------------------ геттеры и сеттеры
+    private void setId (Long value) { id = value; }
+    private void setUpdatedAt (LocalDateTime value) { updatedAt = value; }
+    private void setCreatedAt (LocalDateTime value) { createdAt = value; }
+//------------------------------------------------------------
     public static String validateName (String name) {
         String result = null;
         if (name != null)
@@ -58,4 +50,16 @@ public class ProductsCategory {
         return result;
     }
     public String toString()    {   return name;   }
+//------------------------------------------------------------
+//(метод используется в тестах, где корректность аргументов зависит от целей тестирования)
+    public static ProductsCategory dummyProductsCategory (Long id, String name, List<Product> products,
+                                                          LocalDateTime createdAt, LocalDateTime updatedAt) {
+        ProductsCategory pc = new ProductsCategory();
+        pc.id        = id;
+        pc.name      = name;
+        pc.createdAt = createdAt;
+        pc.updatedAt = updatedAt;
+        pc.products  = products;
+        return pc;
+    }
 }

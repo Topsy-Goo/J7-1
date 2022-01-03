@@ -64,7 +64,8 @@ public class Factory {
     public static final String ERR_MINPRICE_OUTOF_RANGE = "Указаная цена (%f)\rменьше минимальной (%f).";
 
     public static String   CART_PREFIX_        = STR_EMPTY;
-    public static Duration CART_LIFE           = Duration.ofDays(30L);
+    public static Duration CART_LIFE_GUEST     = Duration.ofDays(30L);  //< срок жизни гостевой корзины
+    public static Duration CART_LIFE_DELETED   = Duration.ofSeconds(1L); //< срок жизни удалённой корзины
     public static Duration DONOT_SET_CART_LIFE = null;
 
     public static final Locale RU_LOCALE = new Locale ("ru", "RU");
@@ -82,8 +83,8 @@ public class Factory {
         String s = env.getProperty ("app.cart.life");
 
         if (isDecimalNumber (s, !FLOAT_POINT)) {
-            CART_LIFE = Duration.ofDays (Long.parseLong (s));
-            System.out.println ("app.cart.life: "+ CART_LIFE);
+            CART_LIFE_GUEST = Duration.ofDays (Long.parseLong (s));
+            System.out.println ("app.cart.life: " + CART_LIFE_GUEST);
         }
 
         if (isDecimalNumber (s = env.getProperty ("views.shop.page.items"), !FLOAT_POINT)) {

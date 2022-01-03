@@ -6,7 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Data   @Entity    @Table (name="productreviews")
+@Entity    @Data   @Table (name="productreviews")
 public class ProductReview {
 
     @Id    @GeneratedValue (strategy = GenerationType.IDENTITY)
@@ -29,6 +29,10 @@ public class ProductReview {
     private LocalDateTime updatedAt;
 //-----------------------------------------------------------
     public ProductReview (){}
+//-----------------------------------------------------------
+    private void setId (Long value) { id = value; }
+    private void setUpdatedAt (LocalDateTime value) { updatedAt = value; }
+    private void setCreatedAt (LocalDateTime value) { createdAt = value; }
 //-----------------------------------------------------------
     @Override public String toString() {
         return String.format ("review:[%d, u:%s, p:%s, «%s»]",

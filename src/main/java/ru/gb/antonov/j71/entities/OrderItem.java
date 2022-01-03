@@ -34,6 +34,10 @@ public class OrderItem {
 //-----------------------------------------------------------------
     public OrderItem () {}
 //-----------------------------------------------------------------
+    private void setId (Long value) { id = value; }
+    private void setUpdatedAt (LocalDateTime value) { updatedAt = value; }
+    private void setCreatedAt (LocalDateTime value) { createdAt = value; }
+//-----------------------------------------------------------------
     @Override public String toString() {
         return String.format ("Oitem:[id:%d, oid:%d, pid:%s, bp:%.2f, qt:%d].",
                               id, order.getId(), product.getTitle(), buyingPrice, quantity);

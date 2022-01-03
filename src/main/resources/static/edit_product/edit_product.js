@@ -13,27 +13,56 @@ angular.module('market-front').controller('edit_productController',
 	var contextPrompt_Editing = "Изменение существующего товара.";
 	var contextPrompt_AccessDenied = "У вас нет разрешения для редактирования товаров.";
 	$scope.contextPrompt = "";
+	$scope.categories_list = [];
+	$scope.measures_list = [];
 
 	$scope.prepareEditProductPage = function ()
 	{
-	/* имя параметра (pid) должно совпадать с именем элемента в index10.js. >> function config >> ….when('/edit_product/:pid'…)	*/
-		if ($routeParams.pid == null)
+	//запрашиваем список известных приложению категорий товаров:
+		$http.get (contextProductPath + '/categories_list').then (
+		function successCallback (response)
 		{
+			$scope.categories_list = response.data;
+			console.log (response.data);
+			console.log ($scope.categories_list);
+
+	//запрашиваем список известных приложению единиц измерений товаров:
+			$http.get (contextProductPath + '/measures_list').then (
+			function successCallback (response)
+			{
+				$scope.measures_list = response.data;
+				console.log (response.data);
+				console.log ($scope.measures_list);
+
+	//заполняем форму данными о товаре (если они есть), и начинаем создание/редактирование товара:
+				$scope.fillFormWithProductData();
+			},
+			function failureCallback (response) {
+				alert ('ОШИБКА! Не удалось получить список единиц измерений!\r');
+			});
+		},
+		function failureCallback (response) {
+			alert ('ОШИБКА! Не удалось получить список категорий!\r');
+		});
+		return false;
+	}
+
+	$scope.fillFormWithProductData = function ()
+	{
+	/* имя параметра (pid) должно совпадать с именем элемента в index10.js. >> function config >> ….when('/edit_product/:pid'…)	*/
+		if ($routeParams.pid == null) {
 			$scope.contextPrompt = contextPrompt_Creation;
 		}
-		else
-		{
+		else {
 			$scope.contextPrompt = contextPrompt_Editing;
 
 			$http.get (contextProductPath + '/' + $routeParams.pid)
 			.then (
-			function successCallback (response)
-			{
+			function successCallback (response) {
 				$scope.new_product = response.data;
 				console.log (response.data);
 			},
-			function failureCallback (response)
-			{
+			function failureCallback (response) {
 				alert ('Не удалось получить информацию о продукте.\r'+ response.data.messages);	//< название параметра взято из ErrorMessage
 			});
 		}
@@ -41,6 +70,8 @@ angular.module('market-front').controller('edit_productController',
 //----------------------------------------------------------------------- редактирование
 	$scope.createOrUpdateProduct = function ()
 	{
+		console.log ('Попытка создать/изменить продукт: ');		console.log ($scope.new_product);
+
 		if ($scope.new_product != null)
 		{
 			if ($scope.new_product.productId == null)

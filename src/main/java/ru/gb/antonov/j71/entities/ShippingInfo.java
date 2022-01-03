@@ -68,6 +68,10 @@ public class ShippingInfo {
     }
     private static String setOrEmpty (String value) {   return (value == null) ? STR_EMPTY : value;   }
 //-------------------------------------------------------------------------
+    private void setId (Long value) { id = value; }
+    private void setUpdatedAt (LocalDateTime value) { updatedAt = value; }
+    private void setCreatedAt (LocalDateTime value) { createdAt = value; }
+//-------------------------------------------------------------------------
 
     @Override public String toString()    {   return getAddress()+ " телефон: " + getPhone();    }
 
