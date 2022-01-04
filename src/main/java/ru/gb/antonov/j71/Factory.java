@@ -165,4 +165,36 @@ public class Factory {
         }
         return true;
     }
+
+/** Пробуем преобразовать строку в Double.
+@param s строка-число
+@return null, если в процессе преобразования выяснилось, что строка s не может быть преобразована к числу. */
+    public static Double stringToDouble (String s) {
+        Double result = null;
+        if (s != null && !s.isBlank())
+        try {
+            result = Double.valueOf (s.trim());
+        }
+        catch (NumberFormatException e) {
+            Integer i = stringToInteger(s);
+            result = (i != null) ? i.doubleValue() : null;
+        }
+        return result;
+    }
+
+/** Пробуем преобразовать строку в Integer.
+@param s строка-число
+@return null, если в процессе преобразования выяснилось, что строка s не может быть преобразована к числу. */
+    public static Integer stringToInteger (String s) {
+        Integer result = null;
+        if (s != null && !s.isBlank())
+        try {
+            result = Integer.valueOf (s.trim());
+        }
+        catch (NumberFormatException e) {
+            Double d = stringToDouble (s);
+            result = (d != null) ? d.intValue() : null;
+        }
+        return result;
+    }
 }
