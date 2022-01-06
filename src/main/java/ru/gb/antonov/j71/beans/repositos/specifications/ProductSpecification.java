@@ -3,8 +3,6 @@ package ru.gb.antonov.j71.beans.repositos.specifications;
 import org.springframework.data.jpa.domain.Specification;
 import ru.gb.antonov.j71.entities.Product;
 
-import javax.persistence.criteria.CriteriaBuilder;
-
 import static ru.gb.antonov.j71.Factory.PRODUCT_PRICE_FIELD_NAME;
 import static ru.gb.antonov.j71.Factory.PRODUCT_TITLE_FIELD_NAME;
 

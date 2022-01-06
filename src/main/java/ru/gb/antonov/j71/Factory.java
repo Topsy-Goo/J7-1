@@ -166,34 +166,40 @@ public class Factory {
         return true;
     }
 
-/** Пробуем преобразовать строку в Double.
+/** Пробуем преобразовать строку в Double. Если не получилось, то пробуем преобразовать в Integer, а
+потом в Double.
 @param s строка-число
-@return null, если в процессе преобразования выяснилось, что строка s не может быть преобразована к числу. */
-    public static Double stringToDouble (String s) {
-        Double result = null;
-        if (s != null && !s.isBlank())
+@return double
+@throws NumberFormatException если строка s не может быть преобразована к числу. */
+    public static double stringToDouble (String s) {
+        if (s == null || s.isBlank())
+            throw new NumberFormatException();
+        double result;
+        s = s.trim();
         try {
-            result = Double.valueOf (s.trim());
+            result = Double.parseDouble (s);
         }
         catch (NumberFormatException e) {
-            Integer i = stringToInteger(s);
-            result = (i != null) ? i.doubleValue() : null;
+            result = Integer.valueOf (s).doubleValue();
         }
         return result;
     }
 
-/** Пробуем преобразовать строку в Integer.
+/** Пробуем преобразовать строку в Integer. Если не получилось, то пробуем преобразовать в Double, а
+потом в Integer.
 @param s строка-число
-@return null, если в процессе преобразования выяснилось, что строка s не может быть преобразована к числу. */
-    public static Integer stringToInteger (String s) {
-        Integer result = null;
-        if (s != null && !s.isBlank())
+@return int.
+@throws NumberFormatException если строка s не может быть преобразована к числу. */
+    public static int stringToInteger (String s) {
+        if (s == null || s.isBlank())
+            throw new NumberFormatException();
+        int result;
+        s = s.trim();
         try {
-            result = Integer.valueOf (s.trim());
+            result = Integer.parseInt(s);
         }
         catch (NumberFormatException e) {
-            Double d = stringToDouble (s);
-            result = (d != null) ? d.intValue() : null;
+            result = Double.valueOf (s).intValue();
         }
         return result;
     }

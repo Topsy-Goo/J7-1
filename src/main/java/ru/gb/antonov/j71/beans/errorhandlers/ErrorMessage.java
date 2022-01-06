@@ -22,13 +22,9 @@ public class ErrorMessage {
         date = new Date();
     }
 
-    public ErrorMessage (String text) {
-        this (List.of(text));
-    }
+    public ErrorMessage (String text) {    this (List.of(text));    }
 
-    public ErrorMessage (String ... messages) {
-        this (Arrays.asList(messages));
-    }
+    public ErrorMessage (String ... messages) {    this (Arrays.asList(messages));    }
 //---------------- геттеры и сесстеры -----------------------------
 
     public List<String> getMessages() {   return Collections.unmodifiableList (messages);   }

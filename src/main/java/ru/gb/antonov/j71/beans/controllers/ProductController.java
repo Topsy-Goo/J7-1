@@ -37,8 +37,8 @@ public class ProductController {
     @GetMapping ("/page")
     public Page<ProductDto> getProductsPage (
             @RequestParam (defaultValue="0", name="p", required=false) Integer pageIndex,
-            @RequestParam MultiValueMap<String, String> filters) {
-
+            @RequestParam MultiValueMap<String, String> filters)
+    {
         LOGGER.info ("Получен GET-запрос: /api/v1/products/page?p="+pageIndex);
         return productService.getPageOfProducts (pageIndex, pageSize, filters);
     }
@@ -58,8 +58,8 @@ public class ProductController {
    //http://localhost:12440/market/api/v1/products   POST
     @PostMapping
     public Optional<ProductDto> createProduct (@RequestBody @Validated ProductDto pdto, BindingResult br,
-                                               Principal principal) {
-    //  Нельзя изменять последовательность следующих параметров: @Validated ProductDto pdto, BindingResult br
+                                               Principal principal)
+    {//  Нельзя изменять последовательность следующих параметров: @Validated ProductDto pdto, BindingResult br
         LOGGER.info ("Получен POST-запрос: /api/v1/products + "+ pdto);
         if (br.hasErrors())
             //преобразуем набор ошибок в список сообщений, и пакуем в одно общее исключение (в наше заранее для это приготовленное исключение).

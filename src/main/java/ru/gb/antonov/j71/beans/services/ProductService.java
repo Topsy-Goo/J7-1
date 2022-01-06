@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
+import ru.gb.antonov.j71.beans.errorhandlers.FilterPriceException;
 import ru.gb.antonov.j71.beans.errorhandlers.ResourceNotFoundException;
 import ru.gb.antonov.j71.beans.errorhandlers.UnableToPerformException;
 import ru.gb.antonov.j71.beans.repositos.ProductRepo;
@@ -87,7 +88,8 @@ public class ProductService {
 
     @Transactional
     public Page<ProductDto> getPageOfProducts (int pageIndex, int pageSize,
-                                               @Nullable MultiValueMap<String, String> filters) {
+                                               @Nullable MultiValueMap<String, String> filters)
+    {
         return findAll (pageIndex, pageSize, filters).map(ProductService::dtoFromProduct);
     }
 //-------------- Редактирование товаров ---------------------------------
@@ -138,12 +140,8 @@ public class ProductService {
     Логично будет добавить к этому НЕвозможность показывать такой товар на витрине.*/
     @Transactional
     public void deleteById (Long id) {
-
-        //TODO: Редактирование товаров пока не входит в план проекта.
-        //TODO: добавить к этому НЕвозможность показывать такой товар на витрине.
         Product p = findById (id);  //< бросает ResourceNotFoundException
         p.setRest (0);
-        //productRepo.delete(p);
     }
 
     @Transactional
@@ -209,6 +207,9 @@ public class ProductService {
         return result;
     }
 //-------------- Фильтры ------------------------------------------------
+
+/** Выбираем товары из базы в соответствии с настройкой фильтров на стр. магазина.
+@throws FilterPriceException если неправильно задан диапазон цен. */
     @NotNull private Specification<Product> constructSpecification (@Nullable MultiValueMap<String,
                                                                     String> params)
     {
@@ -216,18 +217,24 @@ public class ProductService {
         if (params != null) {
     //MultiValueMap.getFirst() returns the first value for the specified key, or null if none.
             String s;
-            if ((s = params.getFirst (FILTER_MIN_PRICE)) != null && !s.isBlank()) {
-                Double minPrice = stringToDouble (s);
-                if (minPrice == null)
-                    minPrice = MIN_PRICE.doubleValue();
-                spec = spec.and (ProductSpecification.priceGreaterThanOrEqualsTo (minPrice));
-            }
+            double minPrice = 0.0;
+            try {
+                if ((s = params.getFirst (FILTER_MIN_PRICE)) != null && !s.isBlank()) {
+                    minPrice = stringToDouble (s);
+                    if (minPrice < 0.0)
+                        throw new FilterPriceException (USE_DEFAULT_STRING);
+                    spec = spec.and (ProductSpecification.priceGreaterThanOrEqualsTo (minPrice));
+                }
 
-            if ((s = params.getFirst (FILTER_MAX_PRICE)) != null && !s.isBlank()) {
-                Double maxPrice = stringToDouble (s);
-                if (maxPrice == null)
-                    maxPrice = MAX_PRICE.doubleValue();
-                spec = spec.and (ProductSpecification.priceLessThanOrEqualsTo (maxPrice));
+                if ((s = params.getFirst (FILTER_MAX_PRICE)) != null && !s.isBlank()) {
+                    double maxPrice = stringToDouble (s);
+                    if (maxPrice < minPrice)
+                        throw new FilterPriceException (USE_DEFAULT_STRING);
+                    spec = spec.and (ProductSpecification.priceLessThanOrEqualsTo (maxPrice));
+                }
+            }
+            catch (NumberFormatException e) {
+                throw new FilterPriceException (USE_DEFAULT_STRING, e);
             }
 
             if ((s = params.getFirst (FILTER_TITLE)) != null && !s.isBlank()) {

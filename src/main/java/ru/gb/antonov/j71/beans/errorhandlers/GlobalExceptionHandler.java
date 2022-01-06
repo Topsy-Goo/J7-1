@@ -51,4 +51,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> catchUnauthorizedAccessException (UnauthorizedAccessException e) {
         return new ResponseEntity<>(new ErrorMessage (e.getMessage()), HttpStatus.UNAUTHORIZED); //401
     }
+
+    @ExceptionHandler
+    public ResponseEntity<?> catchFilterPriceException (FilterPriceException e) {
+        return new ResponseEntity<>(new ErrorMessage (e.getMessage()), HttpStatus.BAD_REQUEST); //400
+    }
 }

@@ -34,7 +34,7 @@ angular.module('market-front').controller('storeController',
                 max_price: $scope.filter ? $scope.filter.max_price : null
 			}
 		})
-		.then (function (response)
+		.then (function successCallback (response)
 		{
 			$scope.productsPage = response.data;	//< переменную можно объявлять где угодно в коде
 			productPageCurrent = $scope.productsPage.pageable.pageNumber;
@@ -42,6 +42,9 @@ angular.module('market-front').controller('storeController',
 
 			$scope.paginationArray = $scope.generatePagesIndexes(1, productPageTotal);
 			console.log (response.data); //< в этом случае конкатенация не работает
+		},
+		function failureCallback (response) {
+			alert (response.data.messages);
 		});
 		$scope.getCartLoad();
 	}
