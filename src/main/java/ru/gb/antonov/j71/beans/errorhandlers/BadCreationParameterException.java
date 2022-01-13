@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 public class BadCreationParameterException extends IllegalArgumentException {
 
     final static String messageDefault = " Переданы некорректные параметры. ";
-    final static Logger LOGGER         = Logger.getLogger ("ru.gb.antonov.j71.beans.errorhandlers.BadCreationParameterException");
+    final static Logger LOGGER         = Logger.getLogger (BadCreationParameterException.class.getSimpleName());
 
 /** {@code HttpStatus.BAD_REQUEST = 400}}<br>
     Умолчальный текст сообщения: " Переданы некорректные параметры. " */

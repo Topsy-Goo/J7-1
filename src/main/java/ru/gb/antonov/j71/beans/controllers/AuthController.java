@@ -1,7 +1,6 @@
 package ru.gb.antonov.j71.beans.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -11,7 +10,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.gb.antonov.j71.beans.errorhandlers.ErrorMessage;
 import ru.gb.antonov.j71.beans.errorhandlers.OurValidationException;
 import ru.gb.antonov.j71.beans.errorhandlers.UserCreationException;
 import ru.gb.antonov.j71.beans.errorhandlers.UserNotFoundException;

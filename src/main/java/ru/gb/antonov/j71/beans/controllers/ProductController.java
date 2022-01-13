@@ -9,6 +9,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.gb.antonov.j71.beans.errorhandlers.OurValidationException;
 import ru.gb.antonov.j71.beans.errorhandlers.UnableToPerformException;
+import ru.gb.antonov.j71.beans.errorhandlers.UnauthorizedAccessException;
+import ru.gb.antonov.j71.beans.services.OurUserService;
 import ru.gb.antonov.j71.beans.services.ProductService;
 import ru.gb.antonov.j71.entities.Product;
 import ru.gb.antonov.j71.entities.dtos.ProductDto;
@@ -27,6 +29,7 @@ import static ru.gb.antonov.j71.Factory.PROD_PAGESIZE_DEF;
 public class ProductController {
 
     private final ProductService productService;
+    private final OurUserService ourUserService;
 
     //@Value ("${views.shop.items-per-page-def}")
     private final        int    pageSize = PROD_PAGESIZE_DEF;
@@ -61,6 +64,7 @@ public class ProductController {
                                                Principal principal)
     {//  Нельзя изменять последовательность следующих параметров: @Validated ProductDto pdto, BindingResult br
         LOGGER.info ("Получен POST-запрос: /api/v1/products + "+ pdto);
+        chechAccessToEditProducts (principal);
         if (br.hasErrors())
             //преобразуем набор ошибок в список сообщений, и пакуем в одно общее исключение (в наше заранее для это приготовленное исключение).
             throw new OurValidationException (br.getAllErrors().stream()
@@ -77,6 +81,7 @@ public class ProductController {
     public Optional<ProductDto> updateProduct (@RequestBody ProductDto pdto, Principal principal) {
 
         LOGGER.info ("Получен PUT-запрос: /api/v1/products + "+ pdto);
+        chechAccessToEditProducts (principal);
         Product p = productService.updateProduct (pdto.getProductId(), pdto.getTitle(), pdto.getPrice(),
                                                   pdto.getRest(), pdto.getMeasure(), pdto.getCategory());
         return toOptionalProductDto (p);
@@ -87,8 +92,7 @@ public class ProductController {
     public void deleteProductById (@PathVariable Long id, Principal principal) {
 
         LOGGER.info ("Получен GET-запрос: /api/v1/products/delete/"+ id);
-        if (id == null)
-            throw new UnableToPerformException ("Не могу удалить товар (Unable to delete product) id: "+ id);
+        chechAccessToEditProducts (principal);
         productService.deleteById (id);
     }
 
@@ -108,5 +112,14 @@ public class ProductController {
 
         return p != null ? Optional.of (ProductService.dtoFromProduct(p))
                          : Optional.empty();
+    }
+
+    private void chechAccessToEditProducts (Principal principal) {
+        if (!ourUserService.canEditProduct (principal))
+            throw new UnauthorizedAccessException ("Вам это нельзя!");
+
+        //Это дополнительная проверка. Первый раз проверка выполняется на фронте — через
+        // AuthController.checkPermissionEditProducts(), — когда фронт принимает решение, показывать ли
+        // юзеру доп.элементы управления.
     }
 }

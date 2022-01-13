@@ -93,7 +93,7 @@ memurai-cli --scan
 memurai-cli flushall
 
 Текст для следующего коммита:
-•
+
 
 
 

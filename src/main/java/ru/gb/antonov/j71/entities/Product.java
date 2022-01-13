@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.test.util.AssertionErrors;
+import org.springframework.util.Assert;
 import ru.gb.antonov.j71.beans.errorhandlers.BadCreationParameterException;
 import ru.gb.antonov.j71.beans.soap.products.ProductSoap;
 
@@ -28,9 +30,6 @@ public class Product implements Buildable<Product> {
     @Column(name="title", nullable=false)            @Getter
     private String title;
 
-    public static String getTitleFieldName ()  {   return "title";   }
-    public static String getPriceFieldName ()  {   return "price";   }
-
     @Column(name="price", nullable=false)            @Getter
     private BigDecimal price = BigDecimal.ZERO;
 
@@ -52,14 +51,28 @@ public class Product implements Buildable<Product> {
     private LocalDateTime updatedAt;
 
 //----------------------------------------------------------------------
-    private Product () {}
-
+/** При создании товара некоторые характеристики должны обязательно заполняться. Остальные могут
+быть заполнены позже и/или при необходимости.
+@param newTitle наименование товара. Уникальность наименования не проверяется в этом конструкторе.
+@param newMeasure единица измерения.
+@param newProductCategory категория товара. */
+    private Product (String newTitle, Measure newMeasure, ProductsCategory newProductCategory) {
+        if (!setTitle (newTitle))
+            throw new BadCreationParameterException ("\rнекорректное название продукта : "+ newTitle);
+        if (!setMeasure (newMeasure))
+            throw new BadCreationParameterException ("\rнекорректная еденица измерения : "+ newMeasure);
+        if (!setCategory (newProductCategory))
+            throw new BadCreationParameterException ("\rнекорректная категория продукта : "+ newProductCategory);
+    }
 //---------------- создание и обновление объектов ----------------------
 /** Создаёт пустой объект Product и начинает цепочку методов, каждый из которых проверяет валидность
-изменяемого параметра.
+изменяемого параметра. Параметрами являются обязательные характеристики товара.
 @return ссылка на объект Product */
-    public static Product create () {
-        return new Product();
+    public static Product create (String newTitle, Measure newMeasure, ProductsCategory newProductCategory)
+    {
+        //Делая measure и category обязательными, мы в частности избавляем себя от их проверок на null
+        //в таких методах как Product.toProductSoap().
+        return new Product (newTitle, newMeasure, newProductCategory);
     }
 
  /** Начинает цепочку методов, каждый из которых проверяет валидность изменяемого параметра. Цепочка не
@@ -69,14 +82,7 @@ public class Product implements Buildable<Product> {
     public Product strictUpdate () {
         return this;
     }
-/**
-@return this
-@throws BadCreationParameterException */
-   public Product withTitle (String newTitle) {
-        if (!setTitle (newTitle))
-            throw new BadCreationParameterException ("\rнекорректное название продукта : "+ newTitle);
-        return this;
-    }
+
 /**
 @return this
 @throws BadCreationParameterException */
@@ -85,6 +91,7 @@ public class Product implements Buildable<Product> {
             throw new BadCreationParameterException ("\rнекорректная цена продукта : "+ newPrice);
         return this;
     }
+
 /**
 @return this
 @throws BadCreationParameterException */
@@ -93,22 +100,7 @@ public class Product implements Buildable<Product> {
             throw new BadCreationParameterException ("\rнекорректный остаток продукта : "+ newRest);
         return this;
     }
-    /**
-@return this
-@throws BadCreationParameterException */
-    public Product withMeasure (Measure newMeasure) {
-        if (!setMeasure(newMeasure))
-            throw new BadCreationParameterException ("\rнекорректная еденица измерения : "+ newMeasure);
-        return this;
-    }
-/**
-@return this
-@throws BadCreationParameterException */
-    public Product withProductsCategory (ProductsCategory newProductCategory) {
-        if (!setCategory (newProductCategory))
-            throw new BadCreationParameterException ("\rнекорректная категория продукта : "+ newProductCategory);
-        return this;
-    }
+
 /**
 @return this */
     @Override public Product build () {
@@ -119,15 +111,12 @@ public class Product implements Buildable<Product> {
 
 /** Метод используется в тестах, где корректность аргументов зависит от целей тестирования.    */
     public static Product dummyProduct (Long id, String title, BigDecimal price, Integer rest,
-                                        Measure measure, ProductsCategory category,
+                                        Measure measure,         ProductsCategory category,
                                         LocalDateTime createdAt, LocalDateTime updatedAt)
-    {   Product p = new Product();
+    {   Product p = new Product (title, measure, category);
         p.id        = id;
-        p.title     = title;
         p.price     = price;
         p.rest      = rest;
-        p.measure   = measure;
-        p.category  = category;
         p.createdAt = createdAt;
         p.updatedAt = updatedAt;
         return p;
@@ -157,12 +146,12 @@ public class Product implements Buildable<Product> {
     }
 //----------------- Геттеры и сеттеры -----------------------------------
 
-    private void setId (Long id)   {   this.id = id;   }
+    private void setId (Long newvalue)   {   id = newvalue;   }
 
-    public boolean setTitle (String title) {
-        boolean ok = isTitleValid (title);
+    public boolean setTitle (String newvalue) {
+        boolean ok = isTitleValid (newvalue);
         if (ok)
-            this.title = title.trim();
+            title = newvalue.trim();
         return ok;
     }
 
@@ -180,10 +169,10 @@ public class Product implements Buildable<Product> {
         return ok;
     }
 
-    private boolean setMeasure (Measure value) {
-        boolean ok = Measure.isMeasureValid (value);
+    private boolean setMeasure (Measure newvalue) {
+        boolean ok = Measure.isMeasureValid (newvalue);
         if (ok)
-            measure = value;
+            measure = newvalue;
         return ok;
     }
 
@@ -194,12 +183,12 @@ public class Product implements Buildable<Product> {
         return ok;
     }
 
-    private void setUpdatedAt (LocalDateTime value) { updatedAt = value; }
-    private void setCreatedAt (LocalDateTime value) { createdAt = value; }
+    private void setUpdatedAt (LocalDateTime newvalue) { updatedAt = newvalue; }
+    private void setCreatedAt (LocalDateTime newvalue) { createdAt = newvalue; }
 //-----------------------------------------------------------------------
 
-    public static boolean isTitleValid (String title) {
-        return title != null  &&  !title.trim().isEmpty();
+    public static boolean isTitleValid (String value) {
+        return value != null  &&  !value.trim().isEmpty();
     }
 
     public static boolean isPriceValid (BigDecimal value) {

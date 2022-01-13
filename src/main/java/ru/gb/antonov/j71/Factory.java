@@ -1,22 +1,25 @@
 package ru.gb.antonov.j71;
 
+import org.springframework.core.CollectionFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.util.MultiValueMap;
 import ru.gb.antonov.j71.beans.errorhandlers.UnableToPerformException;
 import ru.gb.antonov.j71.entities.Product;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Factory {
 
     public static final boolean DRYCART = true;
     public static final boolean FLOAT_POINT = true; //< в isDecimalNumber() указывает, нужно ли считать точку/запятую частью числа.
 
-    public static       BigDecimal MIN_PRICE = BigDecimal.valueOf (0.01);
+    public static       BigDecimal MIN_PRICE = BigDecimal.valueOf (0.0);
     public static final BigDecimal MAX_PRICE = BigDecimal.valueOf (Double.MAX_VALUE);
 
     public static int PROD_PAGESIZE_DEF = 6;
@@ -46,8 +49,8 @@ public class Factory {
     public static final String BRAND_NAME_ENG = "Marketplace";
     public static final String STR_EMPTY      = "";
     public static final String BEARER_        = "Bearer ";
-    public static final String PRODUCT_PRICE_FIELD_NAME = Product.getPriceFieldName();
-    public static final String PRODUCT_TITLE_FIELD_NAME = Product.getTitleFieldName();
+    public static final String PRODUCT_TITLE_FIELD_NAME = "title";
+    public static final String PRODUCT_PRICE_FIELD_NAME = "price";
     public static final String ORDERSTATE_NONE     = "NONE";
     public static final String ORDERSTATE_PENDING  = "PENDING";
     public static final String ORDERSTATE_SERVING  = "SERVING";
@@ -71,6 +74,9 @@ public class Factory {
     public static final Locale RU_LOCALE = new Locale ("ru", "RU");
     public static final MultiValueMap<String, String> NO_FILTERS = null;
 //------------------------------------------------------------------------
+    static {
+        checkClassForPresenceOfFields (Product.class, PRODUCT_TITLE_FIELD_NAME, PRODUCT_PRICE_FIELD_NAME);
+    }
 
 /** Считываем настройки из файла настроек. */
     public static void init (Environment env) {
@@ -93,13 +99,13 @@ public class Factory {
             System.out.println ("views.shop.page.items: "+ PROD_PAGESIZE_DEF);
         }
 
-        if (isDecimalNumber (s = env.getProperty ("app.product.price.min"), FLOAT_POINT)) {
+/*        if (isDecimalNumber (s = env.getProperty ("app.product.price.min"), FLOAT_POINT)) {
 
             MIN_PRICE = BigDecimal.valueOf(Double.parseDouble(s));
             if (MIN_PRICE.compareTo(BigDecimal.ZERO) < 0)
                 MIN_PRICE = BigDecimal.ZERO;
             System.out.println ("app.product.price.min: "+ MIN_PRICE);
-        }
+        }*/
 //        if (isDecimalNumber (s = env.getProperty (""), FLOAT_POINT))      ;
         System.out.println ("************************** Настройки считаны: **************************");
     }
@@ -202,5 +208,26 @@ public class Factory {
             result = Double.valueOf (s).intValue();
         }
         return result;
+    }
+
+/** Проверка на наличие в классе {@code tClass} полей с указанными именами. Метод предназначен для проверки на
+стадии запуска приложения; при пом.исключения метод сигнализирует о том, что было изменено имя поля класса,
+ без согласования с методами или переменными, которые это имя используют.
+@param tClass класс, в котором проверяется наличие поля с указанным именем.
+@param fieldNames имена полей, наличие которых требуется проверить.
+@throws RuntimeException если хотя бы одно поле с именем из fieldNames не нашлось. */
+    public static <T> void checkClassForPresenceOfFields (Class<T> tClass, String... fieldNames) {
+
+        if (fieldNames != null && fieldNames.length > 0) {
+            List<String> classFields = Arrays.stream (tClass.getDeclaredFields())
+                                             .map (Field::getName)
+                                             .collect (Collectors.toList());
+            List<String> names = new ArrayList<>(Arrays.asList (fieldNames));
+
+            names.removeIf (classFields::contains);
+            if (!names.isEmpty())
+                throw new RuntimeException (String.format ("\nОШИБКА! В классе %s не найдены поля:\n\t%s\n",
+                                            tClass.getName(), names));
+        }
     }
 }
