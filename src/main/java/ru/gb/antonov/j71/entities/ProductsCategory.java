@@ -1,13 +1,11 @@
 package ru.gb.antonov.j71.entities;
 
-
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import ru.gb.antonov.j71.beans.errorhandlers.BadCreationParameterException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity     @Data    @Table(name="categories")
 public class ProductsCategory {
@@ -25,8 +23,8 @@ public class ProductsCategory {
     @CreationTimestamp    @Column(name="updated_at")
     private LocalDateTime updatedAt;
 //-------- неколонки
-    @OneToMany(mappedBy="category")
-    private List<Product> products;
+//    @OneToMany(mappedBy="category")
+//    private List<Product> products;
 //------------------------------------------------------------ конструкторы
     public ProductsCategory (){}
     public ProductsCategory (String name) {
@@ -52,14 +50,15 @@ public class ProductsCategory {
     public String toString()    {   return name;   }
 //------------------------------------------------------------
 //(метод используется в тестах, где корректность аргументов зависит от целей тестирования)
-    public static ProductsCategory dummyProductsCategory (Long id, String name, List<Product> products,
-                                                          LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public static ProductsCategory dummyProductsCategory (
+                        Long id, String name, /*List<Product> products,*/
+                        LocalDateTime createdAt, LocalDateTime updatedAt) {
         ProductsCategory pc = new ProductsCategory();
         pc.id        = id;
         pc.name      = name;
         pc.createdAt = createdAt;
         pc.updatedAt = updatedAt;
-        pc.products  = products;
+        //pc.products  = products;
         return pc;
     }
 }

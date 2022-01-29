@@ -71,8 +71,8 @@ public class ProductController {
                                                 .map (ObjectError::getDefaultMessage)
                                                 .collect (Collectors.toList()));
 
-        Product p = productService.createProduct (pdto.getTitle(), pdto.getPrice(),
-                                                  pdto.getRest(), pdto.getMeasure(), pdto.getCategory());
+        Product p = productService.createProduct (pdto.getTitle(), pdto.getPrice(), pdto.getRest(),
+                                                  pdto.getCategory(), pdto.getMeasure());
         return toOptionalProductDto (p);
     }
 

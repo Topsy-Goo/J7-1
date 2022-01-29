@@ -36,11 +36,8 @@ public class Measure {
         Measure measure = (Measure) o;
         return name.equals(measure.name);
     }
-
     @Override
-    public int hashCode () {
-        return Objects.hash (name);
-    }
+    public int hashCode () {    return Objects.hash (name);    }
 
     @Override public String toString () { return String.format ("Measure[%d, %s]", id, name); }
 //------------------------------------------------------------ */

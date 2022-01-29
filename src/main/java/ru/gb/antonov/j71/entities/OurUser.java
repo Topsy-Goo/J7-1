@@ -99,7 +99,6 @@ public class OurUser implements Buildable<OurUser> {
     private void setPassword (String password) {   this.password = password;   }
 
     private boolean setLogin (String login) {
-
         String s = validateString (login, LOGIN_LEN_MIN, LOGIN_LEN_MAX);
         boolean ok = s != null;
         if (ok)
@@ -108,7 +107,6 @@ public class OurUser implements Buildable<OurUser> {
     }
 
     private boolean setEmail (String email) {
-
         String s = validateString (email, EMAIL_LEN_MIN, EMAIL_LEN_MAX);
         boolean ok = s != null && hasEmailFormat (email);
         if (ok)
@@ -123,7 +121,6 @@ public class OurUser implements Buildable<OurUser> {
 заданном пароле и при этом выводить в сообщении пароль, а не хэш пароля.
 */
     private boolean setPass (String password) {
-
         String s = validateString (password, PASS_LEN_MIN, PASS_LEN_MAX);
         boolean ok = s != null;
         if (ok)

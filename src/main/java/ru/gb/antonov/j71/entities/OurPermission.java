@@ -37,5 +37,4 @@ public class OurPermission {
         return name.equals (ourPermission.name);
     }
     @Override public int hashCode () { return Objects.hash (name); }
-
 }

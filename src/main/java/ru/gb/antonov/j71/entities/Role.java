@@ -35,6 +35,5 @@ public class Role {
         Role role = (Role) o;
         return name.equals (role.name);
     }
-
     @Override public int hashCode () { return Objects.hash (name); }
 }

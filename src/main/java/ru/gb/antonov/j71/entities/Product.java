@@ -49,8 +49,8 @@ public class Product implements Buildable<Product> {
 
     @CreationTimestamp    @Column(name="updated_at") @Getter @Setter
     private LocalDateTime updatedAt;
-
 //----------------------------------------------------------------------
+    private Product () {}
 /** При создании товара некоторые характеристики должны обязательно заполняться. Остальные могут
 быть заполнены позже и/или при необходимости.
 @param newTitle наименование товара. Уникальность наименования не проверяется в этом конструкторе.

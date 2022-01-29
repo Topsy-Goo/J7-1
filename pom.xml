@@ -23,24 +23,19 @@
 	</properties>
 
 	<dependencies>
-
-		<!-- при работе на проектом J7-5 с какого-то хрена отвалился maven-plugin. Вроде, удалось пофиксить проблему добавлением этой зависимости. -->
 		<dependency><!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-maven-plugin -->
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-maven-plugin</artifactId>
 			<version>2.5.5</version>
-		</dependency>
-
+		</dependency> <!-- spring-boot-maven-plugin -->
 		<dependency>	<!-- Позволяет упростить работу с хибер-том на уровне Спринга. См.также YAML-файл. -->
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-
+		</dependency> <!-- spring-boot-starter-data-jpa -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-
+		</dependency> <!-- spring-boot-starter-web -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -51,111 +46,100 @@
 					<artifactId>junit-vintage-engine</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-
+		</dependency> <!-- spring-boot-starter-test -->
 		<dependency>	<!-- для организации авторизации при пом.(чего?) -->
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 			<!-- Также автоматически конфигурирет умолчального пользователя user; его (одноразовый?) пароль создаётся генериться при старте приложения.  -->
-		</dependency>
-
-		<dependency>	<!-- для тестирования безопасности -->
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-test</artifactId>
-		</dependency>
-
+		</dependency> <!-- spring-boot-starter-security -->
 <!--	<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
-		</dependency>	-->
+		</dependency>	--> <!-- spring-boot-starter-validation -->
+		<dependency>	<!-- для тестирования безопасности -->
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+		</dependency> <!-- spring-security-test -->
 
 		<dependency>	<!-- для организации автоматических проверок параметров методов -->
 			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>6.1.5.Final</version>
-		</dependency>
-
+		</dependency> <!-- hibernate-validator -->
 		<dependency>	<!-- поддержка jdbc-драйвера H2 ("H2 Database Engine"). См.также YAML-файл. -->
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
-		</dependency>
-
+		</dependency> <!-- h2 -->
 		<dependency>	<!-- Библиотека для генерации кода: геттеры, сеттеры, конструкторы и др. -->
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
-		</dependency>
-
+		</dependency> <!-- lombok -->
 		<dependency>	<!-- Помогает собирать и парсить JWT. -->
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
 			<version>0.9.1</version>
-		</dependency>
-
+		</dependency> <!-- jjwt -->
 		<dependency>	<!-- Система миграции. Позволит указывать, какое наполнение базы данных нам может пригодиться. В ресурсах нужна папка db\migration (не db.migration). -->
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
-		</dependency>
+		</dependency> <!-- flyway-core -->
+		<dependency>
+			<groupId>org.jetbrains</groupId>
+			<artifactId>annotations</artifactId>
+			<version>22.0.0</version><!-- LATEST or RELEASE are being deprecated -->
+			<scope>compile</scope>
+		</dependency> <!-- jetbrains annotations -->
 
 	<!-- Для использования следующих двух зависимостей требуется установка Redis'а (Linux only)
 		 или Memurai (аналог Redis'а для Windows). -->
 		<dependency>	<!-- Аналог Spring data под кэшь Radis'а. -->
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-redis</artifactId>
-		</dependency>
-		<!-- + -->
+		</dependency> <!-- spring-data-redis -->
 		<dependency>	<!-- Библиотека для установления соединения с Redis. -->
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
 			<version>3.6.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jetbrains</groupId>
-			<artifactId>annotations</artifactId>
-			<version>22.0.0</version><!-- LATEST or RELEASE are being deprecated -->
-			<scope>compile</scope>
-		</dependency>
+		</dependency> <!-- jedis -->
 
 <!--		<dependency>	для @PostConstruct и @PreDestroy; не понадобилось, — всё работает и так.
 			<groupId>javax.annotation</groupId>
 			<artifactId>jsr250-api</artifactId>
 			<version>1.0</version>
-		</dependency> -->
+		</dependency> --> <!-- jsr250-api -->
 
 <!-- Следующие 5 зависимостей нужны для SOAP. -->
 		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
-			<version>2.3.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish.jaxb</groupId>
-			<artifactId>jaxb-runtime</artifactId>
-			<version>2.3.1</version>
-		</dependency>
-		<dependency>
-			<groupId>wsdl4j</groupId>
-			<artifactId>wsdl4j</artifactId>
-			<version>1.6.2</version>
-		</dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web-services</artifactId>
+		</dependency> <!-- spring-boot-starter-web-services -->
 		<!-- https://mvnrepository.com/artifact/org.codehaus.mojo/jaxb2-maven-plugin -->
 		<dependency>	<!-- Без этого jaxb2-плагин не устанавливался. -->
 			<groupId>org.codehaus.mojo</groupId>
 			<artifactId>jaxb2-maven-plugin</artifactId>
 			<version>2.5.0</version>
-		</dependency>
+		</dependency> <!-- jaxb2-maven-plugin -->
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web-services</artifactId>
-		</dependency>
-
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>2.3.1</version>
+		</dependency> <!-- jaxb-api -->
+		<dependency>
+			<groupId>org.glassfish.jaxb</groupId>
+			<artifactId>jaxb-runtime</artifactId>
+			<version>2.3.1</version>
+		</dependency> <!-- jaxb-runtime -->
+		<dependency>
+			<groupId>wsdl4j</groupId>
+			<artifactId>wsdl4j</artifactId>
+			<version>1.6.2</version>
+		</dependency> <!-- wsdl4j -->
 	</dependencies>
 
 	<build>
 		<plugins>
-
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

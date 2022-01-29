@@ -100,8 +100,8 @@ public class ProductService {
 //-------------- Редактирование товаров ---------------------------------
 
     @Transactional
-    public Product createProduct (String title, BigDecimal price, int rest, String productMeasure,
-                                  String productCategoryName)
+    public Product createProduct (String title, BigDecimal price, int rest,
+                                  String productCategoryName, String productMeasure)
     {
         ProductsCategory category = productCategoryService.findByName (productCategoryName); //< бросает ResourceNotFoundException
         Measure measure = measureService.findByName (productMeasure);

@@ -75,7 +75,7 @@ public class CartTest {
         long pid;
         if (!MOKED_PRODUCT_SERVICE) {
             //Код, который использует настоящий бин:
-            product = productService.createProduct ("Товар2", BigDecimal.valueOf(20.0), 20, "D");
+            product = productService.createProduct ("Товар2", BigDecimal.valueOf(20.0), 20, "D", null);
             pid = product.getId();
             product = productService.updateProduct (pid, null, null, 20, null, null);//TODO:удалить этот вызов?
         }
@@ -119,12 +119,12 @@ public class CartTest {
         ProductsCategory pCat;
         if (!MOKED_PRODUCT_SERVICE) {
             //Код, который использует только настоящий бин:
-            product = productService.createProduct ("Продукт Ф", BigDecimal.valueOf(99.99), 0, "D");
+            product = productService.createProduct ("Продукт Ф", BigDecimal.valueOf(99.99), 0, "D", null);
             pid = product.getId(); //< эффективли файнал, для лямбды
             product = productService.updateProduct (pid, null, null, 0, null, null);//TODO:удалить этот вызов?
         }
         else {   //Код, который использует только поддельный бин.
-            pCat = ProductsCategory.dummyProductsCategory (100500L, "W", null, null, null);
+            pCat = ProductsCategory.dummyProductsCategory (100500L, "W", /*null,*/ null, null);
             pid = 1L;
             product = Product.dummyProduct (pid, "Продукт Ф", BigDecimal.valueOf(99.99), 0, null, pCat, null, null);
 
