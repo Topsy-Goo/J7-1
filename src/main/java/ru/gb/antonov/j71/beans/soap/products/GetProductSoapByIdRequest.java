@@ -9,6 +9,5 @@ import javax.xml.bind.annotation.*;
 @XmlType         (name="", propOrder={"id"})
 @XmlRootElement  (name="getProductSoapByIdRequest")
 public class GetProductSoapByIdRequest {
-
     @XmlElement (required=true)    protected long id;
 }

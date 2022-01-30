@@ -29,29 +29,24 @@ public class ObjectFactory {
      *
      */
     public ObjectFactory () {}
-
     /**
      Create an instance of {@link GetProductSoapByIdRequest }
      */
     public GetProductSoapByIdRequest createGetProductSoapByIdRequest () {
         return new GetProductSoapByIdRequest ();
     }
-
     /**
      Create an instance of {@link GetProductSoapByIdResponse }
      */
     public GetProductSoapByIdResponse createGetProductSoapByIdResponse () {
         return new GetProductSoapByIdResponse ();
     }
-
     public GetProductSoapRangeByIdRequest createGetProductSoapRangeByIdRequest () {
         return new GetProductSoapRangeByIdRequest ();
     }
-
     public GetProductSoapRangeByIdResponse createGetProductSoapRangeByIdResponse () {
         return new GetProductSoapRangeByIdResponse ();
     }
-
     /**
      Create an instance of {@link ProductSoap }
      */

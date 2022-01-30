@@ -6,14 +6,14 @@
 
 	<xs:complexType name="ProductSoap">
 		<xs:sequence>
-			<xs:element name="id" type="xs:long"/>
+			<xs:element name="id"    type="xs:long"  />
 			<xs:element name="title" type="xs:string"/>
 			<xs:element name="price" type="xs:double"/>
-			<xs:element name="rest" type="xs:int"/>
-			<xs:element name="measure" type="xs:string"/>
+			<xs:element name="rest"  type="xs:int"   />
+			<xs:element name="measure"      type="xs:string"/>
 			<xs:element name="categoryName" type="xs:string"/>
-			<xs:element name="createdAt" type="xs:long"/><!-- unsignedLong -->
-			<xs:element name="updatedAt" type="xs:long"/><!-- unsignedLong -->
+			<xs:element name="createdAt"    type="xs:long"  /><!-- unsignedLong -->
+			<xs:element name="updatedAt"    type="xs:long"  /><!-- unsignedLong -->
 		</xs:sequence>
 	</xs:complexType>
 
@@ -37,7 +37,7 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="fromId" type="xs:long"/>
-				<xs:element name="toId" type="xs:long"/>
+				<xs:element name="toId"   type="xs:long"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

@@ -10,7 +10,6 @@ import java.util.List;
 @XmlType         (name="", propOrder={"soapProducts"})
 @XmlRootElement  (name="getProductSoapRangeByIdResponse")
 public class GetProductSoapRangeByIdResponse {
-
     @XmlElement (required=true)
     protected List<ProductSoap> soapProducts;
 }

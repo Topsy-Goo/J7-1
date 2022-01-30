@@ -78,10 +78,8 @@ CREATE TABLE measures
 	PRIMARY KEY (id)
 );
 INSERT INTO measures (name) VALUES
-	('штука'), ('комплект'),
-	('килограмм'), ('грамм'),
-	('упаковка'), ('пакет'),
-	('банка'), ('бутылка'), ('литр');
+('штука'), ('комплект'), ('килограмм'), ('грамм'), ('упаковка'), ('пакет'),
+('банка'), ('бутылка'), ('литр');
 -- ----------------------------------------------------------------------
 CREATE TABLE products					-- TODO: помни о SOAP.
 (	id			bigserial,
@@ -96,27 +94,28 @@ CREATE TABLE products					-- TODO: помни о SOAP.
 	FOREIGN KEY (measure_id) REFERENCES measures (id),
 	FOREIGN KEY (category_id) REFERENCES categories (id)
 );
-INSERT INTO products (title,		price,		rest,	measure_id, category_id) VALUES
-					('Товар№01',	 10.0,		20,		1,			1),
-					('Товар№02',	 20.0,		20,		3,			2),
-					('Товар№03',	 30.0,		20,		2,			1),
-					('Товар№04',	 40.0,		20,		3,			2),
-					('Товар№05',	 50.0,		20,		2,			1),
-					('Товар№06',	 60.0,		20,		4,			2),
-					('Товар№07',	 70.0,		20,		1,			1),
-					('Товар№08',	 80.0,		20,		4,			2),
-					('Товар№09',	 90.0,		20,		1,			1),
-					('Товар№10',	100.0,		20,		3,			2),
-					('Товар№11',	110.0,		20,		6,			3),
-					('Товар№12',	120.0,		20,		7,			4),
-					('Товар№13',	130.0,		20,		6,			3),
-					('Товар№14',	140.0,		20,		8,			4),
-					('Товар№15',	150.0,		20,		5,			3),
-					('Товар№16',	160.0,		20,		9,			4),
-					('Товар№17',	170.0,		20,		6,			3),
-					('Товар№18',	180.0,		20,		8,			4),
-					('Товар№19',	190.0,		20,		5,			3),
-					('Товар№20',	200.0,		20,		7,			4);
+INSERT INTO products
+(title,			price,		rest,	measure_id, category_id) VALUES
+('Товар№01',	 10.0,		20,		1,			1),
+('Товар№02',	 20.0,		20,		3,			2),
+('Товар№03',	 30.0,		20,		2,			1),
+('Товар№04',	 40.0,		20,		3,			2),
+('Товар№05',	 50.0,		20,		2,			1),
+('Товар№06',	 60.0,		20,		4,			2),
+('Товар№07',	 70.0,		20,		1,			1),
+('Товар№08',	 80.0,		20,		4,			2),
+('Товар№09',	 90.0,		20,		1,			1),
+('Товар№10',	100.0,		20,		3,			2),
+('Товар№11',	110.0,		20,		6,			3),
+('Товар№12',	120.0,		20,		7,			4),
+('Товар№13',	130.0,		20,		6,			3),
+('Товар№14',	140.0,		20,		8,			4),
+('Товар№15',	150.0,		20,		5,			3),
+('Товар№16',	160.0,		20,		9,			4),
+('Товар№17',	170.0,		20,		6,			3),
+('Товар№18',	180.0,		20,		8,			4),
+('Товар№19',	190.0,		20,		5,			3),
+('Товар№20',	200.0,		20,		7,			4);
 -- ----------------------------------------------------------------------
 CREATE TABLE orderstates
 (	id				serial,
@@ -126,12 +125,13 @@ CREATE TABLE orderstates
 	updated_at		TIMESTAMP DEFAULT current_timestamp,
 	PRIMARY KEY (id)
 );
-INSERT INTO orderstates (short_name,	friendly_name) VALUES
-						('NONE',		'(Нет статуса)'),
-						('PENDING',		'Ожидает подтверждения'),
-						('SERVING',		'Выполняется'),
-						('PAYED',		'Оплачен'),
-						('CANCELED',	'Отменён');
+INSERT INTO orderstates
+(short_name,	friendly_name) VALUES
+('NONE',		'(Нет статуса)'),
+('PENDING',		'Ожидает подтверждения'),
+('SERVING',		'Выполняется'),
+('PAYED',		'Оплачен'),
+('CANCELED',	'Отменён');
 -- ----------------------------------------------------------------------
 --CREATE TABLE delivery_types
 --(
@@ -143,11 +143,12 @@ INSERT INTO orderstates (short_name,	friendly_name) VALUES
 --	updated_at		TIMESTAMP DEFAULT current_timestamp,
 --	PRIMARY KEY (id)
 --);
---INSERT INTO delivery_types (short_name,	friendly_name,				cost) VALUES
---						('SELFY',		'Самовывоз',				0.0),
---						('RF_POST',		'Почта России',				300.0),
---						('COURIER',		'Курьерская доставка', 		300.0),
---						('TERMINAL',	'Доставка до терминала',	100.0);
+--INSERT INTO delivery_types
+--(short_name,	friendly_name,				cost) VALUES
+--('SELFY',		'Самовывоз',				0.0),
+--('RF_POST',	'Почта России',				300.0),
+--('COURIER',	'Курьерская доставка', 		300.0),
+--('TERMINAL',	'Доставка до терминала',	100.0);
 -- ----------------------------------------------------------------------
 CREATE TABLE shipping_info
 (
@@ -163,11 +164,12 @@ CREATE TABLE shipping_info
 	updated_at		TIMESTAMP DEFAULT current_timestamp,
 	PRIMARY KEY (id)
 );
-INSERT INTO shipping_info (country_code, postal_code,	region,			town_village,		street_house,		apartment,	phone) VALUES
-						  ('RU', 		'200870', 	'Муромская обл.',		'г.Китеж',		'ул.Алхимиков, 17-3',	'12',	'+78006004050'),
-						  ('RU', 		'200870', 	'Муромская обл.',		'г.Китеж',		'ул.Алхимиков, 17-3',	'12',	 '84957772211'),
-						  ('RU', 		'456842', 	'Чукотский авт.округ',	'пос.Мирный',	'ул.Чоппера 33/7',		'',			   '31415'),
-						  ('RU', 		'125402',	'',						'Москва',		'Юнатов 22-180',		'',		'988-480-77-12');
+INSERT INTO shipping_info
+(country_code, postal_code,	region,			town_village, street_house,	  	  apartment, phone) VALUES
+('RU', 	'200870', 	'Муромская обл.',		'г.Китеж',	  'ул.Алхимиков, 17-3', '12',	 '+78006004050'),
+('RU', 	'200870', 	'Муромская обл.',		'г.Китеж',	  'ул.Алхимиков, 17-3', '12',	 '84957772211'),
+('RU', 	'456842', 	'Чукотский авт.округ',	'пос.Мирный', 'ул.Чоппера 33/7',	'',		 '31415'),
+('RU', 	'125402',	'',						'Москва',	  'Юнатов 22-180',	    '',		 '988-480-77-12');
 -- ----------------------------------------------------------------------
 CREATE TABLE orders
 (	id					bigserial,
@@ -182,12 +184,13 @@ CREATE TABLE orders
 	FOREIGN KEY (shipping_info_id) REFERENCES shipping_info (id),
 	FOREIGN KEY (ouruser_id) REFERENCES ourusers (id)
 );
-INSERT INTO orders	(ouruser_id, shipping_info_id,  all_items_cost,	orderstate_id) VALUES
-					(2, 		 1,				 	140.0,			4),	-- admin	Китеж	почта
-					(2, 		 2,				 	300.0,			5),	-- admin	Китеж	почта
-					(3, 		 3,				 	500.0,			4),	-- user1	Мирный	почта
-					(3, 		 3,				 	580.0,			4),	-- user1	Мирный	почта
-					(4, 		 4,				 	370.0,			3);	-- user2	Москва	самовывоз
+INSERT INTO orders
+(ouruser_id, shipping_info_id,  all_items_cost,	orderstate_id) VALUES
+(2, 		 1,				 	140.0,			4),	-- admin	Китеж	почта
+(2, 		 2,				 	300.0,			5),	-- admin	Китеж	почта
+(3, 		 3,				 	500.0,			4),	-- user1	Мирный	почта
+(3, 		 3,				 	580.0,			4),	-- user1	Мирный	почта
+(4, 		 4,				 	370.0,			3);	-- user2	Москва	самовывоз
 -- ----------------------------------------------------------------------
 CREATE TABLE orderitems
 (	id				bigserial,
@@ -201,21 +204,22 @@ CREATE TABLE orderitems
 	FOREIGN KEY (order_id) REFERENCES orders (id),
 	FOREIGN KEY (product_id) REFERENCES products (id)
 );
-INSERT INTO orderitems (order_id, product_id, buying_price, quantity) VALUES
-						(1,			 1,			 10.0,		1),	-- admin
-						(1,			 2,			 20.0,		2),
-						(1,			 3,			 30.0,		3),
-						(2,			18,			180.0,		1),	-- admin
-						(2,			12,			120.0,		1),
-						(3,			10,			100.0,		1),	-- user1
-						(3,			20,			200.0,		2),
-						(4,			10,			100.0,		1),	-- user1
-						(4,			15,			150.0,		1),
-						(4,			16,			160.0,		1),
-						(4,			17,			170.0,		1),
-						(5,			 6,			 60.0,		1),	-- user2
-						(5,			11,			110.0,		2),
-						(5,			 9,			 90.0,		1);
+INSERT INTO orderitems
+(order_id, product_id, buying_price, quantity) VALUES
+(1,			 1,			 10.0,		1),	-- admin
+(1,			 2,			 20.0,		2),
+(1,			 3,			 30.0,		3),
+(2,			18,			180.0,		1),	-- admin
+(2,			12,			120.0,		1),
+(3,			10,			100.0,		1),	-- user1
+(3,			20,			200.0,		2),
+(4,			10,			100.0,		1),	-- user1
+(4,			15,			150.0,		1),
+(4,			16,			160.0,		1),
+(4,			17,			170.0,		1),
+(5,			 6,			 60.0,		1),	-- user2
+(5,			11,			110.0,		2),
+(5,			 9,			 90.0,		1);
 -- ----------------------------------------------------------------------
 CREATE TABLE productreviews
 (	id				bigserial,

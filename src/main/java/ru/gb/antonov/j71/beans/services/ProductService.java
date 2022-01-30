@@ -40,9 +40,9 @@ public class ProductService {
     private final MeasureService         measureService;
 
 //названия фильтров, использующиеся на фронте:
-    private static final String FILTER_MIN_PRICE = "min_price";
-    private static final String FILTER_MAX_PRICE = "max_price";
-    private static final String FILTER_TITLE = "title";
+    private static final String FILTER_NAME_MIN_PRICE = "min_price";
+    private static final String FILTER_NAME_MAX_PRICE = "max_price";
+    private static final String FILTER_NAME_TITLE     = "title";
 
     private static final Logger LOGGER = getLogger (ProductService.class.getSimpleName());
 //-----------------------------------------------------------------------
@@ -236,14 +236,14 @@ public class ProductService {
             String s;
             double minPrice = 0.0;
             try {
-                if ((s = params.getFirst (FILTER_MIN_PRICE)) != null && !s.isBlank()) {
+                if ((s = params.getFirst (FILTER_NAME_MIN_PRICE)) != null && !s.isBlank()) {
                     minPrice = stringToDouble (s);
                     if (minPrice < 0.0)
                         throw new FilterPriceException (USE_DEFAULT_STRING);
                     spec = spec.and (ProductSpecification.priceGreaterThanOrEqualsTo (minPrice));
                 }
 
-                if ((s = params.getFirst (FILTER_MAX_PRICE)) != null && !s.isBlank()) {
+                if ((s = params.getFirst (FILTER_NAME_MAX_PRICE)) != null && !s.isBlank()) {
                     double maxPrice = stringToDouble (s);
                     if (maxPrice < minPrice)
                         throw new FilterPriceException (USE_DEFAULT_STRING);
@@ -254,7 +254,7 @@ public class ProductService {
                 throw new FilterPriceException (USE_DEFAULT_STRING, e);
             }
 
-            if ((s = params.getFirst (FILTER_TITLE)) != null && !s.isBlank()) {
+            if ((s = params.getFirst (FILTER_NAME_TITLE)) != null && !s.isBlank()) {
                 spec = spec.and (ProductSpecification.titleLike (s));
             }
 /*  Если, например, понадобится добавить фильтр, состоящий из ряда необязательных элементов, то

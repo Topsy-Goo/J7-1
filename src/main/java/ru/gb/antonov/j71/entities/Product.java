@@ -205,8 +205,8 @@ public class Product implements Buildable<Product> {
     @Override public int hashCode()    {   return Objects.hash (id);   }
 
     @Override public String toString() {
-        return String.format ("prod:[id:%d, «%s», %.2f, rt:%d, msr:%s, cat:%s]",
-                              id, title, price, rest, measure, category);
+        return String.format ("prod:[id:%d, «%s», %.2f, rt:%d, msr:«%s», cat:«%s»]",
+                        id, title, price, rest, measure.getName(), category.getName());
     }
 
     @NotNull public static ProductSoap toProductSoap (Product p) {

@@ -47,7 +47,7 @@ public class ProductsCategory {
         }
         return result;
     }
-    public String toString()    {   return name;   }
+    public String toString()    {   return ProductsCategory.class.getSimpleName() +":"+ name;   }
 //------------------------------------------------------------
 //(метод используется в тестах, где корректность аргументов зависит от целей тестирования)
     public static ProductsCategory dummyProductsCategory (

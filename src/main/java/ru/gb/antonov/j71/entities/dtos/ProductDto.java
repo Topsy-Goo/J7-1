@@ -58,7 +58,7 @@ public class ProductDto {
     }
 
     @Override public String toString() {
-        return String.format ("prodDto:[pid:%d, title:%s, price:%f, rest:%d, msr:%s, categ:%s]",
-                                      productId, title,   price,    rest,    measure, category);
+        return String.format ("prodDto:[pid:%d, title:«%s», price:%f, rest:%d, msr:«%s», categ:«%s»]",
+                                      productId, title,     price,    rest,    measure,  category);
     }
 }

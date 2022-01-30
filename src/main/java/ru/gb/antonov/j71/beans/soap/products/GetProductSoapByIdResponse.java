@@ -13,7 +13,6 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType         (name="", propOrder={"productSoap"})
 @XmlRootElement  (name="getProductSoapByIdResponse")
 public class GetProductSoapByIdResponse {
-
     @XmlElement (required=true)
     protected ProductSoap productSoap;
 }
