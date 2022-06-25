@@ -1,6 +1,7 @@
 package ru.gb.antonov.j71.entities.dtos;
 
 import lombok.Data;
+import org.jetbrains.annotations.TestOnly;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ public class OrderDetalesDto {
 //-------------------------------------------------------------------------------------
     public OrderDetalesDto () {}
 
+    @TestOnly
     public static OrderDetalesDto dummyOrderDetalesDto (ShippingInfoDto sidto) {
 
         OrderDetalesDto oddto = new OrderDetalesDto();

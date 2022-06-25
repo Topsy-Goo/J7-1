@@ -3,6 +3,7 @@ package ru.gb.antonov.j71.entities.dtos;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
+import org.jetbrains.annotations.TestOnly;
 
 import javax.validation.constraints.NotNull;
 
@@ -45,6 +46,7 @@ public class ShippingInfoDto {
                               countryCode, postalCode, region, townVillage, streetHouse, apartment);
     }
 
+    @TestOnly
     public static ShippingInfoDto dummyShippingInfoDto () {
 
         ShippingInfoDto sidto = new ShippingInfoDto();

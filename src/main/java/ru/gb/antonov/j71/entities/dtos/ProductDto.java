@@ -2,6 +2,7 @@ package ru.gb.antonov.j71.entities.dtos;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
+import org.jetbrains.annotations.TestOnly;
 import ru.gb.antonov.j71.entities.Product;
 
 import javax.validation.constraints.NotNull;
@@ -45,6 +46,7 @@ public class ProductDto {
     }
 
 /** Используется для тестов. Корректность значений определяется потребностями тестов.   */
+    @TestOnly
     public static ProductDto dummyProductDto (Long pProductId, String pTitle, BigDecimal pPrice,
                                               Integer pRest, String measure, String pCategory)
     {   ProductDto pdt = new ProductDto();

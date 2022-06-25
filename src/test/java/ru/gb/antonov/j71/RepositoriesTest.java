@@ -19,9 +19,8 @@ public class RepositoriesTest
 
     @Autowired TestEntityManager testEntityManager;
 
-//TODO: файл V1__initialize.sql ещё пустой.
-
-// Имеет смысл тестировать только какие-то нестандартные, сложные запросы, что-то посложнее обычных CRUD-операций.
+// Имеет смысл тестировать только какие-то нестандартные, сложные запросы, что-то посложнее обычных
+// CRUD-операций.
     @Test public void testProductRepo () {}
     @Test public void testOurUserRepo () {}
 

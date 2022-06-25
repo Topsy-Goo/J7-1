@@ -11,7 +11,7 @@
 
 	наличие []-скобок означает создание основного модуля, а в скобках можно указать список подключаемых модулей (возможно подключение сторонних модулей);
 
-	отсутствие []-скобок означает создание доп.модуля. При его создании будет выполнен поиск пиложения с указанным именем (поиск осн.модуля указанного приложения).
+	отсутствие []-скобок означает создание доп.модуля. При его создании будет выполнен поиск приложения с указанным именем (поиск осн.модуля указанного приложения).
 
 	ngRoute - имя модуля, подключенного в html-файле при пом.тэга <script src="…/angular-route.min.js">. (используется тут же, ниже, в function config())
 
@@ -80,18 +80,18 @@
 
 	function run ($rootScope, $http, $localStorage)
 	{
-	/*	При запуске приложения во фронте неразлогиненный юзер будет считан (из локального хранилища
-	браузера) и в соотв-ии с ним будет добавлен и настроен умолчальный заголовок Authorization, как
+	/*	При запуске приложения во фронте неразлогиненный юзер будет считан из локального хранилища
+	браузера и в соотв-ии с ним будет добавлен и настроен умолчальный заголовок Authorization, как
 	при авторизации и регистрации.
-	(В нашем учебном проекте это не заработает, т.к. при старте
-	приложения, бэк считывает БД из sql-файла, а при регистрации нового юзера он не записывается в
-	упомянутый файл).
+	(В нашем учебном проекте это аработает только для прописанных вручную юзеров, т.к. при старте
+	приложения бэк считывает БД из sql-файла, а при регистрации нового юзера он не записывается в
+	образ БД, находящийся в памяти, а не в sql-файл. В проекте 7-10 это исправлено, — там БД хранится
+	в Docker'е и хранит все сделанные за сессию изменения.)
 	*/
 		const contextAuthoPath	= 'http://localhost:12440/market/api/v1/auth';
 		const contextCartPath	= 'http://localhost:12440/market/api/v1/cart';
 
-        if ($localStorage.webMarketUser)
-        {
+        if ($localStorage.webMarketUser) {
             $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.webMarketUser.token;
         }
 
@@ -102,7 +102,7 @@
 			function successCallback(response)
 			{
 				$localStorage.gbj7MarketGuestCartId = response.data.value;
-				console.log ('Temporary cartID is generated:'+ response.data.value);
+				console.log ('Temporary cartID is generated: ', response.data.value);
 			});
 		}
 	}
@@ -140,8 +140,7 @@ angular.module('market-front').controller('indexController', function ($rootScop
 	{
 		if ($scope.user != null)
 		{
-			$http.post (contextAuthoPath + '/login',
-						$scope.user)
+			$http.post (contextAuthoPath + '/login', $scope.user)
 			.then(
 			function successCallback (response)
 			{

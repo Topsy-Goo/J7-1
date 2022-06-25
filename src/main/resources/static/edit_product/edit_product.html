@@ -15,7 +15,7 @@
 				<div class="col-2">
 					<label for="pid" class="col-form-lable">id:</label>
 				</div>
-				<div class="col-10">
+				<div class="col-10"><!-- form-control-sm  -->
 					<input	id="pid"
 							class="form-control"
 							type="number"
@@ -28,11 +28,11 @@
 				<div class="col-2">
 					<label for="cnm" class="col-form-lable">category:&nbsp;</label>
 				</div>
-				<div class="col-10">
+				<div class="col-10"><!-- col-12 form-control-sm form-select-sm   mb-3--это вертик. интервал -->
 					<!--<input	id="cnm" class="form-control" type="text" placeholder="—" required="required" ng-model="new_product.category">-->
 					<!-- https://docs.angularjs.org/api/ng/directive/select -->
 					<select	id="cnm" name="cnm"
-							class="col-12 form-select form-select-lg mb-3"
+							class="form-control form-select"
 							required="required"
 							ng-model="new_product.category">
 						<option selected></option>
@@ -45,10 +45,10 @@
 				<div class="col-2">
 					<label for="msr" class="col-form-lable">measure:&nbsp;</label>
 				</div>
-				<div class="col-10">
+				<div class="col-10"><!-- col-12 form-control-sm form-select-sm  -->
 					<!--<input	id="msr" class="form-control" type="text" placeholder="еденица измерения" required="required" ng-model="new_product.measure">-->
 					<select	id="msr" name="msr"
-							class="col-12"
+							class="form-control form-select"
 							required="required"
 							ng-model="new_product.measure">
 						<option selected></option>

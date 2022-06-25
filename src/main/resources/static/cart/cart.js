@@ -32,12 +32,11 @@ angular.module('market-front').controller('cartController',
 
 	$scope.gotoOrder = function ()
 	{
-		if ($scope.isAuthenticatedUser())
-		{
+		if ($scope.isAuthenticatedUser()) {
 			$location.path('/order');
 		}
-		else
-		{	alert ('Чтобы оформить заказ, Вы должны авторизоваться.\r\r'+
+		else {
+			alert ('Чтобы оформить заказ, Вы должны авторизоваться.\r\r'+
 				   'При авторизации выбранные Вами товары будут перемещены в корзину вашей учётной записи.');
 		}
 	}
@@ -55,7 +54,7 @@ angular.module('market-front').controller('cartController',
 			function failureCallback (response)
 			{
 				alert (response.data.messages);
-				console.log ('Error: '+ response.data);
+				console.log ('Error: ', response.data);
 			});
 		}
 	}
@@ -71,7 +70,7 @@ angular.module('market-front').controller('cartController',
 		function failureCallback (response)
 		{
 			alert ('ОШИБКА: '+ response.data.messages);
-//			console.log ('ОШИБКА: '+ response.data.messages);
+//			console.log ('ОШИБКА: ', response.data.messages);
 		});
 	}
 

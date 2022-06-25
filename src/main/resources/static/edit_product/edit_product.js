@@ -49,7 +49,7 @@ angular.module('market-front').controller('edit_productController',
 
 	$scope.fillFormWithProductData = function ()
 	{
-	/* имя параметра (pid) должно совпадать с именем элемента в index10.js. >> function config >> ….when('/edit_product/:pid'…)	*/
+	/* имя параметра (pid) должно совпадать с именем элемента в index.js. >> function config >> ….when('/edit_product/:pid'…)	*/
 		if ($routeParams.pid == null) {
 			$scope.contextPrompt = contextPrompt_Creation;
 		}
@@ -70,7 +70,7 @@ angular.module('market-front').controller('edit_productController',
 //----------------------------------------------------------------------- редактирование
 	$scope.createOrUpdateProduct = function ()
 	{
-		console.log ('Попытка создать/изменить продукт: ');		console.log ($scope.new_product);
+		console.log ('Попытка создать/изменить продукт: ', $scope.new_product);
 
 		if ($scope.new_product != null)
 		{

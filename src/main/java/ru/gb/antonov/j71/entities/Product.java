@@ -3,7 +3,9 @@ package ru.gb.antonov.j71.entities;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 import org.springframework.test.util.AssertionErrors;
 import org.springframework.util.Assert;
 import ru.gb.antonov.j71.beans.errorhandlers.BadCreationParameterException;
@@ -15,8 +17,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
 import java.util.Objects;
 
-import static ru.gb.antonov.j71.Factory.MAX_PRICE;
-import static ru.gb.antonov.j71.Factory.MIN_PRICE;
+import static ru.gb.antonov.j71.Factory.*;
 
 @Entity
 @Table (name="products")
@@ -27,10 +28,10 @@ public class Product implements Buildable<Product> {
     @Column (name="id")
     private Long id;
 
-    @Column(name="title", nullable=false)            @Getter
+    @Column(name="title", nullable=false, length= PROD_TITLELEN_MAX)      @Getter
     private String title;
 
-    @Column(name="price", nullable=false)            @Getter
+    @Column(name="price", nullable=false, precision= PRICE_PRECISION, scale= PRICE_SCALE)     @Getter
     private BigDecimal price = BigDecimal.ZERO;
 
     @Column(name="rest", nullable=false)             @Getter
@@ -44,10 +45,10 @@ public class Product implements Buildable<Product> {
     @JoinColumn(name="category_id", nullable=false)  @Getter
     private ProductsCategory category;
 
-    @CreationTimestamp    @Column(name="created_at") @Getter @Setter
+    @CreationTimestamp    @Column(name= COLNAME_CREATED_AT) @Getter @Setter
     private LocalDateTime createdAt;
 
-    @CreationTimestamp    @Column(name="updated_at") @Getter @Setter
+    @UpdateTimestamp    @Column(name= COLNAME_UPDATED_AT) @Getter @Setter
     private LocalDateTime updatedAt;
 //----------------------------------------------------------------------
     private Product () {}
@@ -110,6 +111,7 @@ public class Product implements Buildable<Product> {
     }
 
 /** Метод используется в тестах, где корректность аргументов зависит от целей тестирования.    */
+    @TestOnly
     public static Product dummyProduct (Long id, String title, BigDecimal price, Integer rest,
                                         Measure measure,         ProductsCategory category,
                                         LocalDateTime createdAt, LocalDateTime updatedAt)

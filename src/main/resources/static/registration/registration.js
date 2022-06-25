@@ -54,7 +54,7 @@ angular.module('market-front').controller('registrationController',
 			function failureCallback (response)	//кажется, errorCallback тоже можно использовать
 			{
 				alert ('ОШИБКА: '+ response.data.messages);
-				console.log ('$scope.tryToRegister failure callback. : '+ response.data.messages);
+				console.log ('$scope.tryToRegister failure callback. : ', response.data.messages);
 				$scope.contextPrompt = contextPrompt_Error;
 			});
 		}

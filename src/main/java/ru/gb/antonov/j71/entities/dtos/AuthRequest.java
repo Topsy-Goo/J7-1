@@ -3,6 +3,7 @@ package ru.gb.antonov.j71.entities.dtos;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
+import org.jetbrains.annotations.TestOnly;
 
 import javax.validation.constraints.NotNull;
 
@@ -19,6 +20,7 @@ public class AuthRequest {
     @Length (min=PASS_LEN_MIN, max=PASS_LEN_MAX, message="\rДлина пароля: 3…128 символов!")
     private String password;
 //--------------------------------------------------------------------------------
+    @TestOnly
     public static AuthRequest dummyAuthRequest (String login, String password) {
         AuthRequest ar = new AuthRequest();
         ar.login    = login;

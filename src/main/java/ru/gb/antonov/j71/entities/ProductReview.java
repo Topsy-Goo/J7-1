@@ -2,9 +2,12 @@ package ru.gb.antonov.j71.entities;
 
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+
+import static ru.gb.antonov.j71.Factory.*;
 
 @Entity    @Data   @Table (name="productreviews")
 public class ProductReview {
@@ -13,7 +16,7 @@ public class ProductReview {
     @Column (name="id")
     private Long id;
 
-    @Column(name="text", nullable=false)
+    @Column(name="text", nullable=false, length= PRODUCTREVIEW_LEN_MAX)
     private String text;
 
     @ManyToOne    @JoinColumn(name="ouruser_id", nullable=false)
@@ -22,10 +25,10 @@ public class ProductReview {
     @Column(name="product_id", nullable=false)
     private Long productId;
 
-    @CreationTimestamp    @Column(name="created_at")
+    @CreationTimestamp    @Column(name= COLNAME_CREATED_AT)
     private LocalDateTime createdAt;
 
-    @CreationTimestamp    @Column(name="updated_at")
+    @UpdateTimestamp    @Column(name= COLNAME_UPDATED_AT)
     private LocalDateTime updatedAt;
 //-----------------------------------------------------------
     public ProductReview (){}

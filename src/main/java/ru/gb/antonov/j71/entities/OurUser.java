@@ -3,6 +3,7 @@ package ru.gb.antonov.j71.entities;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import ru.gb.antonov.j71.beans.errorhandlers.UserCreationException;
 
@@ -22,19 +23,19 @@ public class OurUser implements Buildable<OurUser> {
     @Column (name="id")
     private Long id;
 
-    @Column(name="login", nullable=false, unique=true)  @Getter
+    @Column(name="login", nullable=false, unique=true, length= LOGIN_LEN_MAX)  @Getter
     private String login;
 
-    @Column(name="password", nullable=false)            @Getter
+    @Column(name="password", nullable=false, length= PASS_LEN_MAX)            @Getter
     private String password;
 
-    @Column(name="email", nullable=false, unique=true)  @Getter
+    @Column(name="email", nullable=false, unique=true, length= EMAIL_LEN_MAX)  @Getter
     private String email;
 
-    @CreationTimestamp    @Column(name="created_at")    @Getter @Setter
+    @CreationTimestamp    @Column(name= COLNAME_CREATED_AT)    @Getter @Setter
     private LocalDateTime createdAt;
 
-    @CreationTimestamp    @Column(name="updated_at")    @Getter @Setter
+    @UpdateTimestamp      @Column(name= COLNAME_UPDATED_AT)    @Getter @Setter
     private LocalDateTime updatedAt;
 //--------------неколонки
     @ManyToMany

@@ -2,10 +2,14 @@ package ru.gb.antonov.j71.entities;
 
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.jetbrains.annotations.TestOnly;
 import ru.gb.antonov.j71.beans.errorhandlers.BadCreationParameterException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+
+import static ru.gb.antonov.j71.Factory.*;
 
 @Entity     @Data    @Table(name="categories")
 public class ProductsCategory {
@@ -14,13 +18,13 @@ public class ProductsCategory {
     @Column (name="id")
     private Long id;
 
-    @Column(name="name", nullable=false)
+    @Column(name="name", nullable=false, length= PRODCAT_NAMELEN_MAX)
     private String name;
 
-    @CreationTimestamp    @Column(name="created_at")
+    @CreationTimestamp    @Column(name= COLNAME_CREATED_AT)
     private LocalDateTime createdAt;
 
-    @CreationTimestamp    @Column(name="updated_at")
+    @UpdateTimestamp    @Column(name= COLNAME_UPDATED_AT)
     private LocalDateTime updatedAt;
 //-------- неколонки
 //    @OneToMany(mappedBy="category")
@@ -50,6 +54,7 @@ public class ProductsCategory {
     public String toString()    {   return ProductsCategory.class.getSimpleName() +":"+ name;   }
 //------------------------------------------------------------
 //(метод используется в тестах, где корректность аргументов зависит от целей тестирования)
+    @TestOnly
     public static ProductsCategory dummyProductsCategory (
                         Long id, String name, /*List<Product> products,*/
                         LocalDateTime createdAt, LocalDateTime updatedAt) {

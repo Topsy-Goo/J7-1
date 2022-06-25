@@ -22,7 +22,7 @@ angular.module('market-front')
 		{
 			errorMessage = 'Не удалось загрузить информацию о пользователе. \rОшибка : ';
 			alert (errorMessage + response.data);
-			console.log ('Error @ loadUserInfo(): '+ errorMessage + response.data);
+			console.log ('Error @ loadUserInfo(): ', errorMessage, response.data);
 		});
 	}
 
@@ -41,7 +41,7 @@ angular.module('market-front')
 		{
 			errorMessage = 'Не удалось загрузить заказы пользователя. \rОшибка : ';
 			alert (errorMessage + response.data);
-			console.log ('Error @ loadOrders(): '+ errorMessage + response.data.messages);
+			console.log ('Error @ loadOrders(): ', errorMessage, response.data.messages);
 		});
 	}
 //----------------------------------------------------------------------- действия

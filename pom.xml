@@ -23,12 +23,12 @@
 	</properties>
 
 	<dependencies>
-		<dependency><!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-maven-plugin -->
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-maven-plugin</artifactId>
 			<version>2.5.5</version>
-		</dependency> <!-- spring-boot-maven-plugin -->
-		<dependency>	<!-- Позволяет упростить работу с хибер-том на уровне Спринга. См.также YAML-файл. -->
+		</dependency> <!-- spring-boot-maven-plugin 2.5.5 -->
+		<dependency> <!-- Позволяет упростить работу с хибер-том на уровне Спринга. См.также YAML-файл. -->
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency> <!-- spring-boot-starter-data-jpa -->
@@ -52,20 +52,24 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 			<!-- Также автоматически конфигурирет умолчального пользователя user; его (одноразовый?) пароль создаётся генериться при старте приложения.  -->
 		</dependency> <!-- spring-boot-starter-security -->
-<!--	<dependency>
+<!--		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
-		</dependency>	--> <!-- spring-boot-starter-validation -->
+		</dependency>--> <!-- spring-boot-starter-validation -->
+<!--		<dependency>	для @PostConstruct и @PreDestroy.
+			<groupId>javax.annotation</groupId>
+			<artifactId>jsr250-api</artifactId>
+			<version>1.0</version>
+		</dependency> --> <!-- jsr250-api 1.0 -->
 		<dependency>	<!-- для тестирования безопасности -->
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
 		</dependency> <!-- spring-security-test -->
-
 		<dependency>	<!-- для организации автоматических проверок параметров методов -->
 			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>6.1.5.Final</version>
-		</dependency> <!-- hibernate-validator -->
+		</dependency> <!-- hibernate-validator 6.1.5.Final -->
 		<dependency>	<!-- поддержка jdbc-драйвера H2 ("H2 Database Engine"). См.также YAML-файл. -->
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
@@ -80,8 +84,8 @@
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
 			<version>0.9.1</version>
-		</dependency> <!-- jjwt -->
-		<dependency>	<!-- Система миграции. Позволит указывать, какое наполнение базы данных нам может пригодиться. В ресурсах нужна папка db\migration (не db.migration). -->
+		</dependency> <!-- jjwt 0.9.1 -->
+		<dependency>	<!-- Система миграции. В ресурсах нужна папка db\migration (не db.migration). -->
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
 		</dependency> <!-- flyway-core -->
@@ -90,10 +94,10 @@
 			<artifactId>annotations</artifactId>
 			<version>22.0.0</version><!-- LATEST or RELEASE are being deprecated -->
 			<scope>compile</scope>
-		</dependency> <!-- jetbrains annotations -->
+		</dependency> <!-- jetbrains annotations 22.0.0 -->
 
-	<!-- Для использования следующих двух зависимостей требуется установка Redis'а (Linux only)
-		 или Memurai (аналог Redis'а для Windows). -->
+	<!-- Для использования следующих двух зависимостей требуется установка Redis'а (в Linux) или
+		 Memurai (в Windows). -->
 		<dependency>	<!-- Аналог Spring data под кэшь Radis'а. -->
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-redis</artifactId>
@@ -104,38 +108,32 @@
 			<version>3.6.0</version>
 		</dependency> <!-- jedis -->
 
-<!--		<dependency>	для @PostConstruct и @PreDestroy; не понадобилось, — всё работает и так.
-			<groupId>javax.annotation</groupId>
-			<artifactId>jsr250-api</artifactId>
-			<version>1.0</version>
-		</dependency> --> <!-- jsr250-api -->
-
 <!-- Следующие 5 зависимостей нужны для SOAP. -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web-services</artifactId>
 		</dependency> <!-- spring-boot-starter-web-services -->
-		<!-- https://mvnrepository.com/artifact/org.codehaus.mojo/jaxb2-maven-plugin -->
 		<dependency>	<!-- Без этого jaxb2-плагин не устанавливался. -->
+			<!-- https://mvnrepository.com/artifact/org.codehaus.mojo/jaxb2-maven-plugin -->
 			<groupId>org.codehaus.mojo</groupId>
 			<artifactId>jaxb2-maven-plugin</artifactId>
 			<version>2.5.0</version>
-		</dependency> <!-- jaxb2-maven-plugin -->
+		</dependency> <!-- jaxb2-maven-plugin 2.5.0 -->
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
 			<version>2.3.1</version>
-		</dependency> <!-- jaxb-api -->
+		</dependency> <!-- jaxb-api 2.3.1 -->
 		<dependency>
 			<groupId>org.glassfish.jaxb</groupId>
 			<artifactId>jaxb-runtime</artifactId>
 			<version>2.3.1</version>
-		</dependency> <!-- jaxb-runtime -->
+		</dependency> <!-- jaxb-runtime 2.3.1 -->
 		<dependency>
 			<groupId>wsdl4j</groupId>
 			<artifactId>wsdl4j</artifactId>
 			<version>1.6.2</version>
-		</dependency> <!-- wsdl4j -->
+		</dependency> <!-- wsdl4j 1.6.2 -->
 	</dependencies>
 
 	<build>
@@ -184,3 +182,4 @@
 	</build>
 
 </project>
+<!--  :  :  -->

@@ -35,8 +35,8 @@ public class AuthController {
 
     //http://localhost:12440/market/api/v1/auth/login
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser (@RequestBody AuthRequest authRequest) {
-
+    public ResponseEntity<?> authenticateUser (@RequestBody AuthRequest authRequest)
+    {
         String login = authRequest.getLogin();
         String password = authRequest.getPassword();
         return inlineAuthentificateAndResponseWithJwt (login, password);
@@ -45,8 +45,8 @@ public class AuthController {
     //http://localhost:12440/market/api/v1/auth/register
     @PostMapping ("/register")
     public ResponseEntity<?> registerNewUser (@RequestBody @Validated RegisterRequest registerRequest,
-                                              BindingResult br) {
-        if (br.hasErrors())
+                                              BindingResult br)
+    {   if (br.hasErrors())
             throw new OurValidationException (br.getAllErrors()
                                                 .stream()
                                                 .map (ObjectError::getDefaultMessage)
@@ -74,8 +74,9 @@ public class AuthController {
         return ourUserService.canEditProduct (principal);
     }
 
-    private ResponseEntity<?> inlineAuthentificateAndResponseWithJwt (String login, String password) {
 
+    private ResponseEntity<?> inlineAuthentificateAndResponseWithJwt (String login, String password)
+    {
         try {
             authenticationManager.authenticate (new UsernamePasswordAuthenticationToken (login, password));
         }

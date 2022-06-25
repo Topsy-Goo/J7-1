@@ -24,8 +24,8 @@ public class JwtokenUtil {
     @Value("${jwt.lifetime}")
     private Integer lifetime;   //< обычно выносится в к-л конфиг (см. yaml)
 
-    public String generateJWToken (UserDetails userDetails) {
-
+    public String generateJWToken (UserDetails userDetails)
+    {
         Map<String, Object> claims = new HashMap<>();
         List<String> roles = userDetails
                                 .getAuthorities()
@@ -36,18 +36,17 @@ public class JwtokenUtil {
         claims.put ("roles", roles);
         Date dateIssued = new Date();
         Date dateExpired = new Date (dateIssued.getTime() + lifetime);
-        String s = Jwts.builder()
-                       .setClaims (claims)
-                       .setSubject (userDetails.getUsername())
-                       .setIssuedAt (dateIssued)
-                       .setExpiration (dateExpired)
-                       .signWith (SignatureAlgorithm.HS256, secret)
-                       .compact();
-        return s;
+        return Jwts.builder()
+                   .setClaims (claims)
+                   .setSubject (userDetails.getUsername())
+                   .setIssuedAt (dateIssued)
+                   .setExpiration (dateExpired)
+                   .signWith (SignatureAlgorithm.HS256, secret)
+                   .compact();
     }
 
     public String getLoginFromToken (String token) {
-        return getClaimFromToken(token, Claims::getSubject);
+        return getClaimFromToken (token, Claims::getSubject);
     }
 
     private <T> T getClaimFromToken (String token, Function<Claims, T> claimsResolver) {
@@ -56,19 +55,16 @@ public class JwtokenUtil {
     }
 
     private Claims getAllClaimsFromToken(String token) {
-
-        Claims c = Jwts.parser()
+        return Jwts.parser()
                    .setSigningKey (secret)  //< нужет для проверки подлинности и актуальности токена
                    .parseClaimsJws (token)
                    .getBody();
-        return c;
     }
 
     public List<String> getRoles(String token) {
     /*    return getClaimFromToken (
                 token,
                 (Function<Claims, List<String>>) claims -> claims.get("roles", List.class));*/
-        List<String> list = getClaimFromToken (token, claims -> claims.get ("roles", List.class));
-        return list;
+        return getClaimFromToken (token, claims -> claims.get ("roles", List.class));
     }
 }

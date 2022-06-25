@@ -34,4 +34,5 @@ build/
 /desktop.ini
 /земетки.txt
 /backup.files/
-
+/src/main/resources/static/img/
+/src/main/java/ru/gb/antonov/j71/beans/utils/VideoTest.java

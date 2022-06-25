@@ -14,8 +14,8 @@ import org.springframework.xml.xsd.XsdSchema;
 
 @EnableWs
 @Configuration
-public class WebServiceConfig extends WsConfigurerAdapter {
-
+public class WebServiceConfig extends WsConfigurerAdapter
+{
 /** Здесь мы создаём и настраиваем отдельный сервлет для SOAP.<p>
     Если неправильно ввести адрес, то сообщение об ошибке придёт в html-формате (404).<p>
     Если неправильно указать название wsdl-файла, то придёт 405.
@@ -24,8 +24,8 @@ public class WebServiceConfig extends WsConfigurerAdapter {
 
 /** {@code "/ws/*"} — это адрес, на который нужно слать запросы этому сервлету. Оказалось, что этот адрес добавляется к {@code http://localhost:8189/market} — т.е. звено {@code /market} категорически показано к применению. Без него ничего не получится. */
     @Bean
-    public ServletRegistrationBean messageDispatcherServlet (ApplicationContext applicationContext)  {
-
+    public ServletRegistrationBean messageDispatcherServlet (ApplicationContext applicationContext)
+    {
         MessageDispatcherServlet servlet = new MessageDispatcherServlet ();
         servlet.setApplicationContext (applicationContext);
         servlet.setTransformWsdlLocations (true);
@@ -34,8 +34,8 @@ public class WebServiceConfig extends WsConfigurerAdapter {
 
 /** Как оказалось, инструкция <br>{@code @Bean (name = {"productSoap"})}<br>указывает на название wsdl-файла, который будет создан и отправлен в ответ на запрос wsdl-файла. Т.е. запрос wsdl-файла должен выглядеть так:<br>{@code http://localhost:8189/market/ws/productSoap.wsdl}. */
     @Bean (name = {"productSoap"})
-    public DefaultWsdl11Definition productWsdl11Definition (XsdSchema productSchema) {
-
+    public DefaultWsdl11Definition productWsdl11Definition (XsdSchema productSchema)
+    {
         DefaultWsdl11Definition wsdl11Definition = new DefaultWsdl11Definition ();
         wsdl11Definition.setPortTypeName ("ProductPort");
         wsdl11Definition.setLocationUri ("/ws");

@@ -52,11 +52,11 @@
 				<div class="input-group col-11"><!-- не удалось сделать красиво: если для @ использовать
 span, то у него получаются скруглённые края, а если делать input, то мин.ширина выставляется тольк при
 пом. col-1 и почти всегда оказывается некрасиво большой. В общем, — в топку; слишком мало времени!	-->
-	<input class="form-control" type="text" width="50" ng-model="new_user.emailUser" placeholder="Имя пользователя" id="email">
-	<input class="form-control" type="text" width="20" value="@" readonly>
-	<input class="form-control" type="text" width="50" ng-model="new_user.emailServer" placeholder="Имя сервера">
-	<input class="form-control" type="text" width="20" value="." readonly>
-	<input class="form-control" type="text" width="50" ng-model="new_user.emailDomain" placeholder="Домен">
+	<input class="col-7 form-control" type="text" width="50" ng-model="new_user.emailUser" placeholder="Имя пользователя" id="email">
+	<input class="col-1 form-control" style="min-width=20px;" type="text"  value="@" readonly>
+	<input class="col-2 form-control" type="text" width="50" ng-model="new_user.emailServer" placeholder="Имя сервера">
+	<input class="col-1 form-control" style="min-width=20px;" type="text"  value="." readonly>
+	<input class="col-1 form-control" type="text" width="50" ng-model="new_user.emailDomain" placeholder="Домен">
 				</div>
 			</div>
 		</div>

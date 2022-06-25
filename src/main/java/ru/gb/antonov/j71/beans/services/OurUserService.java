@@ -45,8 +45,8 @@ public class OurUserService implements UserDetailsService {
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername (String login) {
-
+    public UserDetails loadUserByUsername (String login)
+    {
         OurUser ourUser = findByLogin (login)
                             .orElseThrow(()->new UsernameNotFoundException (NO_SUCH_LOGIN_+ login));
 
@@ -56,8 +56,9 @@ public class OurUserService implements UserDetailsService {
     }
 
     private Collection<? extends GrantedAuthority> mapRolesToAuthorities (
-                                    Collection<Role> roles, Collection<OurPermission> permissions) {
-
+                                    Collection<Role> roles,
+                                    Collection<OurPermission> permissions)
+    {
         List<String> list = roles.stream().map (Role::getName)
                                  .collect (Collectors.toList());
 
@@ -69,13 +70,14 @@ public class OurUserService implements UserDetailsService {
     }
 
     @Transactional
-    public Optional<OurUser> createNewOurUser (String login, String password, String email) {
-
+    public Optional<OurUser> createNewOurUser (String login, String password, String email)
+    {
         OurUser newOurUser = OurUser.create()
-                                   .withLogin (login)
-                                   .withPassword (password)
-                                   .withEmail (email)
-                                   .build();
+                                    .withLogin (login)
+                                    .withPassword (password)
+                                    .withEmail (email)
+                                    .build();
+
         Role roleUser = roleService.getRoleUser();
         OurPermission ourDefaultPermission = ourPermissionService.getPermissionDefault();
 

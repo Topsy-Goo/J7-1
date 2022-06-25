@@ -91,7 +91,7 @@ public class ProductService {
         return Math.max(pageIndex, 0);
     }
 
-    @Transactional
+    @Transactional (readOnly = true)
     public Page<ProductDto> getPageOfProducts (int pageIndex, int pageSize,
                                                @Nullable MultiValueMap<String, String> filters)
     {
@@ -133,18 +133,21 @@ public class ProductService {
             throw new UnableToPerformException (String.format (ERR_MINPRICE_OUTOF_RANGE, price, MIN_PRICE));
 
         Product p = findById (id);
-        ProductsCategory category = null;
-        Measure measure = null;
+        if (p != null)
+        {
+            ProductsCategory category = null;
+            Measure measure = null;
 
-        if (productCategoryName != null)
-            category = productCategoryService.findByName (productCategoryName);
+            if (productCategoryName != null)
+                category = productCategoryService.findByName (productCategoryName);
 
-        if (productMeasure != null)
-            measure = measureService.findByName (productMeasure);
+            if (productMeasure != null)
+                measure = measureService.findByName (productMeasure);
 
-        p.update (title, price, rest, measure, category);
-        p = productRepo.save (p);
-        LOGGER.warning ("Изменён продукт: "+ p.toString());
+            p.update (title, price, rest, measure, category);
+            p = productRepo.save (p);
+            LOGGER.warning ("Изменён продукт: "+ p.toString());
+        }
         return p;
     }
 
@@ -161,13 +164,13 @@ public class ProductService {
         LOGGER.warning ("Удалён продукт: "+ p.toString());
     }
 
-    @Transactional
+    @Transactional (readOnly = true)
     public List<String> getCategoriesList () {
         List<String> result = productCategoryService.getCategoriesList();
         return result != null ? result : new ArrayList<>();
     }
 
-    @Transactional
+    @Transactional (readOnly = true)
     public List<String> getMeasuresList () {
         List<String> result = measureService.getMeasuresList();
         return result != null ? result : new ArrayList<>();
@@ -196,16 +199,15 @@ public class ProductService {
     }
 //-------------- SOAP ---------------------------------------------------
 
-    @Transactional
+    @Transactional (readOnly = true)
     public ProductSoap getProductSoapByProductId (Long pid) {
         return Product.toProductSoap (findById (pid));
     }
 
 /** @param from {@code productId} первого элемента интервала.
     @param to {@code productId} последнего элемента интервала (включительно). */
-    @Transactional
-    @NotNull
-    public List<ProductSoap> getProductSoapRangeByProductIdRange (Long from, Long to) {
+    @Transactional (readOnly = true)
+    @NotNull public List<ProductSoap> getProductSoapRangeByProductIdRange (Long from, Long to) {
 
         List<ProductSoap> result = Collections.emptyList();
         if (from != null && to != null && from > 0L && from.compareTo(to) <= 0)
@@ -234,24 +236,19 @@ public class ProductService {
         if (params != null) {
     //MultiValueMap.getFirst() returns the first value for the specified key, or null if none.
             String s;
-            double minPrice = 0.0;
-            try {
-                if ((s = params.getFirst (FILTER_NAME_MIN_PRICE)) != null && !s.isBlank()) {
-                    minPrice = stringToDouble (s);
-                    if (minPrice < 0.0)
-                        throw new FilterPriceException (USE_DEFAULT_STRING);
-                    spec = spec.and (ProductSpecification.priceGreaterThanOrEqualsTo (minPrice));
-                }
-
-                if ((s = params.getFirst (FILTER_NAME_MAX_PRICE)) != null && !s.isBlank()) {
-                    double maxPrice = stringToDouble (s);
-                    if (maxPrice < minPrice)
-                        throw new FilterPriceException (USE_DEFAULT_STRING);
-                    spec = spec.and (ProductSpecification.priceLessThanOrEqualsTo (maxPrice));
-                }
+            Double minPrice = 0.0;
+            if ((s = params.getFirst (FILTER_NAME_MIN_PRICE)) != null && !s.isBlank()) {
+                minPrice = stringToDouble (s);
+                if (minPrice == null || minPrice < 0.0)
+                    throw new FilterPriceException (USE_DEFAULT_STRING);
+                spec = spec.and (ProductSpecification.priceGreaterThanOrEqualsTo (minPrice));
             }
-            catch (NumberFormatException e) {
-                throw new FilterPriceException (USE_DEFAULT_STRING, e);
+
+            if ((s = params.getFirst (FILTER_NAME_MAX_PRICE)) != null && !s.isBlank()) {
+                Double maxPrice = stringToDouble (s);
+                if (maxPrice == null || maxPrice < minPrice)
+                    throw new FilterPriceException (USE_DEFAULT_STRING);
+                spec = spec.and (ProductSpecification.priceLessThanOrEqualsTo (maxPrice));
             }
 
             if ((s = params.getFirst (FILTER_NAME_TITLE)) != null && !s.isBlank()) {

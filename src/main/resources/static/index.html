@@ -24,7 +24,7 @@
 		.almost_windows
 		{	overflow: auto;	/* полосы прокрутки появятся только при необходимости	*/
 			width: 100%;	/* Ширина блока	*/
-			max-height: 400px;	/* макс. Высота блока	*/
+			max-height: 800px;	/* макс. Высота блока	*/
 			padding: 5px;		/* Поля вокруг текста	*/
 			border: dotted 2px silver;	/* Параметры рамки	*/
 		}
@@ -58,10 +58,19 @@
 		.copyright	{	height: 40px;	line-height: 20px;	margin: 0px 0px 30px 0px;	/* top,rig,bot,lef */
 						box-sizing: border-box;		border: none;/*	3px solid #d8deff;	*/
 		}
-	</style>
 
+		.page_content
+		{	width: 100%;
+			height: fit-content;
+			min-height: 800px;
+			/* background-color: #C8BFE7; */
+			/* border: 5px solid #a00; */
+			box-sizing: border-box;	/* http://htmlbook.ru/css/box-sizing */
+		}
+	</style>
 </head>
 <body ng-app="market-front">
+
 <div class="container">
 
 	<div ng-controller="indexController">
@@ -123,8 +132,9 @@
                     <li class="nav-item" style="background-color: #E0F8C3; margin: 1px;" ng-show="isUserLoggedIn()">
                         <a	class="nav-link" href="#!/user_profile">👤&nbsp;Профиль</a>
 					</li>
-					<li class="nav-item" style="background-color: #E0F8C3; margin: 1px;" ng-show="isUserLoggedIn()"><!-- "padding: 4px;" -->
-						<a class="nav-link" ng-click="tryToLogout()">🚪&nbsp;Выход</a>
+					<li class="nav-item" style="background-color: #E0F8C3; margin: 1px;"
+						ng-show="isUserLoggedIn()"><!-- "padding: 4px;" -->
+						<a class="nav-link" href="" ng-click="tryToLogout()">🚪&nbsp;Выход</a>
 					</li>
 				</ul><!-- 🎀 📎 🔔 👤 🚪 🔕 🔒   -->
 			</div>
@@ -133,8 +143,10 @@
 		<p>&nbsp;</p>
 	</div>
 
-	<ng-view>
-	</ng-view>
+	<div class="page_content">
+		<ng-view>
+		</ng-view>
+	</div>
 
 	<!-- footer start -->
 	<div class="page_footer">
@@ -165,5 +177,6 @@
 	<script src="registration/registration.js"></script>
 	<script src="product_page/product_page.js"></script>
 </div>
+
 </body>
 </html>

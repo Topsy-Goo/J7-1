@@ -2,6 +2,7 @@ package ru.gb.antonov.j71.entities;
 
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -23,7 +24,7 @@ public class Order {
     @JoinColumn(name="shipping_info_id", nullable=false)
     private ShippingInfo shippingInfo;
 
-    @Column (name="all_items_cost", nullable=false)
+    @Column (name="all_items_cost", nullable=false, precision=10, scale=2)
     private BigDecimal allItemsCost = BigDecimal.ZERO;
 
     @ManyToOne    @JoinColumn (name="orderstate_id", nullable=false)
@@ -32,7 +33,7 @@ public class Order {
     @CreationTimestamp    @Column (name="created_at")
     private LocalDateTime createdAt;
 
-    @CreationTimestamp    @Column (name="updated_at")
+    @UpdateTimestamp    @Column (name="updated_at")
     private LocalDateTime updatedAt;
 
 //--------неколонки

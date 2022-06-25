@@ -20,7 +20,8 @@ import java.util.List;
 
 import static ru.gb.antonov.j71.Factory.*;
 
-@Service @RequiredArgsConstructor
+@Service
+@RequiredArgsConstructor
 public class CartService {
 /**
  <b>Как устроена корзина</b><p>

@@ -7,4 +7,5 @@ angular.module('market-front').controller('mainController', function ($scope, $h
 	const contextOrderPath   = 'http://localhost:12440/market/api/v1/order';
 	const contextUserProfilePath   = 'http://localhost:12440/market/api/v1/user_profile';
 	const contextProductReviewPath = 'http://localhost:12440/market/api/v1/productreviews';
+
 });
